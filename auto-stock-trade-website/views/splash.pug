@@ -1,0 +1,38 @@
+doctype html
+head
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/splash.css')
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
+  script(src='js/splash.js')
+body
+  div.page-wrapper  
+    div.login-form-container
+      div.logo-container
+        div.logo-wrapper
+          h1.logo Auto Stock Trader
+      div.login-form-wrapper
+        h1.form-title Login
+        div.login-form.splash-form
+          form(method="POST", action="/login")
+            input.login-field(type="email", placeholder="Email Address", name="username")
+            input.login-field(type="password", placeholder="Password", name="password")
+            input.login-field.submit-field(type="submit", value="Login")
+            div.register-switch-wrapper
+              p.register-switch-text Need an account? 
+              p.register-switch-button(onClick="activateRegisterForm()") Register Now!
+    div.register-form-container
+      div.logo-container
+        div.logo-wrapper
+          h1.logo Auto Stock Trader
+      div.register-form-wrapper
+        h1.form-title Register
+        div.register-form.splash-form
+          form(method="POST", action="/register")
+            input.register-field(type="text", placeholder="First Name", name="first")
+            input.register-field(type="text", placeholder="Last Name", name="last")
+            input.register-field(type="email", placeholder="Email Address", name="email")
+            input.register-field(type="password", placeholder="Password", name="password")
+            input.register-field(type="password", placeholder="Confirm Password", name="password")
+            input.register-field.submit-field(type="submit", value="Register")
+            div.login-switch-wrapper
+              p.login-switch-text Have an account? 
+              p.login-switch-button(onClick="activateLoginForm()") Login Now!
