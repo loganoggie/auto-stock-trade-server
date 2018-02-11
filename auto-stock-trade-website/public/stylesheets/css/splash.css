@@ -1,0 +1,187 @@
+html {
+  height: 100%;
+  min-width: 400px;
+  min-height: 800px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+}
+
+body {
+  height: 100%;
+  min-height: 100%;
+  background-image: url('../../images/mstcampus.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.page-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Logo CSS */
+
+.logo-container {
+  width: 400px;
+  height: 100px;
+  border-bottom: 1px solid #999999;
+}
+
+.logo-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  text-align: center;
+  line-height: 100px;
+  font-size: 2.5em;
+}
+
+/* Login Form CSS */
+
+.login-form-container {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 400px;
+  min-height: 100px;
+  background-color: #ECEFF1D8;
+  font-family: 'Lato', sans-serif;
+}
+
+.login-form-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.form-title {
+  text-align: center;
+  line-height: 2em;
+  font-size: 1.7em;
+}
+
+.login-form {
+  display: block;
+  height: 220px;
+}
+
+.login-field {
+  display: block;
+  width: 80%;
+  height: 35px;
+  margin: 0 auto;
+  margin-top: 25px;
+  padding-left: 15px;
+  font-size: 1em;
+  border: none;
+  border-radius: 3px;
+}
+
+.submit-field {
+  color: white;
+  background-color: #43A047;
+  border: none;
+  box-shadow: none
+}
+
+.register-switch-wrapper {
+  display: block;
+  position: absolute;
+  width: 100%;
+  bottom: 15px;
+  text-align: center;
+}
+
+.register-switch-text {
+  display: inline;
+}
+
+.register-switch-button {
+  display: inline;
+  color: purple;
+}
+
+.register-switch-button:hover {
+  cursor: pointer;
+}
+
+/* End of Login CSS */
+
+/* Register Form CSS */
+
+.register-form-container {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 400px;
+  min-height: 100px;
+  background-color: #ECEFF1D8;
+  font-family: 'Lato', sans-serif;
+}
+
+.register-form-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.form-title {
+  text-align: center;
+  line-height: 2em;
+  font-size: 1.7em;
+}
+
+.register-form {
+  display: block;
+  min-height: 410px;
+}
+
+.register-field {
+  display: block;
+  width: 80%;
+  height: 35px;
+  margin: 0 auto;
+  margin-top: 25px;
+  padding-left: 15px;
+  font-size: 1em;
+  border: none;
+  border-radius: 3px;
+}
+
+.submit-field {
+  color: white;
+  background-color: #43A047;
+  border: none;
+  box-shadow: none
+}
+
+.login-switch-wrapper {
+  display: block;
+  position: absolute;
+  width: 100%;
+  bottom: 15px;
+  text-align: center;
+}
+
+.login-switch-text {
+  display: inline;
+}
+
+.login-switch-button {
+  display: inline;
+  color: purple;
+}
+
+.login-switch-button:hover {
+  cursor: pointer;
+}
+
+/* End of Register CSS */

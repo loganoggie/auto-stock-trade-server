@@ -1,0 +1,40 @@
+doctype html
+head
+  meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/splash.css')
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
+  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+  script(src='js/splash.js')
+body
+  div.page-wrapper  
+    div.login-form-container
+      div.logo-container
+        div.logo-wrapper
+          h1.logo Auto Stock Trader
+      div.login-form-wrapper
+        h1.form-title Login
+        div.login-form.splash-form
+          form(method="POST", action="/login")
+            input.login-field(type="email", placeholder="Email Address", name="username", required=true)
+            input.login-field(type="password", placeholder="Password", name="password", required=true)
+            input.login-field.submit-field(type="submit", value="Login")
+            div.register-switch-wrapper
+              p.register-switch-text Need an account? 
+              p.register-switch-button(onClick="activateRegisterForm()") Register Now!
+    div.register-form-container
+      div.logo-container
+        div.logo-wrapper
+          h1.logo Auto Stock Trader
+      div.register-form-wrapper
+        h1.form-title Register
+        div.register-form.splash-form
+          form(method="POST", action="/register")
+            input.register-field(type="text", placeholder="First Name", name="first", required=true)
+            input.register-field(type="text", placeholder="Last Name", name="last", required=true)
+            input.register-field(type="email", placeholder="Email Address", name="email", required=true)
+            input.register-field(type="password", placeholder="Password", name="password", required=true)
+            input.register-field(type="password", placeholder="Confirm Password", name="password", required=true)
+            input.register-field.submit-field(type="submit", value="Register")
+            div.login-switch-wrapper
+              p.login-switch-text Have an account? 
+              p.login-switch-button(onClick="activateLoginForm()") Login Now!
