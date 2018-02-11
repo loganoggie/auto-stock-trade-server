@@ -1,10 +1,14 @@
 html {
   height: 100%;
   min-width: 400px;
+  min-height: 800px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
 }
 
 body {
   height: 100%;
+  min-height: 100%;
   background-image: url('../../images/mstcampus.jpg');
   background-position: center;
   background-repeat: no-repeat;
@@ -23,20 +27,17 @@ body {
   width: 400px;
   height: 100px;
   border-bottom: 1px solid #999999;
-  /*background-color: #ECEFF1D8;*/
 }
 
 .logo-wrapper {
   width: 100%;
   height: 100%;
-  /*background-color: yellow;*/
 }
 
 .logo {
   text-align: center;
   line-height: 100px;
   font-size: 2.5em;
-  /*background-color: cyan;*/
 }
 
 /* Login Form CSS */
@@ -50,6 +51,7 @@ body {
   width: 400px;
   min-height: 100px;
   background-color: #ECEFF1D8;
+  font-family: 'Lato', sans-serif;
 }
 
 .login-form-wrapper {
@@ -122,6 +124,7 @@ body {
   width: 400px;
   min-height: 100px;
   background-color: #ECEFF1D8;
+  font-family: 'Lato', sans-serif;
 }
 
 .register-form-wrapper {
