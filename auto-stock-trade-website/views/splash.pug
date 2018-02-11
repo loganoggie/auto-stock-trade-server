@@ -13,8 +13,8 @@ body
         h1.form-title Login
         div.login-form.splash-form
           form(method="POST", action="/login")
-            input.login-field(type="email", placeholder="Email Address", name="username")
-            input.login-field(type="password", placeholder="Password", name="password")
+            input.login-field(type="email", placeholder="Email Address", name="username", required=true)
+            input.login-field(type="password", placeholder="Password", name="password", required=true)
             input.login-field.submit-field(type="submit", value="Login")
             div.register-switch-wrapper
               p.register-switch-text Need an account? 
@@ -27,11 +27,11 @@ body
         h1.form-title Register
         div.register-form.splash-form
           form(method="POST", action="/register")
-            input.register-field(type="text", placeholder="First Name", name="first")
-            input.register-field(type="text", placeholder="Last Name", name="last")
-            input.register-field(type="email", placeholder="Email Address", name="email")
-            input.register-field(type="password", placeholder="Password", name="password")
-            input.register-field(type="password", placeholder="Confirm Password", name="password")
+            input.register-field(type="text", placeholder="First Name", name="first", required=true)
+            input.register-field(type="text", placeholder="Last Name", name="last", required=true)
+            input.register-field(type="email", placeholder="Email Address", name="email", required=true)
+            input.register-field(type="password", placeholder="Password", name="password", required=true)
+            input.register-field(type="password", placeholder="Confirm Password", name="password", required=true)
             input.register-field.submit-field(type="submit", value="Register")
             div.login-switch-wrapper
               p.login-switch-text Have an account? 
