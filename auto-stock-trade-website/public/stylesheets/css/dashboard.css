@@ -1,0 +1,77 @@
+/*
+
+Red #7F4646
+Black #1C2321
+Green #43A047
+White #F2F7F2
+Gray #7B7F7C
+
+*/
+
+html {
+  height: 100%;
+  min-width: 400px;
+  min-height: 100%;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+}
+
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+.page-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
+.header {
+  position: fixed;
+  width: 100%;
+  height: 80px;
+  background-color: #1C2321;
+  z-index: 10;
+}
+
+.burger-holder {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background-image: url('../../images/ic_menu_white_48dp_1x.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.content-wrapper {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: calc(100vh - 80px);
+  padding-top: 80px;
+  background-color: #F2F7F2;
+  z-index: 0;
+}
+
+.account-standing {
+  width: 400px;
+  height: 150px;
+  margin: 0 auto;
+  margin-top: 30px;
+  background-color: ;
+}
+
+.account-standing-label {
+  text-align: center;
+  font-size: 1.3em;
+  line-height: 30px;
+}
+
+.account-value {
+  text-align: center;
+  font-size: 4em;
+  line-height: 100px;
+}
