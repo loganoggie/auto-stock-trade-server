@@ -4,11 +4,21 @@ head
   link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
   link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
   link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+
 body
   div.page-wrapper
     div.header
-      div.burger-holder
+      div.dropdown-button-container
+        div.dropdown
+          div.burger-holder.drop-button
+          div.dropdown-content
+            a link 1
+            a link 2
+            a link 3
+      div.logo-holder
     div.content-wrapper
       div.account-standing
         h1.account-standing-label Account Standing
-        h1.account-value $10,000
+        h1.account-standing-value $10,000
+      div.account-graph-holder
+        div.account-graph
