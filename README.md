@@ -11,7 +11,7 @@ git clone https://github.com/loganoggie/auto-stock-trade-server.git
 ```
 
 cd into the git directory and initialize the directory as a node package (you must have nodeJS installed).
-During this process a number of prompts will appear. All can be left as default by pressing enter except for the 
+During this process a number of prompts will appear. All can be left as default by pressing enter except for the
 entry point. This should be changed to app.js.
 
 ```
@@ -39,3 +39,26 @@ MacOS / Linux: ```DEBUG=app:* npm start```
 Windows:       ```set DEBUG=app:* & npm start```
 
 Visit localhost:3000 to see the result of your hard work.
+
+### Running MySQL
+
+In order for MySQL to work on your machine locally, you must install the required npm packages
+
+```
+npm install mysql
+```
+
+Requirements can also be automatically installed by visiting the servers directory.
+
+```
+cd auto-stock-trade-website
+```
+
+and then running the following command
+
+```
+npm install
+```
+
+**Note: This only works if somebody has manually installed a package and then committed
+the updated package.json file to github.**
