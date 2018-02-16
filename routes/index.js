@@ -38,6 +38,12 @@ router.post('/login', function(req, res, next) {
 });
 
 router.post('/register', function(req, res, next) {
+  connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+  [req.body.first, req.body.last, req.body.email, req.body.rpassword, "2018-01-01", "2018-01-01"],
+  function(err, results){
+    if(err){
+      console.log("An error has occured. This email address must already be in use!")
+    }});
 
   // Ensure user isnt already registered
   // Insert user information into table
@@ -46,7 +52,7 @@ router.post('/register', function(req, res, next) {
 
   // These wont actually need to render anything in the future
   // This is really just to make sure it worked.
-  res.render('register');
+  //res.render('register');
 });
 
 router.get('/dashboard', function(req, res, next) {
