@@ -20,7 +20,7 @@ var getData = function(start){//Generates random data for the dates: just for fi
   var currWorth = start;
   data.push(currWorth);
   for (i = 1; i < dates.length; i++) {
-    currWorth = currWorth*Math.random()*2;
+    currWorth = currWorth*(Math.random()*(2)+0.1);
     data.push(currWorth);
   }
   return data;
