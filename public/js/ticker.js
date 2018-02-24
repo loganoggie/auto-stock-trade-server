@@ -44,8 +44,9 @@ function genTicker(tickerID, tickerNum) {//Generate if market is open
       resultMin(tickerID).then(function(valueOpen) {
         var today = JSON.parse(JSON.stringify(valueOpen[0]))
         var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
-        var tickerLoc = document.getElementById('tick')
-        tickerLoc.innerHTML += '<div id=' + tickerNum + '>'
+        var tickersHolder = document.getElementById('tick')
+        tickersHolder.innerHTML += '<div id=' + tickerNum + '>'
+        var tickerLoc = document.getElementById(tickerNum)
         tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
         tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
         var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
@@ -71,7 +72,7 @@ function updateTicker(tickerNum) {
         var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)
         document.getElementById('points-' + tickerNum).innerHTML = deltaPoints
         var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
-        document.getElementById('percent-' + tickerNum).innerHTML = '('+deltaPercent+'%)</br>'
+        document.getElementById('percent-' + tickerNum).innerHTML = '('+deltaPercent+'%)'
         console.log('Ticker ' + tickerID + ' has updated')
       })
     })
@@ -94,6 +95,13 @@ genTicker('TSLA', 2)
 setInterval(function(){updateTicker(2)}, 60*1000)
 genTicker('AAPL', 3)
 setInterval(function(){updateTicker(3)}, 60*1000)
+genTicker('BA', 4)
+setInterval(function(){updateTicker(4)}, 60*1000)
+genTicker('AMD', 5)
+setInterval(function(){updateTicker(5)}, 60*1000)
+genTicker('BAC', 6)
+setInterval(function(){updateTicker(6)}, 60*1000)
+
 
 /*createTicker('GOOG', 1)
 createTicker('TSLA', 2)
