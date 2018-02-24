@@ -1,5 +1,6 @@
 //assume that stocks.js is included
 var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
+var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
 
 async function resultDaily(tickerID) {//fucntion top call when the market is closed!
   numAmount = 2
@@ -89,7 +90,7 @@ function updateTicker(tickerNum) {
 
 //The following works for updating
 
-genTicker('GOOG', 1)
+/*genTicker('GOOG', 1)
 setInterval(function(){updateTicker(1)}, 60*1000)
 genTicker('TSLA', 2)
 setInterval(function(){updateTicker(2)}, 60*1000)
@@ -100,7 +101,12 @@ setInterval(function(){updateTicker(4)}, 60*1000)
 genTicker('AMD', 5)
 setInterval(function(){updateTicker(5)}, 60*1000)
 genTicker('BAC', 6)
-setInterval(function(){updateTicker(6)}, 60*1000)
+setInterval(function(){updateTicker(6)}, 60*1000)*/
+
+for(i = 0, ln = tempStocks.length; i < ln; i++) {//Go through the stock ticker array
+  genTicker(tempStocks[i], i)
+  setInterval(function(k){updateTicker(k)}, 60*1000, i)//Anon function needs snapshot of value to setInterval correctly
+}
 
 
 /*createTicker('GOOG', 1)
