@@ -1,6 +1,5 @@
-var ctx = document.getElementById('folio-value');
-
-var getDates = function(startDate, endDate) {//Generate list of dates
+//----TESTING FUNCTION----
+/*var getDates = function(startDate, endDate) {//Generate list of dates
   var dates = [],
       currentDate = startDate,
       addDays = function(days) {
@@ -27,28 +26,46 @@ var getData = function(start){//Generates random data for the dates: just for fi
 };
 
 var dates = getDates(new Date('Feburary 17, 2017'), new Date('March 17, 2017'))//lower date to upper date
-var numData = getData(10000);
+var numData = getData(10000);*/
 
+//----END TESTING FUNCTIONS----
+//----BEGINNING STUFF----
+var ctx = document.getElementById('folio-value');
 
-var myChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: dates,
-    datasets: [{
-      label: 'Portfolio Value',
-      data: numData,
-      backgroundColor: [
-        'rgba(67, 160, 71, 0.4)'
-      ]
-    }]
-  },
-  options: {
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero:false
-        }
+$.ajax({//Get porfolio value from server
+  url: '/dash-get',
+  dataType: 'json',
+  success: function(data) {
+    var json = $.parseJSON(data);
+    console.log(json);
+    genChart(json);
+  },//end success
+  error: function(data) {
+    console.log('Error in AJAX responce')
+  }//end error
+})
+
+function genChart(data) {
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.dates,
+      datasets: [{
+        label: 'Portfolio Value',
+        data: data.price,
+        backgroundColor: [
+          'rgba(67, 160, 71, 0.4)'
+        ]
       }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:false
+          }
+        }]
+      }
     }
-  }
-});
+  });
+}

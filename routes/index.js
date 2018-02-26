@@ -37,6 +37,16 @@ router.post('/login', function(req, res, next) {
   res.render('login');
 });
 
+router.get('/dash-get', function(req, res, next) {
+  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
+  var myObj = {
+    worth: 10000.00,
+    price: [9000, 9200, 9460.43, 9750, 10000],
+    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
+  }
+  res.json(JSON.stringify(myObj));
+});
+
 router.post('/register', function(req, res, next) {
   connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
   [req.body.first, req.body.last, req.body.email, req.body.rpassword, "2018-01-01", "2018-01-01"],
