@@ -40,25 +40,12 @@ Windows:       ```set DEBUG=app:* & npm start```
 
 Visit localhost:3000 to see the result of your hard work.
 
-### Running MySQL
+### Editing The Database
 
-In order for MySQL to work on your machine locally, you must install the required npm packages
+To edit the database, use the Postgres sql shell (psql) through the following command:
 
-```
-npm install mysql
-```
-
-Requirements can also be automatically installed by visiting the servers directory.
-
-```
-cd auto-stock-trade-website
-```
-
-and then running the following command
-
-```
-npm install
-```
-
-**Note: This only works if somebody has manually installed a package and then committed
-the updated package.json file to github.**
+ ```
+ psql -h ec2-184-73-196-65.compute-1.amazonaws.com -U whiidzewjaaqzm deacrvvlj7rj32
+ ```
+ 
+ The command is of the form: psql -h <host_name> -U <user_name> <database> in case the individual fields are needed.
