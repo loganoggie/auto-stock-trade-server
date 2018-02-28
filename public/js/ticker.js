@@ -1,4 +1,5 @@
 //assume that stocks.js is included
+//responce tome of AlphaVantage is slow, sicne we're not paying for anything. 
 var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
 var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
 
@@ -40,26 +41,35 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
 }*/
 
 function genTicker(tickerID, tickerNum) {//Generate if market is open
-  try {
     resultDaily(tickerID).then(function(valueDaily) {
       resultMin(tickerID).then(function(valueOpen) {
-        var today = JSON.parse(JSON.stringify(valueOpen[0]))
-        var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
-        var tickersHolder = document.getElementById('tick')
-        tickersHolder.innerHTML += '<div id=' + tickerNum + '>'
-        var tickerLoc = document.getElementById(tickerNum)
-        tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
-        tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
-        var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
-        tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
-        var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
-        tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
-      })
+        try {
+          var jsonToday = JSON.stringify(valueOpen[0])
+          var jsonDaily = JSON.stringify(valueDaily[1])
+          if(jsonToday != undefined && jsonDaily != undefined) {
+            var today = JSON.parse(JSON.stringify(valueOpen[0]))
+            var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
+            var tickersHolder = document.getElementById('tick')
+            tickersHolder.innerHTML += '<div id=' + tickerNum + '>'
+            var tickerLoc = document.getElementById(tickerNum)
+            tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
+            tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
+            var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
+            tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
+            var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
+            tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
+          }
+        else {
+          throw "Generation Failed, jsons are undefined"
+        }
+      }
+      catch(err) {
+        console.log("Error: Ticker " + tickerID + " has failed to generate!")
+        console.log("Retrying in a 30 seconds")
+        setTimeout(genTicker.bind(null, tickerID, tickerNum), 30*1000)
+      }
     })
-  }
-  catch(err) {
-    console.log("Error: Ticker with symbol with " + tickerID + " has failed to generate!")
-  }
+  })
 }
 
 function updateTicker(tickerNum) {
@@ -90,21 +100,13 @@ function updateTicker(tickerNum) {
 
 //The following works for updating
 
-/*genTicker('GOOG', 1)
-setInterval(function(){updateTicker(1)}, 60*1000)
-genTicker('TSLA', 2)
-setInterval(function(){updateTicker(2)}, 60*1000)
-genTicker('AAPL', 3)
-setInterval(function(){updateTicker(3)}, 60*1000)
-genTicker('BA', 4)
-setInterval(function(){updateTicker(4)}, 60*1000)
-genTicker('AMD', 5)
-setInterval(function(){updateTicker(5)}, 60*1000)
-genTicker('BAC', 6)
-setInterval(function(){updateTicker(6)}, 60*1000)*/
-
 for(i = 0, ln = tempStocks.length; i < ln; i++) {//Go through the stock ticker array
-  genTicker(tempStocks[i], i)
+  try {
+    genTicker(tempStocks[i], i)
+  }
+  catch(err) {
+    console.log(err)
+  }
   setInterval(function(k){updateTicker(k)}, 60*1000, i)//Anon function needs snapshot of value to setInterval correctly
 }
 
