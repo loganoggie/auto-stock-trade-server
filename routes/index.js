@@ -37,6 +37,8 @@ router.post('/login', function(req, res, next) {
   res.render('login');
 });
 
+//---JSON SENDING EXAMPLES---
+
 router.get('/dash-get', function(req, res, next) {
   //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
   var myObj = {
@@ -46,6 +48,17 @@ router.get('/dash-get', function(req, res, next) {
   }
   res.json(JSON.stringify(myObj));
 });
+
+router.get('/tick-get', function(req, res, next) {
+  //Example of how this ojject should be constructed to generate tickers on the dashboard
+  var myObj = {
+    api: 'QSZQSTA7ZLPXTAZO',
+    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+//---END EXAMPLES---
 
 router.post('/register', function(req, res, next) {
   connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
