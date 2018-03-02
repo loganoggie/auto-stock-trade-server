@@ -1,25 +1,22 @@
 var express = require('express');
-
-// ------- mySQL db connection info -------
-// Change for your personal machine
-var mysql = require('mysql');
-var connection = mysql.createPool({
-  connectionLimit: 10,
-  host: 'localhost',
-  user: 'root',
-  password: 'hamandcheese',
-  database: 'autostockdb'
-});
-
-connection.getConnection(function(err, connection) {
-  if(err) {
-    console.log("Error connecting.");
-  } else {
-    console.log("Success.");
-  }
-});
-
 var router = express.Router();
+const {Client} = require('pg');
+
+//db connection string
+var dbString = 'postgres://whiidzewjaaqzm:0001b1a8a6fa014941cfa07feb3bb8f8049f2210a11f1d5f14895ea6fac6f955@ec2-184-73-196-65.compute-1.amazonaws.com:5432/deacrvvlj7rj32';
+
+const client = new Client({
+  connectionString: dbString,
+  ssl: true,
+});
+
+//Print all rows in users
+/*
+client.connect();
+client.query("SELECT * FROM users;", (err,res) => {
+  console.log(res); //fix this shit front end
+});
+*/
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -27,25 +24,56 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
+  
+  
+  var username = (req['body']['username']);
+  var password = (req['body']['password']);
 
-  // Check user credentials against stored information
+  client.connect();
+  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res) => {
+    if(err) throw err;
 
-  // Redirect to account page if successful
+    if(res.rows.length>0)
+    {
+      console.log("Logged in"); //fix this shit front end
+    }
+    else
+    {
+      console.log("Wrong email/password"); //fix this shit front end
+    }
+  });
 
-  // This wont actually need to render anything in the future
-  // This is really just to make sure it worked.
   res.render('login');
 });
 
 router.post('/register', function(req, res, next) {
 
-  // Ensure user isnt already registered
-  // Insert user information into table
+  var fName = req['body']['first'];
+  var lName = req['body']['last'];
+  var email = req['body']['email'];
+  var pass1 = req['body']['password'][0];
+  var pass2 = req['body']['password'][1];
 
-  // Redirect to splash page to login, or give error on splash if unsuccessful
-
-  // These wont actually need to render anything in the future
-  // This is really just to make sure it worked.
+  if(pass1!=pass2)
+  {
+    console.log("Passwords don't match"); //fix this shit front end
+  }
+  else
+  {
+    client.connect();
+    client.query("INSERT INTO users (fname, lname, email, password) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"');", (err,res) => {
+    if(err) 
+    {
+      throw err;
+      console.log("in here");
+    }
+    else
+    {
+      console.log("Registered."); //fix this shit front end
+    }
+    client.end();
+    });
+  }
   res.render('register');
 });
 
