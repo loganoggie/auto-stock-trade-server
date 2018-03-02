@@ -46,13 +46,43 @@ router.post('/login', function(req, res, next) {
   res.render('login');
 });
 
+//---JSON SENDING EXAMPLES---
+
+router.get('/dash-get', function(req, res, next) {
+  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
+  var myObj = {
+    worth: 10000.00,
+    price: [9000, 9200, 9460.43, 9750, 10000],
+    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+router.get('/tick-get', function(req, res, next) {
+  //Example of how this ojject should be constructed to generate tickers on the dashboard
+  var myObj = {
+    api: 'QSZQSTA7ZLPXTAZO',
+    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+//---END EXAMPLES---
+
 router.post('/register', function(req, res, next) {
+  connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+  [req.body.first, req.body.last, req.body.email, req.body.rpassword, "2018-01-01", "2018-01-01"],
+  function(err, results){
+    if(err){
+      console.log("An error has occured. This email address must already be in use!")
+    }});
 
   var fName = req['body']['first'];
   var lName = req['body']['last'];
   var email = req['body']['email'];
   var pass1 = req['body']['password'][0];
   var pass2 = req['body']['password'][1];
+
 
   if(pass1!=pass2)
   {
@@ -75,6 +105,7 @@ router.post('/register', function(req, res, next) {
     });
   }
   res.render('register');
+
 });
 
 router.get('/dashboard', function(req, res, next) {
