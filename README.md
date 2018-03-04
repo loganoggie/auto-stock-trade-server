@@ -2,7 +2,7 @@
 CS4096 Senior Design project - SP18 Missouri University of Science and Technology
 
 
-### Getting Started
+## Getting Started
 
 Clone the repository into your preferred directory
 
@@ -32,7 +32,9 @@ cd auto-stock-trade-website
 npm install
 ```
 
-Finally, run the server.
+## Running the server
+
+### Method 1
 
 MacOS / Linux: ```DEBUG=app:* npm start```
 
@@ -40,7 +42,21 @@ Windows:       ```set DEBUG=app:* & npm start```
 
 Visit localhost:3000 to see the result of your hard work.
 
-### Editing The Database
+### Method 2
+
+This method updates the server for you so you don't need to restart when making changes.
+
+MacOS / Linux: ```DEBUG=app:* nodemon start```
+
+Windows:       ```set DEBUG=app:* & nodemon start```
+
+Visit localhost:3000 to see the result of your hard work.
+
+## Editing The Database
+
+### Method 1
+
+This method requires you to install Postgres from https://www.postgresql.org/
 
 To edit the database, use the Postgres sql shell (psql) through the following command:
 
@@ -49,3 +65,13 @@ To edit the database, use the Postgres sql shell (psql) through the following co
  ```
  
  The command is of the form: psql -h <host_name> -U <user_name> <database> in case the individual fields are needed.
+ 
+ ### Method 2
+ 
+Alternatively, if you don't want to install Postgres, you can issue queries on the backend by using the following code (obviously replace the query with whatever query you want). And you can place this code in the routes folder, inside the index.js file.
+ 
+ ```
+ client.query("DROP TABLE users;", (err,res) => {
+  console.log("Dropped table users");
+ });
+ ```
