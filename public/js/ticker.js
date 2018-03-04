@@ -49,10 +49,10 @@ function genTicker(tickerID, tickerNum) {//Generate if market is open
             var today = JSON.parse(JSON.stringify(valueOpen[0]))
             var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
             var tickersHolder = document.getElementById('tick')
-            var tickerLoc = document.getElementById(tickerNum)
             var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
             var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
             tickersHolder.innerHTML += '<div id=' + tickerNum + '>'
+            var tickerLoc = document.getElementById(tickerNum)
             tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
             tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
             tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
