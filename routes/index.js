@@ -112,4 +112,8 @@ router.get('/dashboard', function(req, res, next) {
   res.render('dashboard');
 });
 
+router.get('/accountsettings', function(req, res, next) {
+  res.render('accountsettings');
+});
+
 module.exports = router;
