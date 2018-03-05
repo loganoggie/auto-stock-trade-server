@@ -1,7 +1,7 @@
 doctype html
 head
   meta(name="viewport", content="width=device-width, initial-scale=1.0")
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
   link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
   link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
 
@@ -19,7 +19,15 @@ body
     div.content-wrapper
       div.investments
         h1 My Investments
-          div.invest(id='invest')
+        div.invest(id='invest')
+          span(id='load') Loading Data...
+          div.invest-holder(id='base')
+              span.symbol Symbol
+              span.share Share
+              span.volume Volume
+              span.price Price
+              span.algorithm Algorithm
+              span.status Status
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
     script(src='js/stocks.js')
     script(src='js/investments.js')

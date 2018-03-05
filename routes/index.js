@@ -24,8 +24,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  
-  
+
+
   var username = (req['body']['username']);
   var password = (req['body']['password']);
 
@@ -92,7 +92,7 @@ router.post('/register', function(req, res, next) {
   {
     client.connect();
     client.query("INSERT INTO users (fname, lname, email, password) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"');", (err,res) => {
-    if(err) 
+    if(err)
     {
       throw err;
       console.log("in here");
@@ -110,6 +110,10 @@ router.post('/register', function(req, res, next) {
 
 router.get('/dashboard', function(req, res, next) {
   res.render('dashboard');
+});
+
+router.get('/investments', function(req, res, next) {
+  res.render('investments')
 });
 
 module.exports = router;

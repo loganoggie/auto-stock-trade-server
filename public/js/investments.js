@@ -1,18 +1,24 @@
 //assume that stocks.js is included
+//For local testing of the functions - these will be gone when the backend is ready to deal with it
 var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
 var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
-var volumes = [40, 80, 20, 32, 76, 135]//Values of stocks
+var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
+var stat = ['active', 'active', 'active', 'active', 'active', 'active']
+var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 
-async function resultDaily(tickerID) {//fucntion top call when the market is closed!
-  numAmount = 2
-  var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
-    symbol: tickerID,
-    interval: 'daily',
-    amount: numAmount
-   });
-
-   return result
-}
+$.ajax({//Get investments from server
+  url: '/investments-get',
+  dataType: 'json',
+  success: function(data) {
+    var json = $.parseJSON(data);
+    console.log(json);
+    stocks = new Stocks(json.api)//use the API that the node server provides.
+    createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
+  },//end success
+  error: function(data) {
+    console.log('Error in AJAX responce')
+  }//end error
+})
 
 async function resultMin(tickerID) {//fucntion top call when the market is closed!
   var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
@@ -24,33 +30,67 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
    return result
 }
 
-function generateInvestment(tickerID, tickerNum, volume) {
+async function generateInvestment(symbol, investNum, volume, algorithm, status, data, _callback) {
   try {
-    resultDaily(tickerID).then(function(valueDaily) {
-      resultMin(tickerID).then(function(valueMin) {
-        var testOne = JSON.stringify(valueMin[0]);
-        var testTwo = JSON.stringify(valueDaily[1]);
-        var today = JSON.parse(testOne)
-        var yesterday = JSON.parse(testTwo)
-        var investHolder = document.getElementById('invest')
-        investHolder.innerHTML += '<div id=' + tickerNum + '>'
-        var investLoc = document.getElementById(tickerNum)
-        var share = (Number(today.close)*volume).toFixed(2)
-        var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
-        var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
-        investLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
-        investLoc.innerHTML += '<span id=\'share-' + tickerNum + '\' class=\'share\'>$' + share +'</span></br>'
-        investLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
-        investLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
-        investLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
-      })
+      resultMin(symbol).then(function(valueMin) {
+        var jsonToday = JSON.stringify(valueMin[0])
+        if(jsonToday != undefined) {
+          var today = JSON.parse(jsonToday)
+          var myObj = {
+            investNum: investNum,
+            symbol: symbol,
+            algorithm: algorithm,
+            status: status,
+            volume: volume,
+            price: today.close
+          };
+          _callback(data, myObj)
+        }//end if
+        else {
+          throw "Generation Failed, json are undefined"
+        }
     })
   }
   catch(err) {
-    console.log("Error: Investment with symbol with " + tickerID + " has failed to generate!")
+    console.log("Error: Investment with symbol with " + investNum + " has failed to generate!")
+    console.log("Retrying in 30 seconds")
+    setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, data, _callback), 30*1000)
   }
 }
 
-for(i = 0, ln = tempStocks.length; i < ln; i++) {
-  generateInvestment(tempStocks[i], i, volumes[i])
-}
+
+function writeToPage(data) {
+  document.getElementById('load').innerHTML = ''//Take Away the loading data
+  var investHolder = document.getElementById('invest')
+  for(i = 0; i < data.length; i++) {
+    investHolder.innerHTML += '<div class=\'invest-holder\' id=' + data[i].investNum + '>'
+    var investLoc = document.getElementById(data[i].investNum)
+    var share = (Number(data[i].price)*data[i].volume).toFixed(2)
+    investLoc.innerHTML += '<span id=\'symbol-' + data[i].investNum + '\' class=\'symbol\'>' + data[i].symbol + '</span>'
+    investLoc.innerHTML += '<span id=\'share-' + data[i].investNum + '\' class=\'share\'>$' + share +'</span>  '
+    investLoc.innerHTML += '<span id=\'volume-' + data[i].investNum + '\' class=\'volume\'>' + data[i].volume +'</span>'
+    investLoc.innerHTML += '<span id=\'price-' + data[i].investNum + '\' class=\'price\'>$' + data[i].price +'</span>'
+    investLoc.innerHTML += '<span id=\'algorithm-' + data[i].investNum + '\' class=\'algorithm\'>' + data[i].algorithm +'</span>'
+    investLoc.innerHTML += '<span id=\'status-' + data[i].investNum + '\' class=\'status\'>' + data[i].status +'</span>'
+  }
+}//end writeToPage
+
+function createAllInvestments(symbols, volumes, algorithms, status) {
+
+  data = []
+  for(i = 0; i < symbols.length; i++) {
+    generateInvestment(symbols[i], i, volumes[i], algorithms[i], status[i], data, function(data, obj) {
+      data.push(obj)
+      if(data.length == symbols.length) {
+        data.sort(function(a, b) {//sort based off symbol
+          if(a.symbol < b.symbol){return -1};
+          if(a.symbol > b.symbol){return 1};
+          return 0;
+        });
+        writeToPage(data)//finally write all the data to the page
+      }//end if
+    });
+  }//end for
+}//end function createAllInvestments
+
+createAllInvestments(tempStocks, volumes, algor, stat)

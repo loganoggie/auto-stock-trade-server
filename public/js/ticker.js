@@ -18,10 +18,10 @@ $.ajax({//Get tickers from server
   }//end error
 })
 
-async function resultDaily(tickerID) {//fucntion top call when the market is closed!
+async function resultDaily(symbol) {//fucntion top call when the market is closed!
   numAmount = 2
   var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
-    symbol: tickerID,
+    symbol: symbol,
     interval: 'daily',
     amount: numAmount
    });
@@ -29,9 +29,9 @@ async function resultDaily(tickerID) {//fucntion top call when the market is clo
    return result
 }
 
-async function resultMin(tickerID) {//fucntion top call when the market is closed!
+async function resultMin(symbol) {//fucntion top call when the market is closed!
   var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
-    symbol: tickerID,
+    symbol: symbol,
     interval: '1min',
     amount: 1
    });
@@ -39,9 +39,9 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
 }
 
 
-function genTicker(tickerID, tickerNum) {//Generate if market is open
-    resultDaily(tickerID).then(function(valueDaily) {
-      resultMin(tickerID).then(function(valueOpen) {
+function genTicker(symbol, tickerNum) {//Generate if market is open
+    resultDaily(symbol).then(function(valueDaily) {
+      resultMin(symbol).then(function(valueOpen) {
         try {
           var jsonToday = JSON.stringify(valueOpen[0])
           var jsonDaily = JSON.stringify(valueDaily[1])
@@ -53,7 +53,7 @@ function genTicker(tickerID, tickerNum) {//Generate if market is open
             var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
             tickersHolder.innerHTML += '<div id=' + tickerNum + '>'
             var tickerLoc = document.getElementById(tickerNum)
-            tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + tickerID + '</span></br>'
+            tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + symbol + '</span></br>'
             tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
             tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
             tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
@@ -63,9 +63,9 @@ function genTicker(tickerID, tickerNum) {//Generate if market is open
         }
       }
       catch(err) {
-        console.log("Error: Ticker " + tickerID + " has failed to generate!")
-        console.log("Retrying in a 30 seconds")
-        setTimeout(genTicker.bind(null, tickerID, tickerNum), 30*1000)
+        console.log("Error: Ticker " + symbol + " has failed to generate!")
+        console.log("Retrying in 30 seconds")
+        setTimeout(genTicker.bind(null, symbol, tickerNum), 30*1000)
       }
     })
   })
@@ -73,9 +73,9 @@ function genTicker(tickerID, tickerNum) {//Generate if market is open
 
 function updateTicker(tickerNum) {
   try {
-    var tickerID = document.getElementById('symbol-' + tickerNum).innerHTML;
-    resultDaily(tickerID).then(function(valueDaily) {
-      resultMin(tickerID).then(function(valueOpen) {
+    var symbol = document.getElementById('symbol-' + tickerNum).innerHTML;
+    resultDaily(symbol).then(function(valueDaily) {
+      resultMin(symbol).then(function(valueOpen) {
         var today = JSON.parse(JSON.stringify(valueOpen[0]))
         var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
         var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)
@@ -83,7 +83,7 @@ function updateTicker(tickerNum) {
         document.getElementById('price-' + tickerNum).innerHTML = Number(today.close).toFixed(2)
         document.getElementById('points-' + tickerNum).innerHTML = deltaPoints
         document.getElementById('percent-' + tickerNum).innerHTML = '('+deltaPercent+'%)'
-        console.log('Ticker ' + tickerID + ' has updated')
+        console.log('Ticker ' + symbol + ' has updated')
       })
     })
   }
