@@ -92,27 +92,53 @@ white - #f2f7f2
   z-index: 0;
 }
 
-.algorithm-container {
-  position: relative;
-  width: 70%;
-  color: #1C2321;
-  margin: 0 auto;
-  margin-top: 30px;
-  border: 1px solid #1C2321;
-  border-radius: 8px;
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #1C2321;
+    background-color: #F2F7F2;
 }
 
-.algorithm-header {
-  margin-top: 5px;
-  margin-bottom: 30px;
-  position: relative;
-  text-align: center;
-  font-size: 3em;
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 20px 20px;
+    transition: 0.5s;
+    font-size: 1.5em;
 }
 
-.algorithm-body {
-  margin-bottom: 5px;
-  position: relative;
-  text-align: center;
-  font-size: 1.5em;
+
+.tab button:hover {
+    background-color: #7b7f7c;
+}
+
+
+.tab button.active {
+    background-color: #43a047;
+}
+
+.tab-wrapper {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.tab-content-header {
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: sans-serif;
+    font-size: 25px;
+}
+
+.tab-content-body {
+    padding-left: 20px;
+    padding-bottom: 10px;
+    font-family: sans-serif;
+    font-size: 20px;
 }
