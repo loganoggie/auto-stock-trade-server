@@ -93,4 +93,16 @@ router.get('/dashboard', function(req, res, next) {
   res.render('dashboard');
 });
 
+router.get('/investments', function(req, res, next) {
+  res.render('investments');
+});
+
+router.get('/aboutalgorithms', function(req, res, next) {
+  res.render('aboutalgorithms');
+});
+
+router.get('/accountsettings', function(req, res, next) {
+  res.render('accountsettings');
+});
+
 module.exports = router;
