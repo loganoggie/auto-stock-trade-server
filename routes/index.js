@@ -18,22 +18,22 @@ Useful queries
 //Drop table
 /*
 client.query("DROP TABLE users;", (err,res) => {
-  //console.log(res); 
+  //console.log(res);
 });
 
 //Make table
 client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
-  //console.log(res); 
+  //console.log(res);
 });
 
 //Insert into users
 client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob','Bagsby','bob@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
-  //console.log(res); 
+  //console.log(res);
 });
 
 //Print all rows in users
 client.query("SELECT * FROM users", (err,res) => {
-  console.log("Number of users: "+res.rowCount); 
+  console.log("Number of users: "+res.rowCount);
 });
 */
 
@@ -108,6 +108,10 @@ router.get('/aboutalgorithms', function(req, res, next) {
 
 router.get('/accountsettings', function(req, res, next) {
   res.render('accountsettings');
+});
+
+router.get('/twilio', function(req, res, next) {
+  res.render('twiliopage');
 });
 
 module.exports = router;
