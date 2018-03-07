@@ -18,6 +18,19 @@ body
       div.logo-holder
     div.content-wrapper
       div.investments
+        button(type='button', id='add') Add
+        //A Modal
+        div.modal(id='myModal')
+          div.modal-content(id='modal-content')
+            span.close &times;
+            form(id='modalForm', method="POST", action="/add")
+              input(type='text', name='symbol', placeholder='Symbol / Company')
+              input(type='text', name='volume', placeholder='Volume')
+              //algorithm delection stuff is generated dynamically
+              select(name='algorithm')
+                option(value='default') Select an Algorithm
+              div.algorithm-params(id='params')
+              input(type='submit', value='Add')
         h1 My Investments
         div.invest(id='invest')
           span(id='warn')

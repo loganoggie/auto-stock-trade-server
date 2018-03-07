@@ -6,6 +6,15 @@ var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
 var stat = ['active', 'active', 'active', 'active', 'active', 'active']
 var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 
+//Modal stuff
+var modal = document.getElementById('myModal')
+var bttn = document.getElementById('add')
+var close = document.getElementsByClassName('close')[0]
+var select = document.getElementsByName('algorithm')[0]
+
+//Temp stuff for the modal
+var avaAlgor = ['RSI', 'WAVES', 'SOMEOTHERTHING']
+
 $.ajax({//Get investments from server
   url: '/investments-get',
   dataType: 'json',
@@ -18,7 +27,9 @@ $.ajax({//Get investments from server
   error: function(data) {
     console.log('Error in AJAX responce')
   }//end error
-})
+});
+
+
 
 async function resultMin(tickerID) {//fucntion top call when the market is closed!
   var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
@@ -93,4 +104,48 @@ function createAllInvestments(symbols, volumes, algorithms, status) {
   }//end for
 }//end function createAllInvestments
 
+function constructParamForms(algorithms, params) {//future function that will constuct the data used for the parameters
+
+}
+
+bttn.onclick = function() {//show modal
+  modal.style.display = 'block'
+}
+
+close.onclick = function() {//close modal
+  modal.style.display = 'none'
+}
+
+// close modal whgen clicked outside
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+select.onchange = function() {
+  var params = document.getElementById('params')
+  params.innerHTML = ''//Reset it back to blank
+  if(select.value != 'default') {
+    //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
+    params.innerHTML += '<input type=\'radio\' name=\'example\'>' + avaAlgor[select.value];
+  }
+}
+
+$('#modalForm').submit(function() {
+  if(select.value == "default") {
+    console.log("They didn't select an algorithm");
+    alert('Please select a valid algorithm');
+    return false;
+  }
+  return true;
+});
+
+function modalAlgorithms(algorithms) {
+  for(i = 0; i < algorithms.length; i++) {
+    select.innerHTML += '<option value=\'' + i + '\'>' + algorithms[i];
+  }
+}
+
+modalAlgorithms(avaAlgor);
 createAllInvestments(tempStocks, volumes, algor, stat)
