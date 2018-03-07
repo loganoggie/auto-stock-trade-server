@@ -2,7 +2,7 @@ var counter = 0;
 
 $(document).ready(function(){
 
-    
+
     //when mouse is over one of the algorithm submenu buttons
     //  make it turn a darker color by toggling the hover class
     $(".submitButton").mouseenter(function(){
@@ -44,7 +44,7 @@ $(document).ready(function(){
     /* HOW TO CALL A FUNCTION AT A SET INTERVAL AND HOW TO CHANGE THE COLOR OF ELEMENTS
 
         var counter = 0;
-        var foo = function() 
+        var foo = function()
         {
             console.log($.now());
             var colors = ['green','orange'];
