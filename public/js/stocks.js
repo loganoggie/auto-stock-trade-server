@@ -162,7 +162,8 @@ Stocks.prototype = {
         return response.json();
       }).then(function (data) {
         if (typeof data['Error Message'] !== 'undefined') {
-          this._throw(9, 'error');
+          //this._throw(9, 'error');
+					throw "Error in API Request"
         }
 
         resolve(data);

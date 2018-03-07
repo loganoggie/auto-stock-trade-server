@@ -28,6 +28,8 @@ body
           script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
           script(src='js/dash-chart.js')
       div.tickers
+        span(id='warn')
+        span(id='load') Loading Data...
         div.tick(id='tick')
     script(src='js/stocks.js')
     script(src='js/ticker.js')
