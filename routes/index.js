@@ -22,6 +22,7 @@ client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, p
   //console.log(res); //fix this shit front end
 });
 */
+
 //Insert into users
 client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob1','Bagsby1','bob1@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
   //console.log(res); //fix this shit front end
