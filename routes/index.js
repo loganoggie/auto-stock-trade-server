@@ -11,27 +11,32 @@ const client = new Client({
 });
 client.connect();
 
+/*
+Useful queries
+*/
+
 //Drop table
 /*
 client.query("DROP TABLE users;", (err,res) => {
-  //console.log(res); //fix this shit front end
+  //console.log(res);
 });
 
 //Make table
 client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
-  //console.log(res); //fix this shit front end
+  //console.log(res);
 });
 */
 
 //Insert into users
-client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob1','Bagsby1','bob1@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
-  //console.log(res); //fix this shit front end
+client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob','Bagsby','bob@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
+  //console.log(res);
 });
 
 //Print all rows in users
 client.query("SELECT * FROM users", (err,res) => {
-  console.log("Number of users: "+res.rowCount); //fix this shit front end
+  console.log("Number of users: "+res.rowCount);
 });
+*/
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -44,20 +49,20 @@ router.post('/login', function(req, res, next) {
   var username = (req['body']['username']);
   var password = (req['body']['password']);
 
-  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res) => {
+  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res2) => {
     if(err) throw err;
 
-    if(res.rows.length>0)
+    if(res2.rows.length>0)
     {
-      console.log("Logged in"); //fix this shit front end
+      console.log("Logged in");
+      res.render('dashboard'); //pass the user in optional parameters
     }
     else
     {
-      console.log("Wrong email/password"); //fix this shit front end
+      console.log("Wrong email/password");
+      res.render('splash'); //redirect back to splash
     }
   });
-
-  res.render('login');
 });
 
 router.post('/register', function(req, res, next) {
@@ -70,11 +75,11 @@ router.post('/register', function(req, res, next) {
 
   if(pass1!=pass2)
   {
-    console.log("Passwords don't match"); //fix this shit front end
+    console.log("Passwords don't match");
   }
   else
   {
-    client.query("INSERT INTO users (fname, lname, email, password) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"');", (err,res) => {
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','PUTDEFAULTKEYHERE');", (err,res2) => {
     if(err)
     {
       throw err;
@@ -82,7 +87,7 @@ router.post('/register', function(req, res, next) {
     }
     else
     {
-      console.log("Registered."); //fix this shit front end
+      console.log('dashboard'); //pass the user in optional parameters
     }
     client.end();
     });
