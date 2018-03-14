@@ -9,12 +9,31 @@ const client = new Client({
   connectionString: dbString,
   ssl: true,
 });
+client.connect();
+
+/*
+Useful queries
+*/
+
+//Drop table
+/*
+client.query("DROP TABLE users;", (err,res) => {
+  //console.log(res);
+});
+
+//Make table
+client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
+  //console.log(res);
+});
+
+//Insert into users
+client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob','Bagsby','bob@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
+  //console.log(res);
+});
 
 //Print all rows in users
-/*
-client.connect();
-client.query("SELECT * FROM users;", (err,res) => {
-  console.log(res); //fix this shit front end
+client.query("SELECT * FROM users", (err,res) => {
+  console.log("Number of users: "+res.rowCount);
 });
 */
 
@@ -29,53 +48,23 @@ router.post('/login', function(req, res, next) {
   var username = (req['body']['username']);
   var password = (req['body']['password']);
 
-  client.connect();
-  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res) => {
+  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res2) => {
     if(err) throw err;
 
-    if(res.rows.length>0)
+    if(res2.rows.length>0)
     {
-      console.log("Logged in"); //fix this shit front end
+      console.log("Logged in");
+      res.render('dashboard'); //pass the user in optional parameters
     }
     else
     {
-      console.log("Wrong email/password"); //fix this shit front end
+      console.log("Wrong email/password");
+      res.render('splash'); //redirect back to splash
     }
   });
-
-  res.render('login');
 });
-
-//---JSON SENDING EXAMPLES---
-
-router.get('/dash-get', function(req, res, next) {
-  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
-  var myObj = {
-    worth: 10000.00,
-    price: [9000, 9200, 9460.43, 9750, 10000],
-    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-router.get('/tick-get', function(req, res, next) {
-  //Example of how this ojject should be constructed to generate tickers on the dashboard
-  var myObj = {
-    api: 'QSZQSTA7ZLPXTAZO',
-    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-//---END EXAMPLES---
 
 router.post('/register', function(req, res, next) {
-  connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-  [req.body.first, req.body.last, req.body.email, req.body.rpassword, "2018-01-01", "2018-01-01"],
-  function(err, results){
-    if(err){
-      console.log("An error has occured. This email address must already be in use!")
-    }});
 
   var fName = req['body']['first'];
   var lName = req['body']['last'];
@@ -83,15 +72,13 @@ router.post('/register', function(req, res, next) {
   var pass1 = req['body']['password'][0];
   var pass2 = req['body']['password'][1];
 
-
   if(pass1!=pass2)
   {
-    console.log("Passwords don't match"); //fix this shit front end
+    console.log("Passwords don't match");
   }
   else
   {
-    client.connect();
-    client.query("INSERT INTO users (fname, lname, email, password) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"');", (err,res) => {
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','PUTDEFAULTKEYHERE');", (err,res2) => {
     if(err)
     {
       throw err;
@@ -99,13 +86,12 @@ router.post('/register', function(req, res, next) {
     }
     else
     {
-      console.log("Registered."); //fix this shit front end
+      console.log('dashboard'); //pass the user in optional parameters
     }
     client.end();
     });
   }
   res.render('register');
-
 });
 
 router.get('/dashboard', function(req, res, next) {
@@ -113,7 +99,15 @@ router.get('/dashboard', function(req, res, next) {
 });
 
 router.get('/investments', function(req, res, next) {
-  res.render('investments')
+  res.render('investments');
+});
+
+router.get('/aboutalgorithms', function(req, res, next) {
+  res.render('aboutalgorithms');
+});
+
+router.get('/accountsettings', function(req, res, next) {
+  res.render('accountsettings');
 });
 
 module.exports = router;

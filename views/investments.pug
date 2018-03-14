@@ -1,47 +1,36 @@
-doctype html
-head
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
-  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+extends masterPug.pug
 
-body
-  div.page-wrapper
-    div.header
-      div.dropdown-button-container
-        div.dropdown
-          div.burger-holder.drop-button
-          div.dropdown-content
-            a link 1
-            a link 2
-            a link 3
-      div.logo-holder
-    div.content-wrapper
-      div.investments
-        button(type='button', id='add') Add
-        //A Modal
-        div.modal(id='myModal')
-          div.modal-content(id='modal-content')
-            span.close &times;
-            form(id='modalForm', method="POST", action="/add")
-              input(type='text', name='symbol', placeholder='Symbol / Company')
-              input(type='text', name='volume', placeholder='Volume')
-              //algorithm delection stuff is generated dynamically
-              select(name='algorithm')
-                option(value='default') Select an Algorithm
-              div.algorithm-params(id='params')
-              input(type='submit', value='Add')
-        h1 My Investments
-        div.invest(id='invest')
-          span(id='warn')
-          span(id='load') Loading Data...
-          div.invest-holder(id='base')
-              span.symbol Symbol
-              span.share Share
-              span.volume Volume
-              span.price Price
-              span.algorithm Algorithm
-              span.status Status
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-    script(src='js/stocks.js')
-    script(src='js/investments.js')
+block headContent
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
+  script(src='js/stocks.js')
+  script(src='js/investments.js')
+
+block bodyContent
+  div.investments
+    utton(type='button', id='add') Add
+    //A Modal
+    div.modal(id='myModal')
+      div.modal-content(id='modal-content')
+        span.close &times;
+        form(id='modalForm', method="POST", action="/add")
+          input(type='text', name='symbol', placeholder='Symbol / Company')
+          input(type='text', name='volume', placeholder='Volume')
+          //algorithm delection stuff is generated dynamically
+          select(name='algorithm')
+            option(value='default') Select an Algorithm
+          div.algorithm-params(id='params')
+          input(type='submit', value='Add')
+    h1 My Investments
+      div.invest(id='invest')
+        span(id='warn')
+        span(id='load') Loading Data...
+        div.invest-holder(id='base')
+            span.symbol Symbol
+            span.share Share
+            span.volume Volume
+            span.price Price
+            span.algorithm Algorithm
+            span.status Status
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  script(src='js/stocks.js')
+  script(src='js/investments.js')
