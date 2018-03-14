@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 const {Client} = require('pg');
 
+//Twilio constants swagyolo42069
+const accountSid = 'AC31621b0d9e4714be87ce41aa88d2cbad';
+const authToken = 'a3b8be0954cd4e84950c98dbdde099f8';
+const Tclient = require('twilio')(accountSid, authToken);
+
 //db connection string
 var dbString = 'postgres://whiidzewjaaqzm:0001b1a8a6fa014941cfa07feb3bb8f8049f2210a11f1d5f14895ea6fac6f955@ec2-184-73-196-65.compute-1.amazonaws.com:5432/deacrvvlj7rj32';
 
@@ -111,7 +116,18 @@ router.get('/accountsettings', function(req, res, next) {
 });
 
 router.get('/twilio', function(req, res, next) {
+  Tclient.messages.create({
+    to: '+13148147234',
+    from: '+13146674809',
+    body: 'Yay! Twilio is working!'
+  })
+  .then((message) => console.log(message.sid));
+
   res.render('twiliopage');
 });
 
 module.exports = router;
+
+
+
+
