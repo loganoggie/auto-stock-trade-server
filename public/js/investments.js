@@ -29,7 +29,9 @@ $.ajax({//Get investments from server
   }//end error
 });
 
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 async function resultMin(tickerID) {//fucntion top call when the market is closed!
   var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
@@ -43,6 +45,7 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
 
 async function generateInvestment(symbol, investNum, volume, algorithm, status, data, _callback) {
   try {
+      await sleep(1000)
       resultMin(symbol).then(function(valueMin) {
         var jsonToday = JSON.stringify(valueMin[0])
         if(jsonToday != undefined) {
@@ -86,11 +89,10 @@ function writeToPage(data) {
   }
 }//end writeToPage
 
-function createAllInvestments(symbols, volumes, algorithms, status) {
-
+async function createAllInvestments(symbols, volumes, algorithms, status) {
   data = []
   for(i = 0; i < symbols.length; i++) {
-    generateInvestment(symbols[i], i, volumes[i], algorithms[i], status[i], data, function(data, obj) {
+    await generateInvestment(symbols[i], i, volumes[i], algorithms[i], status[i], data, function(data, obj) {
       data.push(obj)
       if(data.length == symbols.length) {
         data.sort(function(a, b) {//sort based off symbol

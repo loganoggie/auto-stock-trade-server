@@ -4,6 +4,10 @@
 //var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
 var stocks;
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 $.ajax({//Get tickers from server
   url: '/tick-get',
   dataType: 'json',
@@ -20,62 +24,76 @@ $.ajax({//Get tickers from server
 
 async function resultDaily(symbol) {//fucntion top call when the market is closed!
   numAmount = 2
-  var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
-    symbol: symbol,
-    interval: 'daily',
-    amount: numAmount
-   });
+  try {
+    var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
+      symbol: symbol,
+      interval: 'daily',
+      amount: numAmount
+     });
 
-   return result
+     return result
+  }//end try
+  catch(err) {
+    console.log(err)
+  }//end catch
 }
 
 async function resultMin(symbol) {//fucntion top call when the market is closed!
-  var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
-    symbol: symbol,
-    interval: '1min',
-    amount: 1
-   });
-   return result
+  try {
+    var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
+      symbol: symbol,
+      interval: '1min',
+      amount: 1
+     });
+     return result
+  }
+  catch(err) {
+    console.log(err)
+  }
 }
 
 
-function genTicker(symbol, tickerNum, data, _callback) {//Generate if market is open
-    resultDaily(symbol).then(function(valueDaily) {
-      resultMin(symbol).then(function(valueOpen) {
+async function genTicker(symbol, tickerNum) {//Generate if market is open
+    resultDaily(symbol).then(async function(valueDaily) {
+      await sleep(1*1000);
+      resultMin(symbol).then(async function(valueOpen) {
         try {
           var jsonToday = JSON.stringify(valueOpen[0])
           var jsonDaily = JSON.stringify(valueDaily[1])
           if(jsonToday != undefined && jsonDaily != undefined) {
             var today = JSON.parse(JSON.stringify(valueOpen[0]))
             var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
-            var myObj = {
-              symbol: symbol,
-              tickerNum: tickerNum,
-              curPrice: today.close,
-              lastClose: yesterday.close
-            };
-            _callback(data, myObj)
+            var tickersHolder = document.getElementById('tick')
+            var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
+            var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
+            tickersHolder.innerHTML += '<div class=\'ticker\' id=' + tickerNum + '>'
+            var tickerLoc = document.getElementById(tickerNum)
+            tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + symbol + '</span></br>'
+            tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
+            tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
+            tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
+            await sleep(1000)
+            sortTickers()
           }
         else {
           throw "Generation Failed, jsons are undefined"
         }
       }
       catch(err) {
-        document.getElementById('warn').innerHTML = "An Error has occured, attemping to fix.</br>"
         console.log("Error: Ticker " + symbol + " has failed to generate!")
-        console.log("Retrying in 10 seconds")
-        console.log(err)
-        setTimeout(genTicker.bind(null, symbol, tickerNum, data, _callback), 10*1000)
+        console.log("Retrying in 30 seconds")
+        setTimeout(genTicker.bind(null, symbol, tickerNum), 30*1000)
       }
-    });
-  });
+    })
+  })
 }
 
-function updateTicker(tickerNum) {
+async function updateTicker(tickerNum) {
   try {
     var symbol = document.getElementById('symbol-' + tickerNum).innerHTML;
-    resultDaily(symbol).then(function(valueDaily) {
-      resultMin(symbol).then(function(valueOpen) {
+    resultDaily(symbol).then(async function(valueDaily) {
+      await sleep(1*1000)
+      resultMin(symbol).then(async function(valueOpen) {
         var jsonToday = JSON.stringify(valueOpen[0])
         var jsonDaily = JSON.stringify(valueDaily[1])
         if(jsonToday != undefined && jsonDaily != undefined) {
@@ -87,6 +105,7 @@ function updateTicker(tickerNum) {
           document.getElementById('points-' + tickerNum).innerHTML = deltaPoints
           document.getElementById('percent-' + tickerNum).innerHTML = '('+deltaPercent+'%)'
           console.log('Ticker ' + symbol + ' has updated')
+          await sleep(1000)
         }//end if
         else {
           throw "Update Failed, jsons are undefined"
@@ -99,35 +118,35 @@ function updateTicker(tickerNum) {
   }
 }
 
-function writeToPage(data) {
-  document.getElementById('load').innerHTML = ''
-  document.getElementById('warn').innerHTML = ''
-  var tickersHolder = document.getElementById('tick')
-  for(i = 0; i < data.length; i++) {
-     tickersHolder.innerHTML += '<div id=' + data[i].tickerNum + '>'
-     var tickerLoc = document.getElementById(data[i].tickerNum)
-     var deltaPoints = (Number(data[i].curPrice)-Number(data[i].lastClose)).toFixed(2)//round to 2 decimal places
-     var deltaPercent = ((Number(deltaPoints)/Number(data[i].lastClose))*100).toFixed(2)//percent
-     tickerLoc.innerHTML += '<span id=\'symbol-' + data[i].tickerNum + '\' class=\'symbol\'>' + data[i].symbol + '</span></br>'
-     tickerLoc.innerHTML += '<span id=\'price-' + data[i].tickerNum + '\' class=\'price\'>$' + data[i].curPrice + '</span></br>'
-     tickerLoc.innerHTML += '<span id=\'points-' + data[i].tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
-     tickerLoc.innerHTML += '<span id=\'percent-' + data[i].tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
-  }//end for
-}
+function sortTickers() {
+  var tickersClone = []
+  var tickersHolder = document.getElementById('tick');
+  var tickers = document.getElementsByClassName('ticker');//get an array of all the tickers
+  var numTickers = tickers.length;
 
-function createAllTickers(symbols) {//this creates all the tickers for the page.
-  data = []
+  for(i = 0; i < numTickers; i++) {
+    tickersClone.push(tickers[i].cloneNode(true))
+  }//end for
+
+  tickersClone.sort(function(a, b) {
+    var aPrice = document.getElementById('price-' + a.id)
+    var bPrice = document.getElementById('price-' + b.id)
+    return Number(bPrice.innerHTML)-Number(aPrice.innerHTML)
+  });
+
+  tickersHolder.innerHTML = ''
+  document.getElementById('load').innerHTML = ''
+  for(i = 0; i < numTickers; i++) {
+    tickersClone[i].style.display = 'inline'//finally show the tickers
+    tickersHolder.appendChild(tickersClone[i])
+  }
+
+}//end function sort Tickers
+
+async function createAllTickers(symbols) {//this creates all the tickers for the page.
   for(i = 0, ln = symbols.length; i < ln; i++) {//Go through the stock ticker array
     try {
-      genTicker(symbols[i], i, data, function(data, obj) {
-        data.push(obj)
-        if(data.length == symbols.length) {
-          data.sort(function(a, b) {//Sort in descending order, by current stock price
-            return b.curPrice-a.curPrice
-          });
-          writeToPage(data);
-        }//end if
-      });
+      await genTicker(symbols[i], i)
     }
     catch(err) {
       console.log(err)

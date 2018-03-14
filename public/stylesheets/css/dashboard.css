@@ -149,3 +149,7 @@ body {
   background-repeat: no-repeat;
   object-fit: fill;
 }
+
+.ticker {
+  display: none;//Start off hidden by default
+}
