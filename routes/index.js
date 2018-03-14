@@ -25,7 +25,7 @@ client.query("DROP TABLE users;", (err,res) => {
 client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
   //console.log(res);
 });
-*/
+
 
 //Insert into users
 client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob','Bagsby','bob@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
