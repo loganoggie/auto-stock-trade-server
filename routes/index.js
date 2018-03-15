@@ -16,42 +16,43 @@ client.connect();
 //Drop table users
 /*
 client.query("DROP TABLE users;", (err,res) => {
-  console.log("users dropped."); 
+  console.log("users dropped.");
 });
 */
 
 //Drop table userstocks
 /*
 client.query("DROP TABLE userstocks;", (err,res) => {
-  console.log("userstocks dropped."); 
+  console.log("userstocks dropped.");
 });
 */
 
 //Make table users
 /*
 client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
-  console.log("users created"); 
+  console.log("users created");
 });
 */
 
 //Make table userstocks
 /*
 client.query("CREATE TABLE userstocks (id int, email varchar, stockticker varchar, numstocks int, algorithm varchar, params varchar, enabled bit, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
-  console.log("userstocks created"); 
+  console.log("userstocks created");
 });
 */
+
 
 //Insert into users
 /*
 client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','adam@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
-  console.log("user added to database."); 
+  console.log("user added to database.");
 });
 */
 
 //Insert into userstocks
 /*
 client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')", (err,res) => {
-  console.log("userstocks added to database."); 
+  console.log("userstocks added to database.");
 });
 */
 
@@ -59,7 +60,7 @@ client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorit
 /*
 client.query("SELECT * FROM users", (err,res) => {
   console.log("Number of users: "+res.rowCount);
-  console.log(res.rows); 
+  console.log(res.rows);
 });
 */
 
@@ -67,7 +68,7 @@ client.query("SELECT * FROM users", (err,res) => {
 /*
 client.query("SELECT * FROM userstocks", (err,res) => {
   console.log("Number of userstocks: "+res.rowCount);
-  console.log(res.rows); 
+  console.log(res.rows);
 });
 */
 
