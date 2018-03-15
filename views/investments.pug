@@ -1,25 +1,11 @@
-doctype html
-head
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
-  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+extends masterPug.pug
 
-body
-  div.page-wrapper
-    div.header
-      div.dropdown-button-container
-        div.dropdown
-          div.burger-holder.drop-button
-          div.dropdown-content
-            a link 1
-            a link 2
-            a link 3
-      div.logo-holder
-    div.content-wrapper
-      div.investments
-        h1 My Investments
-          div.invest(id='invest')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-    script(src='js/stocks.js')
-    script(src='js/investments.js')
+block headContent
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
+  script(src='js/stocks.js')
+  script(src='js/investments.js')
+
+block bodyContent
+  div.investments
+    h1 My Investments
+      div.invest(id='invest')

@@ -1,68 +1,119 @@
-doctype html
-head
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
+extends masterPug.pug
+
+block headContent
   link(rel='stylesheet', type='text/css', href='stylesheets/css/aboutalgorithms.css')
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
-  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
   script(src="js/aboutalgorithms.js")
-  
-body
-  div.page-wrapper
-    div.header
-      div.dropdown-button-container
-        div.dropdown
-          div.burger-holder.drop-button
-          div.dropdown-content
-            a link 1
-            a link 2
-            a link 3
-      div.logo-holder
-    div.content-wrapper
-      div.tab
-        button(class="tablinks" onclick="openAlgorithm(event, 'BETA')" id="defaultOpen") Beta
-        button(class="tablinks" onclick="openAlgorithm(event, 'RSI')") RSI 
-        button(class="tablinks" onclick="openAlgorithm(event, 'MACD')") MACD
-        button(class="tablinks" onclick="openAlgorithm(event, 'SHORT')") MV Short
-        button(class="tablinks" onclick="openAlgorithm(event, 'LONG')") MC Long
-        button(class="tablinks" onclick="openAlgorithm(event, 'TREND')") Trend
-      
-      div(class="tab-wrapper" id="BETA")
-        div.tab-content-header What is Beta?
-        div.tab-content-body Beta is a measure of the volatility, or systematic risk, of a security 
-          | or a portfolio in comparison to the market as a whole. Beta is used in the capital 
-          | asset pricing model (CAPM), which calculates the expected return of an asset based on 
-          | its beta and expected market returns. Beta is also known as the beta coefficient.
-        div.tab-content-header How is Beta calculated?
-        div.tab-content-body Beta is calculated using regression analysis. Beta represents the 
-          | tendency of a security's returns to respond to swings in the market. A security's beta 
-          | is calculated by dividing the covariance the security's returns and the benchmark's 
-          | returns by the variance of the benchmark's returns over a specified period.
-        
-      div(class="tab-wrapper" id="RSI")
-        div.tab-content-header What is RSI?
-        div.tab-content-body The relative strength index (RSI) is a momentum indicator developed by 
-          | noted technical analyst Welles Wilder, that compares the magnitude of recent gains and 
-          | losses over a specified time period to measure speed and change of price movements of a 
-          | security. It is primarily used to attempt to identify overbought or oversold conditions 
-          | in the trading of an asset.
-        div.tab-content-header How is RSI calculated and used?
-        div.tab-content-body The relative strength index is calculated using the following formula: 
-          | RSI = 100 - 100 / (1 + RS) Where RS = Average gain of up periods during the specified  
-          | time frame / Average loss of down periods during the specified time frame. Traditional 
-          | interpretation and usage of the RSI is that RSI values of 70 or above indicate that a 
-          | security is becoming overbought or overvalued, and therefore may be primed for a trend 
-          | reversal or corrective pullback in price. On the other side of RSI values, an RSI reading 
-          | of 30 or below is commonly interpreted as indicating an oversold or undervalued condition 
-          | that may signal a trend change or corrective price reversal to the upside.
+
+block bodyContent
+  div.tab-holder 
+    div.tab
+      button(class="tablinks" onclick="openAlgorithm(event, 'BETA')" id="defaultOpen") Beta
+      button(class="tablinks" onclick="openAlgorithm(event, 'RSI')") RSI 
+      button(class="tablinks" onclick="openAlgorithm(event, 'MACD')") MACD
+      button(class="tablinks" onclick="openAlgorithm(event, 'SHORT')") MV Short
+      button(class="tablinks" onclick="openAlgorithm(event, 'LONG')") MV Long
+      button(class="tablinks" onclick="openAlgorithm(event, 'TREND')") Trend
     
-      div(class="tab-wrapper" id="MACD")
-        div.tab-content-header What is MACD?
-      
-      div(class="tab-wrapper" id="SHORT")
-        div.tab-content-header What is MV Short?
-      
-      div(class="tab-wrapper" id="LONG")
-        div.tab-content-header What is MC Long?
-      
-      div(class="tab-wrapper" id="TREND")
-        div.tab-content-header What is Trend?
+    div(class="tab-wrapper" id="BETA")
+      div.tab-content-header What is Beta?
+      div.tab-content-body Beta is a measure of the volatility, or systematic risk, of a security 
+        | or a portfolio in comparison to the market as a whole. Beta is used in the capital 
+        | asset pricing model (CAPM), which calculates the expected return of an asset based on 
+        | its beta and expected market returns. Beta is also known as the beta coefficient. By 
+        | definition, the market has a beta of 1.0, and individual stocks are ranked according to 
+        | how much they deviate from the market. A stock that swings more than the market over 
+        | time has a beta above 1.0. If a stock moves less than the market, the stock's beta is 
+        | less than 1.0. High-beta stocks are supposed to be riskier but provide a potential for 
+        | higher returns; low-beta stocks pose less risk but also lower returns.
+      div.tab-content-header How is Beta calculated?
+      div.tab-content-body Beta is calculated using regression analysis. Beta represents the 
+        | tendency of a security's returns to respond to swings in the market. A security's beta 
+        | is calculated by dividing the covariance the security's returns and the benchmark's 
+        | returns by the variance of the benchmark's returns over a specified period.
+      div.tab-content-header Is Beta safe to use?
+      div.tab-content-body A stock's price variability is important to consider when assessing 
+        | risk. If you think about risk as the possibility of a stock losing its value, beta has 
+        | appeal as a proxy for risk. Intuitively, it makes plenty of sense. Think of an early-stage 
+        | technology stock with a price that bounces up and down more than the market. It's hard 
+        | not to think that stock will be riskier than, say, a safe-haven utility industry stock 
+        | with a low beta. There are variations on beta depending on things such as the market 
+        | index used and the time period measured – but broadly speaking, the notion of beta is 
+        | fairly straightforward. It's a convenient measure that can be used to calculate the costs 
+        | of equity used in a valuation method that discounts cash flows.
+    
+    div(class="tab-wrapper" id="RSI")
+      div.tab-content-header What is RSI?
+      div.tab-content-body RSI stands for "Relative Strength Index". It is a momentum indicator 
+        | developed by noted technical analyst Welles Wilder, that compares the magnitude of recent 
+        | gains and losses over a specified time period to measure speed and change of price movements 
+        | of a security. It is primarily used to attempt to identify overbought or oversold conditions 
+        | in the trading of an asset.
+      div.tab-content-header How is RSI calculated?
+      div.tab-content-body The relative strength index is calculated using the following formula: 
+      div.tab-content-body
+      div.tab-content-body RSI = 100 - 100 / (1 + RS) 
+      div.tab-content-body
+      div.tab-content-body Where RS = [Average of Upward Price Change] / [Average of Downward Price Change]
+      div.tab-content-header How is RSI used?
+      div.tab-content-body Traditional interpretation and usage of the RSI is that RSI values of 
+        | 70 or above indicate that a security is becoming overbought or overvalued, and therefore 
+        | may be primed for a trend reversal or corrective pullback in price. On the other side of 
+        | RSI values, an RSI reading of 30 or below is commonly interpreted as indicating an oversold 
+        | or undervalued condition that may signal a trend change or corrective price reversal to 
+        | the upside.
+  
+    div(class="tab-wrapper" id="MACD")
+      div.tab-content-header What is MACD and how is it used?
+      div.tab-content-body MACD stands for "Moving Average Convergence Divergence". Developed by 
+        | Gerald Appel in the late seventies, MACD is a trend-following momentum indicator that shows 
+        | the relationship between two moving averages of prices. The MACD is calculated by subtracting 
+        | the 26-day exponential moving average (EMA) from the 12-day EMA. A nine-day EMA of the MACD, 
+        | called the "signal line", is then plotted on top of the MACD, functioning as a trigger for buy 
+        | and sell signals. As its name implies, the MACD is all about the convergence and divergence of 
+        | the two moving averages. Convergence occurs when the moving averages move towards each other. 
+        | Divergence occurs when the moving averages move away from each other. The shorter moving 
+        | average (12-day EMA) is faster and responsible for most MACD movements. The longer moving 
+        | average (26-day EMA) is slower and less reactive to price changes in the underlying security.
+      div.tab-content-header Signal Line Crossovers:
+      div.tab-content-body Signal line crossovers are the most common MACD signals. The signal line is 
+        | a 9-day EMA of the MACD Line. As a moving average of the indicator, it trails the MACD and 
+        | makes it easier to spot MACD turns. A bullish crossover occurs when the MACD turns up and 
+        | crosses above the signal line. A bearish crossover occurs when the MACD turns down and crosses 
+        | below the signal line. Crossovers can last a few days or a few weeks, it all depends on the 
+        | strength of the move.
+      div.tab-content-header Centerline Crossovers:
+      div.tab-content-body Centerline crossovers are the next most common MACD signals. A bullish 
+        | centerline crossover occurs when the MACD Line moves above the zero line to turn positive. 
+        | This happens when the 12-day EMA of the underlying security moves above the 26-day EMA. A 
+        | bearish centerline crossover occurs when the MACD moves below the zero line to turn negative. 
+        | This happens when the 12-day EMA moves below the 26-day EMA. Centerline crossovers can last a 
+        | few days or a few months. It all depends on the strength of the trend. The MACD will remain 
+        | positive as long as there is a sustained uptrend. The MACD will remain negative when there is 
+        | a sustained downtrend.
+      div.tab-content-header Divergences:
+      div.tab-content-body Divergences form when the MACD diverges from the price action of the underlying 
+        | security. A bullish divergence forms when a security records a lower low and the MACD forms a 
+        | higher low. The lower low in the security affirms the current downtrend, but the higher low in 
+        | the MACD shows less downside momentum. Despite less downside momentum, downside momentum is still 
+        | outpacing upside momentum as long as the MACD remains in negative territory. Slowing downside 
+        | momentum can sometimes foreshadow a trend reversal or a sizable rally.
+
+    
+    div(class="tab-wrapper" id="SHORT")
+      div.tab-content-header What is Moving Averages "Short"?
+    
+    div(class="tab-wrapper" id="LONG")
+      div.tab-content-header What is Movind Averages "Long"?
+    
+    div(class="tab-wrapper" id="TREND")
+      div.tab-content-header What is a "Trend"?
+      div.tab-content-body The trend is the general direction of a market or of the price of a security. In 
+        | technical analysis, trends are identified by trend lines that connect a series of highs or lows. 
+        | Most traders trade in the same direction as a trend, while contrarians seek to identify reversals. 
+        | Trends can also apply to interest rates, bond yields, and other markets where they're characterized 
+        | by a long-term movement in price or volume.
+      div.tab-content-header How are Trend Lines used?
+      div.tab-content-body As stated above, trend lines connect a series of highs or lows. Uptrends connect a 
+        | series of higher lows, creating a key support level for future price movements. Downtrends connect 
+        | a series of lower highs, creating a key resistance level for future price movements. In addition to 
+        | support and resistance, these trend lines show the overall direction of the trend. 
