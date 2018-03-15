@@ -164,7 +164,9 @@ Stocks.prototype = {
 	       if (typeof data['Error Message'] !== 'undefined') {
 	         //this._throw(9, 'error');
 					//Somethig has gone wrong with the API request.
-					throw "Error in API Request"
+					console.log("Error in API request")
+					resolve(data);//what does this do exactly?
+					//throw "Error in API Request" //This is a modified line of something that was giving errors
 	       }
 
 	       resolve(data);

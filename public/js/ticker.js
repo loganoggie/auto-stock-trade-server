@@ -84,8 +84,8 @@ async function genTicker(symbol, tickerNum) {//Generate if market is open
         console.log("Retrying in 30 seconds")
         setTimeout(genTicker.bind(null, symbol, tickerNum), 30*1000)
       }
-    })
-  })
+    });
+  });
 }
 
 async function updateTicker(tickerNum) {

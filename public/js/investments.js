@@ -43,66 +43,67 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
    return result
 }
 
-async function generateInvestment(symbol, investNum, volume, algorithm, status, data, _callback) {
-  try {
-      await sleep(1000)
-      resultMin(symbol).then(function(valueMin) {
-        var jsonToday = JSON.stringify(valueMin[0])
-        if(jsonToday != undefined) {
-          var today = JSON.parse(jsonToday)
-          var myObj = {
-            investNum: investNum,
-            symbol: symbol,
-            algorithm: algorithm,
-            status: status,
-            volume: volume,
-            price: today.close
-          };
-          _callback(data, myObj)
-        }//end if
-        else {
-          throw "Generation Failed, json are undefined"
+async function generateInvestment(symbol, investNum, volume, algorithm, status) {
+      resultMin(symbol).then(async function(valueMin) {
+        try {
+          var jsonToday = JSON.stringify(valueMin[0])
+          if(jsonToday != undefined) {
+            var today = JSON.parse(jsonToday)
+            var investHolder = document.getElementById('investments')
+            var price = Number(today.close).toFixed(2)
+            var share = (price*volume).toFixed(2)
+            investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + '>'
+            var investLoc = document.getElementById(investNum)
+            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + symbol + '</span>'
+            investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>  '
+            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + volume +'</span>'
+            investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>'
+            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + algorithm +'</span>'
+            investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>'
+            await sleep(1*1000)//let the API catch up
+            sortInvestments()
+          }//end if
+          else {
+            throw "Generation Failed, json are undefined"
+          }
         }
-    })
+        catch(err) {
+          console.log("Error: Investment with symbol with " + investNum + " has failed to generate!")
+          console.log("Retrying in 30 seconds")
+          setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
+        }
+    });
   }
-  catch(err) {
-    console.log("Error: Investment with symbol with " + investNum + " has failed to generate!")
-    console.log("Retrying in 30 seconds")
-    setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, data, _callback), 30*1000)
+
+function sortInvestments() {
+  var investClone = [];
+  var investHolder = document.getElementById('investments');
+  var investments = document.getElementsByClassName('invest-holder');//get array of all the investments
+  var numInvest = investments.length;
+
+  for(i = 0; i < numInvest; i++) {//sort investments
+    investClone.push(investments[i].cloneNode(true));
+  }//end for
+
+  investClone.sort(function(a, b) {//sort investments by symbol alphabetical order
+    var aSymbol = document.getElementById('symbol-' + a.id);
+    var bSymbol = document.getElementById('symbol-' + b.id);
+    if(aSymbol.innerHTML < bSymbol.innerHTML){return -1}
+    if(aSymbol.innerHTML > bSymbol.innerHTML){return 1}
+    return 0;
+  });
+
+  investHolder.innerHTML = ''
+  for(i = 0; i < numInvest; i++) {
+    investClone[i].style.display = 'block'
+    investHolder.appendChild(investClone[i])
   }
+
 }
 
-
-function writeToPage(data) {
-  document.getElementById('load').innerHTML = ''//Take Away the loading data
-  var investHolder = document.getElementById('invest')
-  for(i = 0; i < data.length; i++) {
-    investHolder.innerHTML += '<div class=\'invest-holder\' id=' + data[i].investNum + '>'
-    var investLoc = document.getElementById(data[i].investNum)
-    var share = (Number(data[i].price)*data[i].volume).toFixed(2)
-    investLoc.innerHTML += '<span id=\'symbol-' + data[i].investNum + '\' class=\'symbol\'>' + data[i].symbol + '</span>'
-    investLoc.innerHTML += '<span id=\'share-' + data[i].investNum + '\' class=\'share\'>$' + share +'</span>  '
-    investLoc.innerHTML += '<span id=\'volume-' + data[i].investNum + '\' class=\'volume\'>' + data[i].volume +'</span>'
-    investLoc.innerHTML += '<span id=\'price-' + data[i].investNum + '\' class=\'price\'>$' + data[i].price +'</span>'
-    investLoc.innerHTML += '<span id=\'algorithm-' + data[i].investNum + '\' class=\'algorithm\'>' + data[i].algorithm +'</span>'
-    investLoc.innerHTML += '<span id=\'status-' + data[i].investNum + '\' class=\'status\'>' + data[i].status +'</span>'
-  }
-}//end writeToPage
-
 async function createAllInvestments(symbols, volumes, algorithms, status) {
-  data = []
   for(i = 0; i < symbols.length; i++) {
-    await generateInvestment(symbols[i], i, volumes[i], algorithms[i], status[i], data, function(data, obj) {
-      data.push(obj)
-      if(data.length == symbols.length) {
-        data.sort(function(a, b) {//sort based off symbol
-          if(a.symbol < b.symbol){return -1};
-          if(a.symbol > b.symbol){return 1};
-          return 0;
-        });
-        writeToPage(data)//finally write all the data to the page
-      }//end if
-    });
+    generateInvestment(symbols[i], i ,volumes[i], algorithms[i], status[i])
   }//end for
 }//end function createAllInvestments
 
@@ -111,11 +112,11 @@ function constructParamForms(algorithms, params) {//future function that will co
 }
 
 bttn.onclick = function() {//show modal
-  modal.style.display = 'block'
+  modal.style.display = 'block';
 }
 
 close.onclick = function() {//close modal
-  modal.style.display = 'none'
+  modal.style.display = 'none';
 }
 
 // close modal whgen clicked outside
@@ -149,5 +150,15 @@ function modalAlgorithms(algorithms) {
   }
 }
 
-modalAlgorithms(avaAlgor);
-createAllInvestments(tempStocks, volumes, algor, stat)
+function loaded(symbols) {//sees if all the symbols are loaded on the page
+  setInterval(function (symbols) {
+    var investments = document.getElementsByClassName('invest-holder')
+    if(investments.length == symbols.length) {
+      document.getElementById('load').innerHTML = ''
+    }//all loaded
+  }, 1000, symbols);
+}//end function loaded
+
+modalAlgorithms(avaAlgor);//FEED MODAL ALGORITHMS
+createAllInvestments(tempStocks, volumes, algor, stat)//GENRATE ALL TEMP STOCK DATA
+loaded(tempStocks)
