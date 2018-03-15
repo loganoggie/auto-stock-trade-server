@@ -147,4 +147,8 @@ router.get('/accountsettings', function(req, res, next) {
   res.render('accountsettings');
 });
 
+router.get('/dataanalytics', function(req, res, next) {
+  res.render('dataanalytics');
+});
+
 module.exports = router;
