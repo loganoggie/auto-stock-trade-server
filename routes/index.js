@@ -110,8 +110,4 @@ router.get('/accountsettings', function(req, res, next) {
   res.render('accountsettings');
 });
 
-router.get('/twilio', function(req, res, next) {
-  res.render('twiliopage');
-});
-
 module.exports = router;
