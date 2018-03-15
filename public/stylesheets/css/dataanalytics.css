@@ -1,0 +1,80 @@
+/*
+orange - #F48F4B
+green - #43a047
+black - #1c2321
+gray - #7b7f7c
+white - #f2f7f2
+*/
+
+.page-title {
+  font-family: 'Lato', sans-serif;
+  font-size: 2em;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.graph-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 600px;
+  margin-top: 50px;
+  /*background-color: cyan;*/
+}
+
+.graph-selector-wrapper {
+  /*position: absolute;*/
+  float: left;
+  width: 200px;
+  height: 100%;
+  /*background-color: red;*/
+  border-right: 1px solid #7b7f7c;
+}
+
+.graph-selection {
+  height: 75px;
+  line-height: 75px;
+  text-align: center;
+  color: #1c2321;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1em;
+  border-bottom: 1px solid #7b7f7c;
+  transition: background-color .15s ease-in-out, color .15s ease-in-out;
+}
+
+.graph-selection:last-child {
+  border: none;
+}
+
+.graph-selection:hover {
+  color: white;
+  background-color: #43a047;
+}
+
+.graph-view-wrapper {
+  /*position: absolute;*/
+  float: right;
+  width: calc(100% - 201px); /* 200px for selector, 1px for the border-right */
+  height: 100%;
+}
+
+.graph-view {
+  width: 100%;
+  height: 100%;
+}
+
+.graph-view:first-child {
+  display: block;
+  background-color: red;
+}
+
+.graph-view:nth-child(2) {
+  display: none;
+  background-color: orange;
+}
+
+.graph-view:nth-child(3) {
+  display: none;
+  background-color: green;
+}
