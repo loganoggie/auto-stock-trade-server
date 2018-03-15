@@ -68,3 +68,10 @@
     font-family: sans-serif;
     font-size: 1.25em;
 }
+
+.tab-content-footer {
+    padding-top: 30px;
+    font-family: sans-serif;
+    font-size: 0.85em;
+    text-align: center;
+}
