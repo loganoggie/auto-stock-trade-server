@@ -105,3 +105,8 @@
 .invest-holder {
   display: none;
 }
+
+.optn:hover {
+  background-color: #F48F4B;
+  cursor: default;
+}

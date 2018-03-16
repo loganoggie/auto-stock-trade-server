@@ -6,6 +6,11 @@ var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
 var stat = ['active', 'active', 'active', 'active', 'active', 'active']
 var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 
+//LOOKUP stuff
+var text = document.getElementsByName('lookup')[0]
+var symbols =[[],[]];
+//const OUTPUT_MAX = 10;
+
 //Modal stuff
 var modal = document.getElementById('myModal')
 var bttn = document.getElementById('add')
@@ -29,6 +34,16 @@ $.ajax({//Get investments from server
   }//end error
 });
 
+$.get('text/nasdaqlisted.txt', function(data) {//map the fiirst list
+  var text = data.split('\n')
+  injectText(text)
+}, 'text');
+
+$.get('text/otherlisted.txt', function(data) {//map the second list
+  var text = data.split('\n')
+  injectText(text)
+}, 'text');
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -41,6 +56,27 @@ async function resultMin(tickerID) {//fucntion top call when the market is close
    });
 
    return result
+}
+
+function injectText(data) {//map a data set
+  //var symbol = [];
+  //var companies = [];
+  for(i = 1; i < data.length; i++) {
+    symbols[0].push(String(data[i].split('|')[0]));
+    symbols[1].push(String(String(data[i].split('|')[1]).split('-')[0]));
+  }
+}
+
+function isSubString(s1, s2) {//see if we have any matches
+  s1 = s1.toString().toLowerCase();
+  s2 = s2.toString().toLowerCase();
+  var length = s1.length;
+  if(s1 == s2.substring(0, length)){return true}
+  return false;
+}//end is SubString
+
+function get(index) {
+  document.getElementsByName('symbol')[0].value = symbols[0][index]
 }
 
 async function generateInvestment(symbol, investNum, volume, algorithm, status) {
@@ -68,7 +104,7 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
           }
         }
         catch(err) {
-          console.log("Error: Investment with symbol with " + investNum + " has failed to generate!")
+          console.log("Error: Investment with symbol with " + symbol + " has failed to generate!")
           console.log("Retrying in 30 seconds")
           setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
         }
@@ -134,6 +170,22 @@ select.onchange = function() {
     params.innerHTML += '<input type=\'radio\' name=\'example\'>' + avaAlgor[select.value];
   }
 }
+
+text.oninput = function() {//some fucking magic
+  const OUTPUT_MAX = 10;
+  var div = document.getElementById('results')
+  div.innerHTML = ''
+  var counter = 0;
+  if(text.value != '') {
+    for(i = 0; i < symbols[0].length; i++) {//I just need one of the two for this
+      if(isSubString(text.value, symbols[1][i]) && counter <= OUTPUT_MAX) {
+        counter++;
+        div.innerHTML += '<span id=' + i + ' class=\'optn\' onclick=\'get(' + i + ')\'>' + symbols[0][i] + ' - ' + symbols[1][i] + '</span></br>';
+      }//end if
+    }//end for
+  }//end if
+}//end oninput
+
 
 $('#modalForm').submit(function() {
   if(select.value == "default") {
