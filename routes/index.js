@@ -110,8 +110,4 @@ router.get('/accountsettings', function(req, res, next) {
   res.render('accountsettings');
 });
 
-router.get('/testing', function(req, res, next) {
-  res.render('testing');
-});
-
 module.exports = router;
