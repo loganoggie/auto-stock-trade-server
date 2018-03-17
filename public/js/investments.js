@@ -9,13 +9,14 @@ var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']
 
 //LOOKUP stuff
-var text = document.getElementsByName('lookup')[0]
+var lookupBox = document.getElementsByName('lookup')[0]
 var symbols =[[],[]];
 //const OUTPUT_MAX = 10;
 
 //Modal stuff
 var modal = document.getElementById('myModal')
 var bttn = document.getElementById('add')
+var volumeBox = document.getElementsByName('volume')[0]
 var close = document.getElementsByClassName('close')[0]
 var select = document.getElementsByName('algorithm')[0]
 
@@ -76,6 +77,8 @@ function isSubString(s1, s2) {//see if we have any matches
 
 function get(index) {
   document.getElementsByName('symbol')[0].value = symbols[0][index]
+  volumeBox.value = '';//reset value
+  volumeOnChange();
 }//end get
 
 async function generateInvestment(symbol, investNum, volume, algorithm, status) {
@@ -180,20 +183,47 @@ select.onchange = function() {
   }//end if
 }//end onchange
 
-text.oninput = function() {
+lookupBox.oninput = function() {
   const OUTPUT_MAX = 10;
   var div = document.getElementById('results')
   div.innerHTML = ''
   var counter = 0;
-  if(text.value != '') {
+  if(lookupBox.value != '') {
     for(i = 0; i < symbols[0].length; i++) {//I just need one of the two for this
-      if(isSubString(text.value, symbols[1][i]) && counter <= OUTPUT_MAX) {
+      if(isSubString(lookupBox.value, symbols[1][i]) && counter <= OUTPUT_MAX) {
         counter++;
         div.innerHTML += '<span id=' + i + ' class=\'optn\' onclick=\'get(' + i + ')\'>' + symbols[0][i] + ' - ' + symbols[1][i] + '</span></br>';
       }//end if
     }//end for
   }//end if
 }//end oninput
+
+function volumeOnChange() {
+  var symbol = document.getElementsByName('symbol')[0].value
+  if(symbol != '' && volumeBox.value != '') {
+    document.getElementById('priceConversion').innerHTML = 'Calculating Price...'
+    resultMin(symbol).then(async function(valueMin) {
+      try {
+        var jsonToday = JSON.stringify(valueMin[0])
+        if(jsonToday != undefined) {
+          var today = JSON.parse(jsonToday)
+          document.getElementById('priceConversion').innerHTML = (Number(volumeBox.value)*Number(today.close)).toFixed(2)//calc money spent
+        }//end if
+        else {
+          throw "Json is undefined"
+        }//end else
+      }//end catch
+      catch(err) {
+        console.log("Whoops");//Do proper error handeling later
+      }//end catch
+    });
+  }//end if
+  else {
+    document.getElementById('priceConversion').innerHTML = ''
+  }
+}//end onchange
+
+
 
 
 $('#modalForm').submit(function() {

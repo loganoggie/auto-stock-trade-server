@@ -16,7 +16,8 @@ block bodyContent
           input(type='text', name='lookup', placeholder='Company Name')
           div.select(id='results')
           input(type='text', name='symbol', placeholder='Symbol', disabled)
-          input(type='text', name='volume', placeholder='Volume')
+          input(type='number', name='volume', onchange='volumeOnChange()', placeholder='Volume')
+          span(id='priceConversion')
           //algorithm delection stuff is generated dynamically
           select(name='algorithm')
             option(value='default') Select an Algorithm
