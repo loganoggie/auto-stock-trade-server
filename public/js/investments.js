@@ -6,6 +6,8 @@ var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
 var stat = ['active', 'active', 'active', 'active', 'active', 'active']
 var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 
+var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']
+
 //LOOKUP stuff
 var text = document.getElementsByName('lookup')[0]
 var symbols =[[],[]];
@@ -16,9 +18,6 @@ var modal = document.getElementById('myModal')
 var bttn = document.getElementById('add')
 var close = document.getElementsByClassName('close')[0]
 var select = document.getElementsByName('algorithm')[0]
-
-//Temp stuff for the modal
-var avaAlgor = ['RSI', 'WAVES', 'SOMEOTHERTHING']
 
 $.ajax({//Get investments from server
   url: '/investments-get',
@@ -62,22 +61,22 @@ function injectText(data) {//map a data set
   //var symbol = [];
   //var companies = [];
   for(i = 1; i < data.length; i++) {
-    symbols[0].push(String(data[i].split('|')[0]));
-    symbols[1].push(String(String(data[i].split('|')[1]).split('-')[0]));
+    symbols[0].push(String(data[i].split('|')[0]));//get company symbol
+    symbols[1].push(String(String(data[i].split('|')[1]).split('-')[0]));//get company name
   }
 }
 
 function isSubString(s1, s2) {//see if we have any matches
-  s1 = s1.toString().toLowerCase();
+  s1 = s1.toString().toLowerCase();//change to lowercase
   s2 = s2.toString().toLowerCase();
   var length = s1.length;
-  if(s1 == s2.substring(0, length)){return true}
+  if(s1 == s2.substring(0, length)){return true}//match the first few chars
   return false;
 }//end is SubString
 
 function get(index) {
   document.getElementsByName('symbol')[0].value = symbols[0][index]
-}
+}//end get
 
 async function generateInvestment(symbol, investNum, volume, algorithm, status) {
       resultMin(symbol).then(async function(valueMin) {
@@ -88,6 +87,7 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
             var investHolder = document.getElementById('investments')
             var price = Number(today.close).toFixed(2)
             var share = (price*volume).toFixed(2)
+            //Display an investment
             investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + '>'
             var investLoc = document.getElementById(investNum)
             investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + symbol + '</span>'
@@ -103,13 +103,13 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
             throw "Generation Failed, json are undefined"
           }
         }
-        catch(err) {
-          console.log("Error: Investment with symbol with " + symbol + " has failed to generate!")
-          console.log("Retrying in 30 seconds")
-          setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
-        }
-    });
-  }
+    catch(err) {
+      console.log("Error: Investment with symbol with " + symbol + " has failed to generate!")
+      console.log("Retrying in 30 seconds")
+      setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
+    }
+  });
+}//end generateInvestment
 
 function sortInvestments() {
   var investClone = [];
@@ -135,7 +135,7 @@ function sortInvestments() {
     investHolder.appendChild(investClone[i])
   }
 
-}
+}//end sortInvetments
 
 async function createAllInvestments(symbols, volumes, algorithms, status) {
   for(i = 0; i < symbols.length; i++) {
@@ -143,35 +143,44 @@ async function createAllInvestments(symbols, volumes, algorithms, status) {
   }//end for
 }//end function createAllInvestments
 
-function constructParamForms(algorithms, params) {//future function that will constuct the data used for the parameters
-
-}
 
 bttn.onclick = function() {//show modal
   modal.style.display = 'block';
-}
+}//end on click
 
 close.onclick = function() {//close modal
   modal.style.display = 'none';
-}
+}//end on click
 
 // close modal whgen clicked outside
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
-}
+}//end on click
 
 select.onchange = function() {
   var params = document.getElementById('params')
   params.innerHTML = ''//Reset it back to blank
   if(select.value != 'default') {
     //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
-    params.innerHTML += '<input type=\'radio\' name=\'example\'>' + avaAlgor[select.value];
-  }
-}
+    if(select.value == ALGORITHM_NAME[0]) {//RSI
+      params.innerHTML += '<input type=\'radio\' name=\'low\' checked=\'checked\'>' + 'Low Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'med\'>' + 'Medium Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'low\'>' + 'High Risk';
+    }//end if
+    if(select.value == ALGORITHM_NAME[1]) {//BETA
+      params.innerHTML += '<input type=\'radio\' name=\'low\' checked=\'checked\'>' + 'Low Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'med\'>' + 'Medium Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'low\'>' + 'High Risk';
+    }//end if
+    if(select.value == ALGORITHM_NAME[2]) {
+      params.innerHTML += '<input type=\'text\', \'name=\'days\', placeholder=\'Number of Days\'>'
+    }//end if
+  }//end if
+}//end onchange
 
-text.oninput = function() {//some fucking magic
+text.oninput = function() {
   const OUTPUT_MAX = 10;
   var div = document.getElementById('results')
   div.innerHTML = ''
@@ -189,6 +198,7 @@ text.oninput = function() {//some fucking magic
 
 $('#modalForm').submit(function() {
   if(select.value == "default") {
+    //dont submit if they havent selected an algorithm
     console.log("They didn't select an algorithm");
     alert('Please select a valid algorithm');
     return false;
@@ -198,7 +208,8 @@ $('#modalForm').submit(function() {
 
 function modalAlgorithms(algorithms) {
   for(i = 0; i < algorithms.length; i++) {
-    select.innerHTML += '<option value=\'' + i + '\'>' + algorithms[i];
+    //create the algorithms in the file
+    select.innerHTML += '<option value=\'' + algorithms[i] + '\'>' + algorithms[i];
   }
 }
 
@@ -211,6 +222,6 @@ function loaded(symbols) {//sees if all the symbols are loaded on the page
   }, 1000, symbols);
 }//end function loaded
 
-modalAlgorithms(avaAlgor);//FEED MODAL ALGORITHMS
+modalAlgorithms(ALGORITHM_NAME);//FEED MODAL ALGORITHMS
 createAllInvestments(tempStocks, volumes, algor, stat)//GENRATE ALL TEMP STOCK DATA
 loaded(tempStocks)
