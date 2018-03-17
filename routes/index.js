@@ -90,6 +90,7 @@ router.post('/login', function(req, res, next) {
     if(res2.rows.length>0)
     {
       console.log("Logged in");
+
       res.render('dashboard'); //pass the user in optional parameters
     }
     else
@@ -114,14 +115,46 @@ router.post('/register', function(req, res, next) {
   }
   else
   {
-    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
-    if(err)
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err2,res2) => {
+    if(err2)
     {
-      throw err;
-      console.log("in here");
+      throw err2;
+      console.log("Error when Registering.");
     }
     else
     {
+      //First time so give them money
+      client.query("SELECT * FROM userstocks;", (error,response) => {
+        if(error)
+        {
+          throw error;
+          console.log("Error");
+        }
+        uniqueID = response.rowCount+1;
+      });
+
+      client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('"+uniqueID+"','"+email+"','$$$$','10000','NULL','NULL','NULL')", (err3,res3) => {
+        if(err3)
+        {
+          throw err3;
+          console.log("Error when giving the user initial money.");
+        }
+        else
+        {
+          console.log("$10,000 added to "+email); 
+        }
+      });
+
+      var user = {
+        fname: fname,
+        lname: lname,
+        email: email,
+        AVkey: 'CJWPUA7R3VDJNLV0',
+        money: '10000',
+        stocks: ''
+      }
+      res.json(JSON.stringify(user));
+
       console.log('dashboard'); //pass the user in optional parameters
     }
     client.end();
@@ -131,10 +164,42 @@ router.post('/register', function(req, res, next) {
 });
 
 router.get('/dashboard', function(req, res, next) {
+  client.query("SELECT * FROM userstocks WHERE email='"+req.email+"' AND stockticker!='$$$$';", (err2,res2) => {
+    if(err2)
+    {
+      throw err2;
+      console.log("Error loading dashboard.");
+    }
+    else
+    {
+      userStocks = res2.rows;
+    }
+  });
+
+  var user = {
+    fname: req.user.fname,
+    lname: req.user.lname,
+    email: req.user.email,
+    AVkey: req.user.AVkey,
+    money: req.user.money,
+    stocks: userStocks
+  }
+  res.json(JSON.stringify(user));
   res.render('dashboard');
 });
 
 router.get('/investments', function(req, res, next) {
+
+  var user = {
+    fname: req.user.fname,
+    lname: req.user.lname,
+    email: req.user.email,
+    AVkey: req.user.AVkey,
+    money: req.user.money,
+    stocks: req.user.userStocks
+  }
+  res.json(JSON.stringify(user));
+
   res.render('investments');
 });
 
