@@ -6,16 +6,15 @@ var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
 var stat = ['active', 'active', 'active', 'active', 'active', 'active']
 var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
 
-var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']
+var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']//Names of all the algorithms
 
 //LOOKUP stuff
 var lookupBox = document.getElementsByName('lookup')[0]
 var symbols =[[],[]];
-//const OUTPUT_MAX = 10;
 
 //Modal stuff
 var modal = document.getElementById('myModal')
-var bttn = document.getElementById('add')
+var bttn = document.getElementById('add')//The Add Button
 var volumeBox = document.getElementsByName('volume')[0]
 var close = document.getElementsByClassName('close')[0]
 var select = document.getElementsByName('algorithm')[0]
@@ -168,17 +167,17 @@ select.onchange = function() {
   if(select.value != 'default') {
     //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
     if(select.value == ALGORITHM_NAME[0]) {//RSI
-      params.innerHTML += '<input type=\'radio\' name=\'low\' checked=\'checked\'>' + 'Low Risk';
-      params.innerHTML += '<input type=\'radio\' name=\'med\'>' + 'Medium Risk';
-      params.innerHTML += '<input type=\'radio\' name=\'low\'>' + 'High Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'Low Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'Medium Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'High Risk';
     }//end if
     if(select.value == ALGORITHM_NAME[1]) {//BETA
-      params.innerHTML += '<input type=\'radio\' name=\'low\' checked=\'checked\'>' + 'Low Risk';
-      params.innerHTML += '<input type=\'radio\' name=\'med\'>' + 'Medium Risk';
-      params.innerHTML += '<input type=\'radio\' name=\'low\'>' + 'High Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'Low Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'Medium Risk';
+      params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'High Risk';
     }//end if
     if(select.value == ALGORITHM_NAME[2]) {
-      params.innerHTML += '<input type=\'text\', \'name=\'days\', placeholder=\'Number of Days\'>'
+      params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
     }//end if
   }//end if
 }//end onchange
@@ -223,14 +222,42 @@ function volumeOnChange() {
   }
 }//end onchange
 
-
+function checkParams() {
+  var params = document.getElementById('params')
+  var children = params.childNodes;
+  if(select.value == ALGORITHM_NAME[0]) {//RSI is selected
+    if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+  }
+  if(select.value == ALGORITHM_NAME[1]) {//Beta is selected
+    if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+  }
+  if(select.value == ALGORITHM_NAME[2]) {//Moving Averages is selected
+    if(children[0].value == '' || children[0].value <= 0){return false}//if the days field is blank and a positive
+  }
+  return true;//no errors encountered
+}//end checkParams
 
 
 $('#modalForm').submit(function() {
   if(select.value == "default") {
     //dont submit if they havent selected an algorithm
     console.log("They didn't select an algorithm");
-    alert('Please select a valid algorithm');
+    alert('Please select a valid algorithm.');
+    return false;
+  }
+  if(volumeBox.value <= 0) {
+    console.log("They had a non-positive integer")
+    alert("Volume field must be a positive integer")
+    return false
+  }
+  if(document.getElementsByName('symbol')[0].value == '') {
+    console.log("They did not choose a stock")
+    alert("Please choose a  vaiuld stock option")
+    return false;
+  }
+  if(!checkParams()) {
+    console.log("Parameters are not valid")
+    alert("Please enter valid parameters!")
     return false;
   }
   return true;
