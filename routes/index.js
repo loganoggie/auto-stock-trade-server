@@ -11,31 +11,70 @@ const client = new Client({
 });
 client.connect();
 
-/*
-Useful queries
-*/
+/*------------------Useful queries------------------*/
 
-//Drop table
+//Drop table users
 /*
 client.query("DROP TABLE users;", (err,res) => {
-  //console.log(res);
-});
-
-//Make table
-client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
-  //console.log(res);
-});
-
-//Insert into users
-client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Bob','Bagsby','bob@gmail.com','apple123', 'PUTDEFAULTKEYHERE')", (err,res) => {
-  //console.log(res);
-});
-
-//Print all rows in users
-client.query("SELECT * FROM users", (err,res) => {
-  console.log("Number of users: "+res.rowCount);
+  console.log("users dropped.");
 });
 */
+
+//Drop table userstocks
+/*
+
+client.query("DROP TABLE userstocks;", (err,res) => {
+  console.log("userstocks dropped.");
+
+});
+*/
+
+//Make table users
+/*
+client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
+  console.log("users created");
+
+});
+*/
+
+//Make table userstocks
+/*
+client.query("CREATE TABLE userstocks (id int, email varchar, stockticker varchar, numstocks int, algorithm varchar, params varchar, enabled bit, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
+  console.log("userstocks created");
+});
+*/
+
+
+/*
+client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','adam@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
+  console.log("user added to database.");
+});
+*/
+
+//Insert into userstocks
+/*
+client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')", (err,res) => {
+  console.log("userstocks added to database.");
+});
+*/
+
+//Print #of users and all rows in users
+/*
+client.query("SELECT * FROM users", (err,res) => {
+  console.log("Number of users: "+res.rowCount);
+  console.log(res.rows);
+});
+*/
+
+//Print #of userstocks and all rows in userstocks
+/*
+client.query("SELECT * FROM userstocks", (err,res) => {
+  console.log("Number of userstocks: "+res.rowCount);
+  console.log(res.rows);
+});
+*/
+
+/*------------------End of queries------------------*/
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -78,7 +117,7 @@ router.post('/register', function(req, res, next) {
   }
   else
   {
-    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','PUTDEFAULTKEYHERE');", (err,res2) => {
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
     if(err)
     {
       throw err;
@@ -109,5 +148,10 @@ router.get('/aboutalgorithms', function(req, res, next) {
 router.get('/accountsettings', function(req, res, next) {
   res.render('accountsettings');
 });
+
+router.get('/dataanalytics', function(req, res, next) {
+  res.render('dataanalytics');
+});
+
 
 module.exports = router;
