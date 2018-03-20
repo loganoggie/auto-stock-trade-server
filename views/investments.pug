@@ -1,11 +1,40 @@
 extends masterPug.pug
 
 block headContent
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
   script(src='js/stocks.js')
   script(src='js/investments.js')
 
 block bodyContent
   div.investments
+    button(type='button', id='add') Add
+    //A Modal
+    div.modal(id='myModal')
+      div.modal-content(id='modal-content')
+        span.close &times;
+        form(id='modalForm', method="POST", action="/add")
+          input(type='text', name='lookup', placeholder='Company Name')
+          div.select(id='results')
+          input(type='text', name='symbol', placeholder='Symbol', disabled)
+          input(type='number', name='volume', onchange='volumeOnChange()', placeholder='Volume')
+          span(id='priceConversion')
+          //algorithm delection stuff is generated dynamically
+          select(name='algorithm')
+            option(value='default') Select an Algorithm
+          div.algorithm-params(id='params')
+          input(type='submit', value='Add')
     h1 My Investments
-      div.invest(id='invest')
+    div.invest(id='invest')
+      span(id='warn')
+      span(id='load') Loading Data...
+      div.invest-holder-base(id='base')
+          span.symbol Symbol
+          span.share Share
+          span.volume Volume
+          span.price Price
+          span.algorithm Algorithm
+          span.status Status
+      div.holders(id='investments')
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  script(src='js/stocks.js')
+  script(src='js/investments.js')

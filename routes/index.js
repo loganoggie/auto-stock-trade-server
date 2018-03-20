@@ -64,6 +64,7 @@ passport.deserializeUser((id, cb) => {
 
 
 //Drop table userstocks
+
 // client.query("DROP TABLE userstocks;", (err,res) => {
 //   console.log("userstocks dropped.");
 // });
@@ -73,6 +74,7 @@ passport.deserializeUser((id, cb) => {
 // client.query("CREATE TABLE users (id bigserial, fname varchar, lname varchar, email varchar UNIQUE, password varchar, AVkey varchar);", (err,res) => {
 //   console.log("users created");
 // });
+
 
 
 //Make table userstocks
@@ -85,6 +87,7 @@ passport.deserializeUser((id, cb) => {
 // client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','bob@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
 //   console.log("user added to database.");
 // });
+
 
 
 //Insert into userstocks
@@ -209,11 +212,13 @@ router.get('/dataanalytics', function(req, res, next) {
   res.render('dataanalytics');
 });
 
+
 router.get('/logout', function(req, res) {
   console.log(req.user);
   req.logout();
   console.log(req.user);
   res.redirect('/');
 })
+
 
 module.exports = router;

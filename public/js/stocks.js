@@ -155,19 +155,23 @@ Stocks.prototype = {
       this._throw(0, 'error');
     }
 
-    return new Promise((resolve, reject) => {
-      var url = this._createUrl(params);
+		return new Promise((resolve, reject) => {
+	     var url = this._createUrl(params);
 
-      fetch(url).then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        if (typeof data['Error Message'] !== 'undefined') {
-          this._throw(9, 'error');
-        }
+	     fetch(url).then(function (response) {
+	       return response.json();
+	     }).then(function (data) {
+	       if (typeof data['Error Message'] !== 'undefined') {
+	         //this._throw(9, 'error');
+					//Somethig has gone wrong with the API request.
+					console.log("Error in API request")
+					resolve(data);//what does this do exactly?
+					//throw "Error in API Request" //This is a modified line of something that was giving errors
+	       }
 
-        resolve(data);
-      });
-    });
+	       resolve(data);
+	     });
+	   });
   },
 
   _checkOptions: function (options, type) {
@@ -265,7 +269,13 @@ Stocks.prototype = {
     }
 
     // Get result
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
+
     var converted = this._convertData(result, options.amount);
 
     if (typeof options.start !== 'undefined') {
@@ -286,7 +296,12 @@ Stocks.prototype = {
     };
 
     // Get result
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
     var converted = this._convertData(result, options.amount);
 
     if (typeof options.start !== 'undefined') {
@@ -306,7 +321,12 @@ Stocks.prototype = {
       function: 'SECTOR'
     };
 
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
 
     var found = Object.keys(result).find(key => {
       let noSpace = key.replace(/ /g, '').toLowerCase();
