@@ -22,8 +22,10 @@ client.query("DROP TABLE users;", (err,res) => {
 
 //Drop table userstocks
 /*
+
 client.query("DROP TABLE userstocks;", (err,res) => {
   console.log("userstocks dropped.");
+
 });
 */
 
@@ -31,6 +33,7 @@ client.query("DROP TABLE userstocks;", (err,res) => {
 /*
 client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
   console.log("users created");
+
 });
 */
 
@@ -42,7 +45,6 @@ client.query("CREATE TABLE userstocks (id int, email varchar, stockticker varcha
 */
 
 
-//Insert into users
 /*
 client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','adam@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
   console.log("user added to database.");
@@ -150,5 +152,6 @@ router.get('/accountsettings', function(req, res, next) {
 router.get('/dataanalytics', function(req, res, next) {
   res.render('dataanalytics');
 });
+
 
 module.exports = router;
