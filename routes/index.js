@@ -146,15 +146,12 @@ router.get('/tick-get', function(req, res, next) {
   //Example of how this ojject should be constructed to generate tickers on the dashboard
   var myObj = {
     api: 'QSZQSTA7ZLPXTAZO',//AlphaVantage API key that the user table has
-    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']//An array of some of the most common stocks. 
+    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']//An array of some of the most common stocks.
   }
   res.json(JSON.stringify(myObj));
 });
 
 //---------------------------------------------------------END EXAMPLES---------------------------------------------------------
-
-router.post('/login', function(req, res, next) {
-
 
 //
 // router.post('/login', function(req, res, next) {
