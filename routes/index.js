@@ -42,6 +42,29 @@ router.get('/', function(req, res, next) {
   res.render('splash');
 });
 
+//---------------------------------------------------------JSON SENDING EXAMPLES---------------------------------------------------------
+
+router.get('/dash-get', function(req, res, next) {
+  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
+  var myObj = {
+    worth: 10000.00,//current portfolio worth
+    price: [9000, 9200, 9460.43, 9750, 10000],//array of the portfolio worth day by day, first enrty is earliest data. Maybe keep size fix so the x-axis isnt hard to read.
+    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]//Value of dates corresponding to the dollar amounts.
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+router.get('/tick-get', function(req, res, next) {
+  //Example of how this ojject should be constructed to generate tickers on the dashboard
+  var myObj = {
+    api: 'QSZQSTA7ZLPXTAZO',//AlphaVantage API key that the user table has
+    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']//An array of some of the most common stocks. 
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+//---------------------------------------------------------END EXAMPLES---------------------------------------------------------
+
 router.post('/login', function(req, res, next) {
 
 
