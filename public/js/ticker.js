@@ -82,6 +82,7 @@ async function genTicker(symbol, tickerNum) {//Generate if market is open
       catch(err) {
         console.log("Error: Ticker " + symbol + " has failed to generate!")
         console.log("Retrying in 30 seconds")
+        console.log(err)
         setTimeout(genTicker.bind(null, symbol, tickerNum), 30*1000)
       }
     });
