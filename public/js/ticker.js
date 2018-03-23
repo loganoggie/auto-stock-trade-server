@@ -3,6 +3,53 @@
 //var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
 //var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
 var stocks;
+//var allSymbols;
+//var indexTickers = 0;//initialize to zero
+
+const STARTING_INDEX = 0;//Starting index of the ticker printing
+const TICKERS_ON_PAGE = 5;
+
+var namespace = {//namespace to hold allSymbols and indexTickers to avoid global variables
+  //namespace vars
+  allSymbols: [],
+  indexTickers: 0,//initialize
+  activeIntervals: [],
+
+  setSymbols: function(symbols) {this.allSymbols = symbols},
+  setIndex: function(index) {this.indexTickers = index},
+
+  nextTickers: function() {
+    this.indexTickers = (this.indexTickers + TICKERS_ON_PAGE) % this.allSymbols.length;//keep wrapping
+    this.clearOld();
+    this.createTickers(this.allSymbols, this.indexTickers)
+  },//end nextTickers
+
+  prevTickers: function() {
+    this.indexTickers = this.indexTickers - TICKERS_ON_PAGE;
+    if(this.indexTickers < 0){this.indexTickers = this.allSymbols.length - TICKERS_ON_PAGE};//wrap back around the other way
+    this.clearOld();
+    this.createTickers(this.allSymbols, this.indexTickers)
+  },//end prvTickers
+
+  clearOld: function() {
+    document.getElementById('tick').innerHTML = ''//Set back to empty
+    for(i = 0; i < this.activeIntervals.length; i++) {
+      clearInterval(this.activeIntervals[i]);
+    }//end for
+  },
+  createTickers: async function(symbols, start) {//this creates all the tickers for the page.
+    for(i = start, ln = start + TICKERS_ON_PAGE; i < ln; i++) {//Go through the stock ticker array
+      try {
+        await genTicker(symbols[i], i)
+      }
+      catch(err) {
+        console.log(err)
+      }
+      this.activeIntervals.push(setInterval(function(k){updateTicker(k)}, 60*1000, i))//Anon function needs snapshot of value to setInterval correctly
+    }
+  }//end createTickers
+
+};//end namespace
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -14,15 +61,18 @@ $.ajax({//Get tickers from server
   success: function(data) {
     var json = $.parseJSON(data);
     console.log(json);
-    stocks = new Stocks(json.api)//use the API that the node server provides.
-    createAllTickers(json.symbols);//create all the tickers for the page once an object is recieved
+    stocks = new Stocks(json.api)//use the API that the node server provides
+    namespace.setSymbols(json.symbols);
+    namespace.setIndex(STARTING_INDEX);
+    namespace.createTickers(json.symbols, 0);//create all the tickers for the page once an object is recieved
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce')
   }//end error
-})
+});
 
-async function resultDaily(symbol) {//fucntion top call when the market is closed!
+
+async function resultDaily(symbol) {//The will get the stock values for the past 2 days
   numAmount = 2
   try {
     var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
@@ -38,7 +88,7 @@ async function resultDaily(symbol) {//fucntion top call when the market is close
   }//end catch
 }
 
-async function resultMin(symbol) {//fucntion top call when the market is closed!
+async function resultMin(symbol) {//This will get the stock data for the past minute
   try {
     var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
       symbol: symbol,
@@ -143,15 +193,3 @@ function sortTickers() {
   }
 
 }//end function sort Tickers
-
-async function createAllTickers(symbols) {//this creates all the tickers for the page.
-  for(i = 0, ln = symbols.length; i < ln; i++) {//Go through the stock ticker array
-    try {
-      await genTicker(symbols[i], i)
-    }
-    catch(err) {
-      console.log(err)
-    }
-    setInterval(function(k){updateTicker(k)}, 60*1000, i)//Anon function needs snapshot of value to setInterval correctly
-  }
-}
