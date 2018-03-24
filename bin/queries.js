@@ -5,7 +5,6 @@ on the database. Feel free to add any queries that you use while developing.
 
 */
 
-
 // Global Module Handling -----------------------------------------------
 //-----------------------------------------------------------------------
 // Local Module Handling ------------------------------------------------
