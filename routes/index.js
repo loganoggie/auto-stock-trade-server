@@ -51,6 +51,8 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
+    // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
+    // function. Promises need to be implemented to return needed data when available. 
     console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
     res.render('dashboard');
   }
