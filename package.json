@@ -6,6 +6,7 @@
     "start": "node bin/www"
   },
   "dependencies": {
+    "alpha-vantage-cli": "^1.0.8",
     "bcrypt": "^1.0.3",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
@@ -15,6 +16,7 @@
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
     "node-bcrypt": "0.0.1",
+    "node-fetch": "^2.1.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "7.4.1",
