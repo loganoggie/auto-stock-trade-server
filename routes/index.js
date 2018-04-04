@@ -15,32 +15,7 @@ router.get('/', function(req, res, next) {
   res.render('splash');
 });
 
-<<<<<<< HEAD
-router.post('/login', function(req, res, next) {
-
-
-  var username = (req['body']['username']);
-  var password = (req['body']['password']);
-
-  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res2) => {
-    if(err) throw err;
-
-    if(res2.rows.length>0)
-    {
-      console.log("Logged in");
-
-      res.render('dashboard'); //pass the user in optional parameters
-    }
-    else
-    {
-      console.log("Wrong email/password");
-      res.render('splash'); //redirect back to splash
-    }
-  });
-});
-=======
 router.post('/login', passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/'}));
->>>>>>> master
 
 router.post('/register', function(req, res, next) {
 
@@ -56,46 +31,14 @@ router.post('/register', function(req, res, next) {
   }
   else
   {
-    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err2,res2) => {
-    if(err2)
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
+    if(err)
     {
-      throw err2;
-      console.log("Error when Registering.");
+      throw err;
+      console.log("in here");
     }
     else
     {
-      //First time so give them money
-      client.query("SELECT * FROM userstocks;", (error,response) => {
-        if(error)
-        {
-          throw error;
-          console.log("Error");
-        }
-        uniqueID = response.rowCount+1;
-      });
-
-      client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('"+uniqueID+"','"+email+"','$$$$','10000','NULL','NULL','NULL')", (err3,res3) => {
-        if(err3)
-        {
-          throw err3;
-          console.log("Error when giving the user initial money.");
-        }
-        else
-        {
-          console.log("$10,000 added to "+email); 
-        }
-      });
-
-      var user = {
-        fname: fname,
-        lname: lname,
-        email: email,
-        AVkey: 'CJWPUA7R3VDJNLV0',
-        money: '10000',
-        stocks: ''
-      }
-      res.json(JSON.stringify(user));
-
       console.log('dashboard'); //pass the user in optional parameters
     }
     client.end();
@@ -105,30 +48,6 @@ router.post('/register', function(req, res, next) {
 });
 
 router.get('/dashboard', function(req, res, next) {
-<<<<<<< HEAD
-  client.query("SELECT * FROM userstocks WHERE email='"+req.email+"' AND stockticker!='$$$$';", (err2,res2) => {
-    if(err2)
-    {
-      throw err2;
-      console.log("Error loading dashboard.");
-    }
-    else
-    {
-      userStocks = res2.rows;
-    }
-  });
-
-  var user = {
-    fname: req.user.fname,
-    lname: req.user.lname,
-    email: req.user.email,
-    AVkey: req.user.AVkey,
-    money: req.user.money,
-    stocks: userStocks
-  }
-  res.json(JSON.stringify(user));
-  res.render('dashboard');
-=======
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     res.redirect('/');
@@ -150,7 +69,6 @@ router.get('/dash-get', function(req, res, next) {
     dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]//Value of dates corresponding to the dollar amounts.
   }
   res.json(JSON.stringify(myObj));
->>>>>>> master
 });
 
 router.get('/tick-get', function(req, res, next) {
@@ -165,20 +83,6 @@ router.get('/tick-get', function(req, res, next) {
 //--------------------------------------------------------------END OF EXAMPLES --------------------------------------------------------
 
 router.get('/investments', function(req, res, next) {
-<<<<<<< HEAD
-
-  var user = {
-    fname: req.user.fname,
-    lname: req.user.lname,
-    email: req.user.email,
-    AVkey: req.user.AVkey,
-    money: req.user.money,
-    stocks: req.user.userStocks
-  }
-  res.json(JSON.stringify(user));
-
-  res.render('investments');
-=======
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     req.logout();
@@ -186,7 +90,6 @@ router.get('/investments', function(req, res, next) {
   } else {
     res.render('investments');
   }
->>>>>>> master
 });
 
 router.get('/aboutalgorithms', function(req, res, next) {
