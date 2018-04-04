@@ -1,0 +1,45 @@
+doctype html
+head
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    //nice fonts for the website:
+    link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+
+    //stylesheet for the title bar:
+    link(rel='stylesheet', type='text/css', href='stylesheets/css/titleBar.css')
+
+    //stylesheet that anchors the title bar to the top left corner and makes browser adjustments:
+    link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
+
+    //master jquery-ui stylesheet:
+    link(href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css", rel="stylesheet")
+
+    //the jquery library:
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+
+    //the jquery-UI library:
+    script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+
+    //where the custom header content will go for each page:
+    block headContent
+
+body
+    //BEGIN: TITLE BAR "HTML"
+    div.page-wrapper
+        div.header
+            div.dropdown-button-container
+                div.dropdown
+                    div.burger-holder.drop-button
+                    div.dropdown-content
+                        a(href='/dashboard') Dashboard
+                        a(href='/investments') Investments
+                        a(href='/dataanalytics') Analytics
+                        a(href='/aboutalgorithms') Algorithm Information
+                        a(href='/accountsettings') Account Settings
+                        a(href='/logout') Log Out
+            div.logo-holder
+        div.content-wrapper
+            //END: TITLE BAR "HTML"
+
+            //where the body contents of the pages will go:
+            block bodyContent

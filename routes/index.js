@@ -1,83 +1,21 @@
+// Global Module Handling -----------------------------------------------
 var express = require('express');
 var router = express.Router();
-const {Client} = require('pg');
+//-----------------------------------------------------------------------
+// Local Module Handling ------------------------------------------------
+var {passport} = require('../bin/passport.js');
+var database = require('../bin/database.js');
+var queries = require('../bin/queries.js');
+var client = database.client;
+var pool = database.pool;
+//-----------------------------------------------------------------------
 
-//db connection string
-var dbString = 'postgres://whiidzewjaaqzm:0001b1a8a6fa014941cfa07feb3bb8f8049f2210a11f1d5f14895ea6fac6f955@ec2-184-73-196-65.compute-1.amazonaws.com:5432/deacrvvlj7rj32';
-
-const client = new Client({
-  connectionString: dbString,
-  ssl: true,
-});
-client.connect();
-
-/*------------------Useful queries------------------*/
-
-//Drop table users
-/*
-client.query("DROP TABLE users;", (err,res) => {
-  console.log("users dropped."); 
-});
-*/
-
-//Drop table userstocks
-/*
-client.query("DROP TABLE userstocks;", (err,res) => {
-  console.log("userstocks dropped."); 
-});
-*/
-
-//Make table users
-/*
-client.query("CREATE TABLE users (fname varchar, lname varchar, email varchar, password varchar, AVkey varchar, PRIMARY KEY(email));", (err,res) => {
-  console.log("users created"); 
-});
-*/
-
-//Make table userstocks
-/*
-client.query("CREATE TABLE userstocks (id int, email varchar, stockticker varchar, numstocks int, algorithm varchar, params varchar, enabled bit, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
-  console.log("userstocks created"); 
-});
-*/
-
-//Insert into users
-/*
-client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','adam@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
-  console.log("user added to database."); 
-});
-*/
-
-//Insert into userstocks
-/*
-client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')", (err,res) => {
-  console.log("userstocks added to database."); 
-});
-*/
-
-//Print #of users and all rows in users
-/*
-client.query("SELECT * FROM users", (err,res) => {
-  console.log("Number of users: "+res.rowCount);
-  console.log(res.rows); 
-});
-*/
-
-//Print #of userstocks and all rows in userstocks
-/*
-client.query("SELECT * FROM userstocks", (err,res) => {
-  console.log("Number of userstocks: "+res.rowCount);
-  console.log(res.rows); 
-});
-*/
-
-/*------------------End of queries------------------*/
-
-/* GET home page. */
 router.get('/', function(req, res, next) {
+  console.log(req.user);
   res.render('splash');
 });
 
+<<<<<<< HEAD
 router.post('/login', function(req, res, next) {
 
 
@@ -100,6 +38,9 @@ router.post('/login', function(req, res, next) {
     }
   });
 });
+=======
+router.post('/login', passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/'}));
+>>>>>>> master
 
 router.post('/register', function(req, res, next) {
 
@@ -164,6 +105,7 @@ router.post('/register', function(req, res, next) {
 });
 
 router.get('/dashboard', function(req, res, next) {
+<<<<<<< HEAD
   client.query("SELECT * FROM userstocks WHERE email='"+req.email+"' AND stockticker!='$$$$';", (err2,res2) => {
     if(err2)
     {
@@ -186,9 +128,44 @@ router.get('/dashboard', function(req, res, next) {
   }
   res.json(JSON.stringify(user));
   res.render('dashboard');
+=======
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    res.redirect('/');
+  } else {
+    // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
+    // function. Promises need to be implemented to return needed data when available.
+    console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    res.render('dashboard');
+  }
 });
 
+//---------------------------------------------------------JSON SENDING EXAMPLES---------------------------------------------------------
+
+router.get('/dash-get', function(req, res, next) {
+  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
+  var myObj = {
+    worth: 10000.00,//current portfolio worth
+    price: [9000, 9200, 9460.43, 9750, 10000],//array of the portfolio worth day by day, first enrty is earliest data. Maybe keep size fix so the x-axis isnt hard to read.
+    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]//Value of dates corresponding to the dollar amounts.
+  }
+  res.json(JSON.stringify(myObj));
+>>>>>>> master
+});
+
+router.get('/tick-get', function(req, res, next) {
+  //Example of how this ojject should be constructed to generate tickers on the dashboard
+  var myObj = {
+    api: 'QSZQSTA7ZLPXTAZO',//AlphaVantage API key that the user table has
+    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']//An array of some of the most common stocks.
+  }
+  res.json(JSON.stringify(myObj));
+});
+
+//--------------------------------------------------------------END OF EXAMPLES --------------------------------------------------------
+
 router.get('/investments', function(req, res, next) {
+<<<<<<< HEAD
 
   var user = {
     fname: req.user.fname,
@@ -201,14 +178,52 @@ router.get('/investments', function(req, res, next) {
   res.json(JSON.stringify(user));
 
   res.render('investments');
+=======
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+    res.render('investments');
+  }
+>>>>>>> master
 });
 
 router.get('/aboutalgorithms', function(req, res, next) {
-  res.render('aboutalgorithms');
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+    res.render('aboutalgorithms');
+  }
 });
 
 router.get('/accountsettings', function(req, res, next) {
-  res.render('accountsettings');
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+    res.render('accountsettings');
+  }
 });
+
+router.get('/dataanalytics', function(req, res, next) {
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+    res.render('dataanalytics');
+  }
+});
+
+router.get('/logout', function(req, res) {
+  console.log(req.user);
+  req.logout();
+  console.log(req.user);
+  res.redirect('/');
+})
 
 module.exports = router;
