@@ -9,10 +9,8 @@
 *****************/
 
 .tab-holder {
-    position: absolute;
-    padding-left: 25%;
     margin: 0 auto;
-    width: 984px;
+    width: 580px;
 }
 
 .tab {
