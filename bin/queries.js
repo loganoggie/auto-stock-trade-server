@@ -5,6 +5,15 @@ on the database. Feel free to add any queries that you use while developing.
 
 */
 
+
+// Global Module Handling -----------------------------------------------
+//-----------------------------------------------------------------------
+// Local Module Handling ------------------------------------------------
+var database = require('../bin/database.js');
+var client = database.client;
+var pool = database.pool;
+//-----------------------------------------------------------------------
+
 /*------------------Useful queries------------------*/
 
 //Drop data from users and userstocks
@@ -60,7 +69,7 @@ on the database. Feel free to add any queries that you use while developing.
 //   console.log("added pk");
 // });
 
-//Print # of users and all rows in users
+// Print # of users and all rows in users
 // client.query("SELECT * FROM users", (err,res) => {
 //   console.log("Number of users: "+res.rowCount);
 //   console.log(res.rows);
@@ -75,3 +84,19 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 */
 
 /*------------------End of queries------------------*/
+
+
+async function getCurrentUserInfo(id, email) {
+
+  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
+    if (err) {
+      console.log("Error running query 'getCurrentUserInfo'.");
+    } else {
+      console.log(res.rows[0]);
+    }
+  });
+
+  return userInfo;
+}
+
+module.exports.getCurrentUserInfo = getCurrentUserInfo;
