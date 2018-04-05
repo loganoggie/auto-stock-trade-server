@@ -47,6 +47,28 @@ router.post('/register', function(req, res, next) {
   res.render('register');
 });
 
+
+router.post('/updateAVkey', function(req, res, next) {
+    
+    var newAVkey = req['body']['newAVkey']; //value from the on-screen textbox
+
+    console.log("UPDATE users SET AVkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+
+    client.query("UPDATE users SET AVkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';", (err,res2) => {
+        if(err)
+        {
+          throw err;
+        }
+        else
+        {
+          console.log('Success?');
+        }
+        client.end();
+    });
+    res.render('accountsettings');
+});
+
+
 router.get('/dashboard', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");

@@ -27,3 +27,10 @@ block bodyContent
                     p(class='two-factor-auth-label' id='phoneNumLabel') Phone Number:
                     input(type='text', name="twoFactorPhoneNum", class='twoFactorSettingsTxtBox')
                 input(type='submit', value='Apply', class='submitButton', id='twoFactorSubButton')
+        h3.accordion-header Alpha Vantage Settings
+        div.accordion-section-contents
+            form.alpha-vantage-form(method="POST", action="/updateAVkey")
+                p.alpha-vantage-key-label Alpha Vantage Key:
+                input(type='text', name="newAVkey", class='pwdSettingsTxtBox', required=true)
+                br
+                input(type='submit', value='Apply', class='submitButton', id='changeAVkeySubButton')
