@@ -54,7 +54,12 @@ router.get('/dashboard', function(req, res, next) {
   } else {
     // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
     // function. Promises need to be implemented to return needed data when available.
-    console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    //console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    var user = {
+      info: queries.getCurrentUserInfo(req.user.id, req.user.email),
+      stocks: queries.getCurrentUserStockInfo(req.user.id, req.user.email)
+    }
+    console.log(user);
     res.render('dashboard');
   }
 });
@@ -88,6 +93,12 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    //console.log("Result of Query: " + queries.getCurrentUserStockInfo(req.user.id, req.user.email));
+    var user = {
+      info: queries.getCurrentUserInfo(req.user.id, req.user.email),
+      stocks: queries.getCurrentUserStockInfo(req.user.id, req.user.email)
+    }
+    console.log(user);
     res.render('investments');
   }
 });
@@ -98,6 +109,11 @@ router.get('/aboutalgorithms', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    var user = {
+      info: queries.getCurrentUserInfo(req.user.id, req.user.email),
+      stocks: queries.getCurrentUserStockInfo(req.user.id, req.user.email)
+    }
+    console.log(user);
     res.render('aboutalgorithms');
   }
 });
@@ -108,6 +124,11 @@ router.get('/accountsettings', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    var user = {
+      info: queries.getCurrentUserInfo(req.user.id, req.user.email),
+      stocks: queries.getCurrentUserStockInfo(req.user.id, req.user.email)
+    }
+    console.log(user);
     res.render('accountsettings');
   }
 });
@@ -118,6 +139,11 @@ router.get('/dataanalytics', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    var user = {
+      info: queries.getCurrentUserInfo(req.user.id, req.user.email),
+      stocks: queries.getCurrentUserStockInfo(req.user.id, req.user.email)
+    }
+    console.log(user);
     res.render('dataanalytics');
   }
 });

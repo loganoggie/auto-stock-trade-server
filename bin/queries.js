@@ -85,9 +85,9 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 /*------------------End of queries------------------*/
 
 
-function getCurrentUserInfo(id, email) {
+async function getCurrentUserInfo(id, email) {
 
-  var userInfo = client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
+  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
     if (err) {
       console.log("Error running query 'getCurrentUserInfo'.");
     } else {
@@ -98,4 +98,18 @@ function getCurrentUserInfo(id, email) {
   return userInfo;
 }
 
+async function getCurrentUserStockInfo(id, email) {
+
+  var userStockInfo = await client.query("SELECT * FROM userstocks WHERE id = $1 and email = $2", [id, email], (err,res) => {
+    if (err) {
+      console.log("Error running query 'getCurrentUserStockInfo'.");
+    } else {
+      console.log(res.rows);
+    }
+  });
+
+  return userStockInfo;
+}
+
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
+module.exports.getCurrentUserStockInfo = getCurrentUserStockInfo;
