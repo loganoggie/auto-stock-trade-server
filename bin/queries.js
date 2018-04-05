@@ -5,7 +5,10 @@ on the database. Feel free to add any queries that you use while developing.
 
 */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 50a8c163ca9291572acca38f5f805841d38fc6e3
 // Global Module Handling -----------------------------------------------
 //-----------------------------------------------------------------------
 // Local Module Handling ------------------------------------------------
