@@ -15,7 +15,7 @@ block bodyContent
         form(id='modalForm', method="POST", action="/add")
           input(type='text', name='lookup', placeholder='Company Name')
           div.select(id='results')
-          input(type='text', name='symbol', placeholder='Symbol', disabled)
+          input(type='text', name='symbol', placeholder='Symbol')
           input(type='number', name='volume', onchange='volumeOnChange()', placeholder='Volume')
           span(id='priceConversion')
           //algorithm delection stuff is generated dynamically

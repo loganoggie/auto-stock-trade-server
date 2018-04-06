@@ -6,12 +6,12 @@ var router = express.Router();
 var {passport} = require('../bin/passport.js');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
+var funcs = require('./funcs.js');
 var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
 router.get('/', function(req, res, next) {
-  console.log(req.user);
   res.render('splash');
 });
 
@@ -52,9 +52,9 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
-    // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
-    // function. Promises need to be implemented to return needed data when available.
-    console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    
+    // it works now, define a function that does what you want and pass it to 3rd arg
+    // queries.getCurrentUserInfo(req.user.id, req.user.email, console.log);
     res.render('dashboard');
   }
 });
@@ -88,6 +88,14 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    console.log(req)
+
+    // queries.getCurrentStockInfo(req.user.email, function(query)
+    //   {
+
+        
+    //   });
+
     res.render('investments');
   }
 });
@@ -128,5 +136,20 @@ router.get('/logout', function(req, res) {
   console.log(req.user);
   res.redirect('/');
 })
+
+router.post('/add', function(req, res, next) {
+  console.log("jjjjjj")
+  console.log(req)
+
+  // var newAlgo = funcs.make_algo_obj(req.user.email, "TICK", "RSI", p1, p2, ri, inter, sig)
+
+
+
+  // client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')")
+  // console.log("userstocks added to database.");
+
+  res.render('investments')
+  
+});
 
 module.exports = router;
