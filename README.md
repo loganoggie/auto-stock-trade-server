@@ -75,3 +75,36 @@ Alternatively, if you don't want to install Postgres, you can issue queries on t
   console.log("Dropped table users");
  });
  ```
+ 
+ # JavaScript Stuff
+ 
+## Accessing Session Variables
+
+Session variables are stored in a variable called "user" within the req module. Therefore, we just say
+
+```
+req.user.<insert thing to be accessed here>
+```
+
+We can also set variables on the session in the same way. By default the session only contains the primary keys of the users table.
+
+## Passing Variables and Functions Between Modules
+
+By default, each js file in node has an object available to it called module.exports. We can set things in this object to be accessed in other files.
+
+```
+module.exports.<insert name here> = <insert variable or function here>;
+```
+
+These can then be imported using require (require returns the module.exports object from the passed module name).
+
+```
+var whatever = require(<insert module>);
+whatever.<insert module.exports element here>;
+```
+
+## Passing Data to Front End 
+
+```
+res.render('<front end page to be rendered>', {<name for variable to be accessed>: <the variable to be accessed>});
+```

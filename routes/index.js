@@ -10,8 +10,11 @@ var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
+console.log(passport);
+console.log(database);
+console.log(queries);
+
 router.get('/', function(req, res, next) {
-  console.log(req.user);
   res.render('splash');
 });
 
@@ -51,11 +54,14 @@ router.get('/dashboard', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     res.redirect('/');
-  } else {
-    // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
-    // function. Promises need to be implemented to return needed data when available.
-    console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
-    res.render('dashboard');
+  }
+  else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email).then(function(userInfo) {//wait fo getCurrentUserInfo
+      console.log("Result of Query: " + userInfo);
+      res.render('dashboard');
+    });
+    //console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    //res.render('dashboard');
   }
 });
 
