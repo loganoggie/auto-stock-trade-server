@@ -106,14 +106,14 @@ var myModal = {
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
       if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\'>' + 'High Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'low\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'med\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'high\'>' + 'High Risk';
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[1]) {//BETA
-        params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'beta\'>' + 'High Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'low\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'med\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'high\'>' + 'High Risk';
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
         params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
@@ -257,13 +257,13 @@ async function createAllInvestments(symbols, volumes, algorithms, status) {
 }//end function createAllInvestments
 
 $('#modalForm').submit(function() {
-  if(select.value == "default") {
+  if(modal.select.value == "default") {
     //dont submit if they havent selected an algorithm
     console.log("They didn't select an algorithm");
     alert('Please select a valid algorithm.');
     return false;
   }
-  if(volumeBox.value <= 0) {
+  if(modal.volumeBox.value <= 0) {
     console.log("They had a non-positive integer")
     alert("Volume field must be a positive integer")
     return false
@@ -273,7 +273,7 @@ $('#modalForm').submit(function() {
     alert("Please choose a  vaiuld stock option")
     return false;
   }
-  if(!checkParams()) {
+  if(!modal.checkParams()) {
     console.log("Parameters are not valid")
     alert("Please enter valid parameters!")
     return false;
