@@ -5,6 +5,10 @@ on the database. Feel free to add any queries that you use while developing.
 
 */
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 50a8c163ca9291572acca38f5f805841d38fc6e3
 // Global Module Handling -----------------------------------------------
 //-----------------------------------------------------------------------
 // Local Module Handling ------------------------------------------------
@@ -85,9 +89,9 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 /*------------------End of queries------------------*/
 
 
-function getCurrentUserInfo(id, email) {
+async function getCurrentUserInfo(id, email) {
 
-  var userInfo = client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
+  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
     if (err) {
       console.log("Error running query 'getCurrentUserInfo'.");
     } else {
