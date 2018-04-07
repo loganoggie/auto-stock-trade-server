@@ -53,9 +53,24 @@ router.get('/dashboard', function(req, res, next) {
     res.redirect('/');
   } else {
     
-    // it works now, define a function that does what you want and pass it to 3rd arg
-    // queries.getCurrentUserInfo(req.user.id, req.user.email, console.log);
-    res.render('dashboard');
+    console.log(req.user)
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      
+      req.user.id = query.rows[0].id
+      req.session.ID = query.rows[0].id
+      req.session.fname = query.rows[0].fname
+      req.session.lname = query.rows[0].lname
+      req.session.email = query.rows[0].email
+      req.session.password = query.rows[0].password
+      req.session.avkey = query.rows[0].avkey
+
+      req.session.algoArr = [] // initialize the object array
+
+      console.log(req.session) 
+
+      res.render('dashboard');
+      });
+    
   }
 });
 
@@ -88,16 +103,44 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    console.log(req)
 
-    // queries.getCurrentStockInfo(req.user.email, function(query)
-    //   {
+    queries.getCurrentStockInfo(req.user.email, function(query)
+      {
 
+        // Do stuff here when we can actually grab rows containing algorithms for 1 person
+
+        for (var i in query.rows)
+        {
+          console.log(i)
+        }
         
-    //   });
+      });
+
+    console.log(req.session)
 
     res.render('investments');
   }
+});
+
+router.post('/add', function(req, res, next) {
+
+  // UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): error: duplicate key value violates unique constraint "userstocks_pkey"
+
+  // The way the database is set up right now, a user can only have 1 algorithm. 
+
+  // client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.id + "','" + req.user.email + 
+  //  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
+
+  
+  // sloppy, but you get the idea
+  var newAlgo = funcs.make_algo_obj(req.user.email, req.body.symbol, req.body.algorithm, 80 , 20, req.body.rsi, "5min", 1, funcs.make_risk_func_RSI(req.body.rsi))
+
+  req.session.algoArr.push(newAlgo)
+
+  console.log(req.session)
+
+  res.render('investments')
+  
 });
 
 router.get('/aboutalgorithms', function(req, res, next) {
@@ -130,6 +173,26 @@ router.get('/dataanalytics', function(req, res, next) {
   }
 });
 
+router.post('/updateAVkey', function(req, res, next) {
+    
+    var newAVkey = req['body']['newAVkey']; //value from the on-screen textbox
+
+    console.log("UPDATE users SET AVkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+
+    client.query("UPDATE users SET AVkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';", (err,res2) => {
+        if(err)
+        {
+          throw err;
+        }
+        else
+        {
+          console.log('Success?');
+        }
+        client.end();
+    });
+    res.render('accountsettings');
+});
+
 router.get('/logout', function(req, res) {
   console.log(req.user);
   req.logout();
@@ -137,19 +200,6 @@ router.get('/logout', function(req, res) {
   res.redirect('/');
 })
 
-router.post('/add', function(req, res, next) {
-  console.log("jjjjjj")
-  console.log(req)
 
-  // var newAlgo = funcs.make_algo_obj(req.user.email, "TICK", "RSI", p1, p2, ri, inter, sig)
-
-
-
-  // client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')")
-  // console.log("userstocks added to database.");
-
-  res.render('investments')
-  
-});
 
 module.exports = router;

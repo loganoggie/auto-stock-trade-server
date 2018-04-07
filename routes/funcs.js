@@ -17,16 +17,75 @@ const DEFAULT_URL = 'https://www.alphavantage.co/query?'
 // 	signal: function(){}
 // }
 
-function make_algo_obj(em, ti, ind, p1, p2, ri, inter, sig)
+function make_risk_func_RSI(risk)
+{
+	if (risk == "low")
+	{
+		return function(current_rsi)
+		{
+			if (current_rsi > 20)
+		    {
+		      return "buy"
+		    }
+		    else if (current_ris < 80)
+		    {
+		      return "sell"
+		    }
+		    else
+		    {
+		      return "stay"
+		    }
+		}
+	}
+	else if (risk == "med")
+	{
+		return function(current_rsi)
+		{
+			if (current_rsi > 25)
+		    {
+		      return "buy"
+		    }
+		    else if (current_ris < 75)
+		    {
+		      return "sell"
+		    }
+		    else
+		    {
+		      return "stay"
+		    }
+		}
+	}
+	else if (risk == "high")
+	{
+		return function(current_rsi)
+		{
+			if (current_rsi > 30)
+		    {
+		      return "buy"
+		    }
+		    else if (current_ris < 70)
+		    {
+		      return "sell"
+		    }
+		    else
+		    {
+		      return "stay"
+		    }
+		}
+	}
+}
+
+function make_algo_obj(em, ti, ind, p1, p2, ri, inter, en, sig)
 {
 	var algoObj = {
-	email: em, // to ID the user
+	email: em, // to ID the user if necessary
 	ticker: ti,
 	indicator: ind,
 	param1: p1,
 	param2: p2,
 	risk: ri,
 	interval: inter,
+	enabled: en,
 	signal: function(){}
 	}
 
@@ -34,14 +93,6 @@ function make_algo_obj(em, ti, ind, p1, p2, ri, inter, sig)
 	return algoObj;
 }
 
-// console.log(make_algo_obj('ninjas@mst.edu', 'MST', 'RSI', 20, 80, 0, '1min', function(low, hi) {
-// 	if (this.param1 > 25)
-// 		return 1
-// 	else if (this.param2 < 75)
-// 		return 2
-// 	else
-// 		return 0
-// }))
 
 async function do_alpha_job(getFunc, get_args, doFunc)
 {
@@ -163,3 +214,4 @@ function getTechnical(ind, sym, inter, time, Apikey)
 module.exports.make_algo_obj = make_algo_obj;
 module.exports.do_alpha_job = do_alpha_job;
 module.exports.get_earliest_RSI = get_earliest_RSI;
+module.exports.make_risk_func_RSI = make_risk_func_RSI;
