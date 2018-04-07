@@ -84,8 +84,8 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 
 /*------------------End of queries------------------*/
 
-async function getCurrentUserInfo(id, email, callback) {
-
+async function getCurrentUserInfo(id, email, callback)
+{
   var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email])
 
   callback(userInfo);
