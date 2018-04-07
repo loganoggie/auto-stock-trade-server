@@ -84,18 +84,32 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 
 /*------------------End of queries------------------*/
 
+async function getCurrentUserInfo(id, email, callback)
+{
+  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email])
 
-async function getCurrentUserInfo(id, email) {
-
-  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
-    if (err) {
-      console.log("Error running query 'getCurrentUserInfo'.");
-    } else {
-      console.log(res.rows[0]);
-    }
-  });
-
-  return userInfo;
+  callback(userInfo);
 }
 
+async function getCurrentStockInfo(email, callback)
+{
+  var stockInfo = await client.query("SELECT * FROM userstocks WHERE email = $1", [email])
+
+  callback(stockInfo);
+}
+
+// function getCurrentUserInfo(id, email) {
+
+//   var userInfo = client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
+//     if (err) {
+//       console.log("Error running query 'getCurrentUserInfo'.");
+//     } else {
+//       console.log(res.rows[0]);
+//     }
+//   });
+
+//   return userInfo;
+// }
+
+module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
