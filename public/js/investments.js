@@ -2,9 +2,11 @@
 //For local testing of the functions - these will be gone when the backend is ready to deal with it
 var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
 var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
-var algor = ['beta', 'beta', 'beta', 'beta', 'beta', 'beta']
+var algor = ['BETA', 'BETA', 'BETA', 'BETA', 'BETA', 'Moving Averages']
 var stat = ['active', 'active', 'active', 'active', 'active', 'active']
 var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
+var algoIDs = [1, 2, 3, 4, 5, 6];
+var params = ['med', 'low', 'high', 'low', 'high', '13'];
 
 //var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']//Names of all the algorithms
 
@@ -19,7 +21,7 @@ $.ajax({//Get investments from server
     var json = $.parseJSON(data);
     console.log(json);
     stocks = new Stocks(json.api);//use the API that the node server provides.
-    createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
+    generator.createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status, json.investID, json.params);//create all the tickers for the page once an object is recieved
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce');
@@ -45,7 +47,7 @@ var getText = {
 //-------------------------------END getText NAMESPACE-------------------------------
 
 
-function sleep(ms) {
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -105,15 +107,10 @@ var myModal = {
     params.innerHTML = ''//Reset it back to blank
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
-      if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'low\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'med\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'rsi\' value=\'high\'>' + 'High Risk';
-      }//end if
-      if(this.select.value == this.ALGORITHM_NAME[1]) {//BETA
-        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'low\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'med\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'beta\' value=\'high\'>' + 'High Risk';
+      if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI or BETA
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'low\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'med\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'high\'>' + 'High Risk';
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
         params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
@@ -189,9 +186,88 @@ var myModal = {
   }//end initlaization
 }//end modal Namespace
 //-------------------------------END MODAL NAMESPACE-------------------------------
+//-------------------------------EDIT MODAL-------------------------------
+var edit = {
+
+  ALGORITHM_NAME: ['RSI', 'BETA', 'Moving Averages'],
+  RADIO_GROUP: 'radio',
+  PARAM_RADIO_RISK: ['low', 'med', 'high'],
+  modal: document.getElementById('edit'),
+  investID: document.getElementsByName('investID')[0],//this is the first investID on the page
+  symbol: document.getElementsByName('symbol')[1],
+  close: document.getElementsByClassName('close')[1],//the second closed
+  select: document.getElementsByName('algorithm')[1],
+  index: 0,//generator.investments index
+
+  hideModal: function() {
+    this.modal.style.display = 'none';
+  },
+
+  constructEdit: function(num) {
+    /*num is the index that this investment is located in inside the generator.investments array.*/
+    this.symbol.value = generator.investments[num].symbol;
+    this.investID.value = generator.investments[num].investID;
+    this.select.value = generator.investments[num].algorithm;
+    this.algorithmOnChange();//We changed the algorithm
+    this.getParams(generator.investments[num].param);
+    this.index = num;//for remembering what index we used for this modal.
+    this.modal.style.display = 'block';//Show the modal now
+
+  },//end constructEdit fucntion
+
+  algorithmOnChange: function() {
+    var params = document.getElementById('edit-params')
+    params.innerHTML = ''//Reset it back to blank
+    if(this.select.value != 'default') {
+      //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
+      if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'low\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'med\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'high\'>' + 'High Risk';
+        if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
+          this.getParams(generator.investments[this.index].param);//check that ond value.
+      }//end if
+      if(this.select.value == this.ALGORITHM_NAME[2]) {
+        params.innerHTML += '<input type=\'number\', name=\'days\', placeholder=\'Number of Days\'>'
+        if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
+          this.getParams(generator.investments[this.index].param);//check that ond value
+      }//end if
+    }//end if
+  },
+
+  getParams: function(param) {
+    if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {
+      if(param == this.PARAM_RADIO_RISK[0]) {//low risk
+        document.getElementsByName(this.RADIO_GROUP)[0].checked = true;
+      }//end if the param is low
+      else if(param == this.PARAM_RADIO_RISK[1]) {//med risk
+        document.getElementsByName(this.RADIO_GROUP)[1].checked = true;
+      }//end else param is med
+      else if(param == this.PARAM_RADIO_RISK[2]) {
+        document.getElementsByName(this.RADIO_GROUP)[2].checked = true;
+      }//ense else param is high
+    }//end if this is RSI or BETA
+    if(this.select.value == this.ALGORITHM_NAME[2]) {//moving averages
+      document.getElementsByName('days')[0].value = param;//set it to the days provided in param
+    }
+  },
+
+  modalAlgorithms: function(algorithms) {
+    for(i = 0; i < algorithms.length; i++) {
+      //create the algorithms in the file
+      this.select.innerHTML += '<option value=\'' + algorithms[i] + '\'>' + algorithms[i];
+    }//end for
+  },//end modalAlgorithms
+
+  initializeAlgorithms: function() {
+    this.modalAlgorithms(this.ALGORITHM_NAME);
+  }//end initlaization
+
+}//end modal
+//-------------------------------END EDIT MODAL-------------------------------
 
 
-async function generateInvestment(symbol, investNum, volume, algorithm, status) {
+async function generateInvestment(symbol, investNum, volume, algorithm, status, investID) {
       resultMin(symbol).then(async function(valueMin) {
         try {
           var jsonToday = JSON.stringify(valueMin[0])
@@ -203,12 +279,13 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
             //Display an investment
             investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + '>'
             var investLoc = document.getElementById(investNum)
-            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + symbol + '</span>'
-            investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>  '
-            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + volume +'</span>'
-            investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>'
-            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + algorithm +'</span>'
-            investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>'
+            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + symbol + '</span>';
+            investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>';
+            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + volume +'</span>';
+            investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>';
+            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + algorithm +'</span>';
+            investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>';
+            investLoc.innerHTML += '<span class = \'edit\' onclick=\'edit.constructEdit(' + investNum + ')\'>Edit</span>';
             await sleep(1*1000)//let the API catch up
             sortInvestments()
           }//end if
@@ -217,8 +294,8 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
           }
         }
     catch(err) {
-      console.log("Error: Investment with symbol with " + symbol + " has failed to generate!")
-      console.log("Retrying in 30 seconds")
+      console.log("Error: Investment with symbol with " + symbol + " has failed to generate!");
+      console.log("Retrying in 30 seconds");
       setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
     }
   });
@@ -242,19 +319,26 @@ function sortInvestments() {
     return 0;
   });
 
-  investHolder.innerHTML = ''
+  investHolder.innerHTML = '';
   for(i = 0; i < numInvest; i++) {
-    investClone[i].style.display = 'block'
-    investHolder.appendChild(investClone[i])
+    investClone[i].style.display = 'block';
+    investHolder.appendChild(investClone[i]);
   }
 
 }//end sortInvetments
 
-async function createAllInvestments(symbols, volumes, algorithms, status) {
-  for(i = 0; i < symbols.length; i++) {
-    generateInvestment(symbols[i], i ,volumes[i], algorithms[i], status[i])
-  }//end for
-}//end function createAllInvestments
+var generator = {
+  investments: new Array(),
+  createAllInvestments: async function(symbols, volumes, algorithms, status, algoIDs, params) {
+    for(i = 0; i < symbols.length; i++) {
+      generateInvestment(symbols[i], i ,volumes[i], algorithms[i], status[i]);
+      /*investID is the unique ID for that investment, investNum is the unquite ID that this script generats
+      //so elements on the page have a unique ID. investNum domain: 0<= num < n where n is the number of investments the user has
+      InvestID domain: 0<= id < m, where m is the total number of investments the shite has stored*/
+      this.investments.push({symbol: symbols[i], volume:volumes[i], algorithm: algorithms[i], status: status[i], investID: algoIDs[i], investNum: i, param: params[i]})
+    }//end for
+  }//end function createAllInvestments
+}//end generator object
 
 $('#modalForm').submit(function() {
   if(modal.select.value == "default") {
@@ -297,5 +381,6 @@ $('document').ready( function() {
 
 //modalAlgorithms(ALGORITHM_NAME);//FEED MODAL ALGORITHMS
 myModal.initializeAlgorithms();
-createAllInvestments(tempStocks, volumes, algor, stat)//GENRATE ALL TEMP STOCK DATA
+edit.initializeAlgorithms();//initialize both
+generator.createAllInvestments(tempStocks, volumes, algor, stat, algoIDs, params)//GENRATE ALL TEMP STOCK DATA
 loaded(tempStocks)

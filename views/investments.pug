@@ -21,6 +21,16 @@ block bodyContent
             option(value='default') Select an Algorithm
           div.algorithm-params(id='params')
           input(type='submit', value='Add')
+    //Edit modal
+    div.modal(id='edit')
+        div.modal-content(id='edit-content')
+          span.close(onclick='edit.hideModal()') &times;
+          form(id='editForm', method='POST', action='/edit-algorithm')
+            input(type='text', name='symbol', readonly="readonly")
+            input(type='hidden', name='investID', readonly="readonly")
+            select(name='algorithm', onchange='edit.algorithmOnChange()')
+            div.algorithm-params(id='edit-params')
+            input(type='submit', value='Confirm')
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
