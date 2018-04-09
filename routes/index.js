@@ -54,14 +54,12 @@ router.get('/dashboard', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     res.redirect('/');
-  }
-  else {
-    queries.getCurrentUserInfo(req.user.id, req.user.email).then(function(userInfo) {//wait fo getCurrentUserInfo
-      console.log("Result of Query: " + userInfo);
-      res.render('dashboard');
+  } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
     });
-    //console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
-    //res.render('dashboard');
+    res.render('dashboard');
   }
 });
 
@@ -94,6 +92,11 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    //console.log("Result of Query: " + queries.getCurrentUserStockInfo(req.user.id, req.user.email));
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('investments');
   }
 });
@@ -104,6 +107,10 @@ router.get('/aboutalgorithms', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('aboutalgorithms');
   }
 });
@@ -114,6 +121,10 @@ router.get('/accountsettings', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('accountsettings');
   }
 });
@@ -124,6 +135,10 @@ router.get('/dataanalytics', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('dataanalytics');
   }
 });
