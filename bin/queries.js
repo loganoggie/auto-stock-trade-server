@@ -96,18 +96,5 @@ async function getCurrentStockInfo(email, callback)
   callback(stockInfo);
 }
 
-// function getCurrentUserInfo(id, email) {
-
-//   var userInfo = client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email], (err,res) => {
-//     if (err) {
-//       console.log("Error running query 'getCurrentUserInfo'.");
-//     } else {
-//       console.log(res.rows[0]);
-//     }
-//   });
-
-//   return userInfo;
-// }
-
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;

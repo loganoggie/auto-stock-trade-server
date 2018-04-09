@@ -10,8 +10,11 @@ var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
+console.log(passport);
+console.log(database);
+console.log(queries);
+
 router.get('/', function(req, res, next) {
-  console.log(req.user);
   res.render('splash');
 });
 
