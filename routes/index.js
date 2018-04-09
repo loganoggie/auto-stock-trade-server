@@ -66,10 +66,19 @@ router.get('/dashboard', function(req, res, next) {
 
       req.session.algoArr = [] // initialize the object array
 
+      console.log("PRINTED FROM DASHBOARD INSIDE QUERY")
       console.log(req.session) 
 
       res.render('dashboard');
       });
+
+    console.log("PRINTED FROM DASHBOARD OUTSIDE QUERY")
+    console.log(req.session)
+
+    req.user.test = 0
+    console.log(req.user)
+
+
     
   }
 });
@@ -103,19 +112,22 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    console.log(req.user)
+
 
     queries.getCurrentStockInfo(req.user.email, function(query)
       {
 
         // Do stuff here when we can actually grab rows containing algorithms for 1 person
-
-        for (var i in query.rows)
-        {
-          console.log(i)
-        }
+        console.log(query.rows)
+        // for (var i in query.rows)
+        // {
+        //   console.log(i)
+        // }
         
       });
 
+    console.log("PRINTED IN INVESTMENTS GET")
     console.log(req.session)
 
     res.render('investments');
@@ -128,13 +140,17 @@ router.post('/add', function(req, res, next) {
 
   // The way the database is set up right now, a user can only have 1 algorithm. 
 
-  // client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.id + "','" + req.user.email + 
-  //  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
+  console.log("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.email + 
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
+
+   client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.email + 
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
 
   
   // sloppy, but you get the idea
   var newAlgo = funcs.make_algo_obj(req.user.email, req.body.symbol, req.body.algorithm, 80 , 20, req.body.rsi, "5min", 1, funcs.make_risk_func_RSI(req.body.rsi))
 
+  console.log("PRINTED IN ADD POST")
   req.session.algoArr.push(newAlgo)
 
   console.log(req.session)
