@@ -2,14 +2,14 @@ extends masterPug.pug
 
 block headContent
   link(rel='stylesheet', type='text/css', href='stylesheets/css/aboutalgorithms.css')
-  script(src="js/aboutalgorithms.js")
 
 block bodyContent
-  div.tab-holder 
-    div.tab
-      button(class="tablinks" onclick="openAlgorithm(event, 'BETA')" id="defaultOpen") Beta
-      button(class="tablinks" onclick="openAlgorithm(event, 'RSI')") RSI 
-      button(class="tablinks" onclick="openAlgorithm(event, 'MAVGS')") Moving Averages
+  div.tab-content
+    div.tab-holder 
+      div.tab
+        button(class="tablinks") Beta
+        button(class="tablinks") RSI 
+        button(class="tablinks") Moving Averages
     
     div(class="tab-wrapper" id="BETA")
       div.tab-content-header What is Beta?
@@ -65,4 +65,4 @@ block bodyContent
   
     div(class="tab-wrapper" id="MAVGS")
       div.tab-content-header What are Moving Averages?
-    
+  script(src="js/aboutalgorithms.js")
