@@ -11,9 +11,9 @@ var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
-console.log(passport);
-console.log(database);
-console.log(queries);
+// console.log(passport);
+// console.log(database);
+// console.log(queries);
 
 router.get('/', function(req, res, next) {
   res.render('splash');
@@ -57,7 +57,6 @@ router.get('/dashboard', function(req, res, next) {
     res.redirect('/');
   } else {
     
-    console.log(req.user)
     queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
       
       req.user.id = query.rows[0].id
@@ -70,19 +69,13 @@ router.get('/dashboard', function(req, res, next) {
 
       req.session.algoArr = [] // initialize the object array
 
-      console.log("PRINTED FROM DASHBOARD INSIDE QUERY")
-      console.log(req.session) 
+      // console.log("PRINTED FROM DASHBOARD INSIDE QUERY")
+      // console.log(req.session) 
 
       res.render('dashboard');
       });
 
-    console.log("PRINTED FROM DASHBOARD OUTSIDE QUERY")
-    console.log(req.session)
-
-    req.user.test = 0
-    console.log(req.user)
-
-
+    // console.log("PRINTED FROM DASHBOARD OUTSIDE QUERY")
     
   }
 });
@@ -116,14 +109,12 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    console.log(req.user)
-
 
     queries.getCurrentStockInfo(req.user.email, function(query)
       {
 
-        // Do stuff here when we can actually grab rows containing algorithms for 1 person
-        console.log(query.rows)
+        // Do stuff here when we can actually grab rows containing stocks/algorithms for 1 person
+        // console.log(query.rows)
         // for (var i in query.rows)
         // {
         //   console.log(i)
@@ -131,8 +122,8 @@ router.get('/investments', function(req, res, next) {
         
       });
 
-    console.log("PRINTED IN INVESTMENTS GET")
-    console.log(req.session)
+    // console.log("PRINTED IN INVESTMENTS GET")
+    // console.log(req.session)
 
     res.render('investments');
   }
@@ -140,12 +131,10 @@ router.get('/investments', function(req, res, next) {
 
 router.post('/add', function(req, res, next) {
 
-  // UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): error: duplicate key value violates unique constraint "userstocks_pkey"
 
-  // The way the database is set up right now, a user can only have 1 algorithm. 
 
-  console.log("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.email + 
-    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
+  // console.log("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.email + 
+  //   "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
 
    client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.user.email + 
     "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.rsi + "','" + 1 + "')")
@@ -156,6 +145,8 @@ router.post('/add', function(req, res, next) {
 
   console.log("PRINTED IN ADD POST")
   req.session.algoArr.push(newAlgo)
+
+  investment.generateInvestment(req.body.symbol, 3, req.body.volume, req.body.algorithm, "active")
 
   console.log(req.session)
 
