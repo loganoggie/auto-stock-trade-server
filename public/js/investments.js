@@ -26,14 +26,14 @@ $.ajax({//Get investments from server
     var json = $.parseJSON(data);
     console.log(json);
     stocks = new Stocks(json.api)//use the API that the node server provides.
-    createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
+    //createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce')
   }//end error
 });
 
-$.get('text/nasdaqlisted.txt', function(data) {//map the fiirst list
+$.get('text/nasdaqlisted.txt', function(data) {//map the first list
   var text = data.split('\n')
   injectText(text)
 }, 'text');
@@ -114,6 +114,7 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status) 
 }//end generateInvestment
 
 function sortInvestments() {
+  console.log();
   var investClone = [];
   var investHolder = document.getElementById('investments');
   var investments = document.getElementsByClassName('invest-holder');//get array of all the investments

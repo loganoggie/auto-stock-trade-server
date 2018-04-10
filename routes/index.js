@@ -10,9 +10,9 @@ var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
-console.log(passport);
-console.log(database);
-console.log(queries);
+// console.log(passport);
+// console.log(database);
+// console.log(queries);
 
 router.get('/', function(req, res, next) {
   res.render('splash');
@@ -84,6 +84,14 @@ router.get('/tick-get', function(req, res, next) {
   res.json(JSON.stringify(myObj));
 });
 
+router.get('/investments-get', function(req, res, next) {
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    console.log(req.session);
+    res.json(JSON.stringify(req.session));
+  });
+});
+
 //--------------------------------------------------------------END OF EXAMPLES --------------------------------------------------------
 
 router.get('/investments', function(req, res, next) {
@@ -97,7 +105,11 @@ router.get('/investments', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
-    res.render('investments');
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows[0];
+      console.log(req.session);
+    });
+    res.render('investments', req);
   }
 });
 
