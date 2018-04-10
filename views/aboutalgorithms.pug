@@ -2,17 +2,14 @@ extends masterPug.pug
 
 block headContent
   link(rel='stylesheet', type='text/css', href='stylesheets/css/aboutalgorithms.css')
-  script(src="js/aboutalgorithms.js")
 
 block bodyContent
-  div.tab-holder 
-    div.tab
-      button(class="tablinks" onclick="openAlgorithm(event, 'BETA')" id="defaultOpen") Beta
-      button(class="tablinks" onclick="openAlgorithm(event, 'RSI')") RSI 
-      button(class="tablinks" onclick="openAlgorithm(event, 'MACD')") MACD
-      button(class="tablinks" onclick="openAlgorithm(event, 'SHORT')") MV Short
-      button(class="tablinks" onclick="openAlgorithm(event, 'LONG')") MV Long
-      button(class="tablinks" onclick="openAlgorithm(event, 'TREND')") Trend
+  div.tab-content
+    div.tab-holder 
+      div.tab
+        button(class="tablinks") Beta
+        button(class="tablinks") RSI 
+        button(class="tablinks") Moving Averages
     
     div(class="tab-wrapper" id="BETA")
       div.tab-content-header What is Beta?
@@ -66,61 +63,18 @@ block bodyContent
       div.tab-content-footer Check out Investopedia's page on RSI 
         a(href='https://www.investopedia.com/terms/r/rsi.asp') here
   
-    div(class="tab-wrapper" id="MACD")
-      div.tab-content-header What is MACD and how is it used?
-      div.tab-content-body MACD stands for "Moving Average Convergence Divergence". Developed by 
-        | Gerald Appel in the late seventies, MACD is a trend-following momentum indicator that shows 
-        | the relationship between two moving averages of prices. The MACD is calculated by subtracting 
-        | the 26-day exponential moving average (EMA) from the 12-day EMA. A nine-day EMA of the MACD, 
-        | called the "signal line", is then plotted on top of the MACD, functioning as a trigger for buy 
-        | and sell signals. As its name implies, the MACD is all about the convergence and divergence of 
-        | the two moving averages. Convergence occurs when the moving averages move towards each other. 
-        | Divergence occurs when the moving averages move away from each other. The shorter moving 
-        | average (12-day EMA) is faster and responsible for most MACD movements. The longer moving 
-        | average (26-day EMA) is slower and less reactive to price changes in the underlying security.
-      div.tab-content-header Signal Line Crossovers:
-      div.tab-content-body Signal line crossovers are the most common MACD signals. The signal line is 
-        | a 9-day EMA of the MACD Line. As a moving average of the indicator, it trails the MACD and 
-        | makes it easier to spot MACD turns. A bullish crossover occurs when the MACD turns up and 
-        | crosses above the signal line. A bearish crossover occurs when the MACD turns down and crosses 
-        | below the signal line. Crossovers can last a few days or a few weeks, it all depends on the 
-        | strength of the move.
-      div.tab-content-header Centerline Crossovers:
-      div.tab-content-body Centerline crossovers are the next most common MACD signals. A bullish 
-        | centerline crossover occurs when the MACD Line moves above the zero line to turn positive. 
-        | This happens when the 12-day EMA of the underlying security moves above the 26-day EMA. A 
-        | bearish centerline crossover occurs when the MACD moves below the zero line to turn negative. 
-        | This happens when the 12-day EMA moves below the 26-day EMA. Centerline crossovers can last a 
-        | few days or a few months. It all depends on the strength of the trend. The MACD will remain 
-        | positive as long as there is a sustained uptrend. The MACD will remain negative when there is 
-        | a sustained downtrend.
-      div.tab-content-header Divergences:
-      div.tab-content-body Divergences form when the MACD diverges from the price action of the underlying 
-        | security. A bullish divergence forms when a security records a lower low and the MACD forms a 
-        | higher low. The lower low in the security affirms the current downtrend, but the higher low in 
-        | the MACD shows less downside momentum. Despite less downside momentum, downside momentum is still 
-        | outpacing upside momentum as long as the MACD remains in negative territory. Slowing downside 
-        | momentum can sometimes foreshadow a trend reversal or a sizable rally.
-      div.tab-content-footer Check out Investopedia's page on MACD 
-        a(href='https://www.investopedia.com/walkthrough/forex/intermediate/level4/macd.aspx') here
-
-    div(class="tab-wrapper" id="SHORT")
-      div.tab-content-header What is Moving Averages "Short"?
-    
-    div(class="tab-wrapper" id="LONG")
-      div.tab-content-header What is Movind Averages "Long"?
-    
-    div(class="tab-wrapper" id="TREND")
-      div.tab-content-header What is a "Trend"?
-      div.tab-content-body The trend is the general direction of a market or of the price of a security. In 
-        | technical analysis, trends are identified by trend lines that connect a series of highs or lows. 
-        | Most traders trade in the same direction as a trend, while contrarians seek to identify reversals. 
-        | Trends can also apply to interest rates, bond yields, and other markets where they're characterized 
-        | by a long-term movement in price or volume.
-      div.tab-content-header How are Trend Lines used?
-      div.tab-content-body As stated above, trend lines connect a series of highs or lows. Uptrends connect a 
-        | series of higher lows, creating a key support level for future price movements. Downtrends connect 
-        | a series of lower highs, creating a key resistance level for future price movements. In addition to 
-        | support and resistance, these trend lines show the overall direction of the trend. 
-      div.tab-content-footer Check out Investopedia's page on Trends 
-        a(href='https://www.investopedia.com/terms/t/trend.asp') here
+    div(class="tab-wrapper" id="MAVGS")
+      div.tab-content-header What are Moving Averages?
+      div.tab-content-body A moving average (MA) is a commonly used technical indicator that is intended 
+        | to smooth out price action by filtering out "noise" caused by random price fluctuations. It is 
+        | considered a trend-following indicator because it is based on past prices. Moving Averages are 
+        | the basis for many different strategies, but for this program, we'll just be utilizing a Simple 
+        | Moving Average.
+      div.tab-content-header How does a Simple Moving Average work?
+      div.tab-content-body A Simple Moving Average is a customizable arithmetic moving average that is  
+        | calculated by adding the closing price of the security for a number of time periods, and then 
+        | dividing that sum by the total number of time periods. This gives the average price of the 
+        | security over the time period...
+      div.tab-content-footer Check out Investopedia's page on Simple Moving Averages 
+        a(href='https://www.investopedia.com/terms/s/sma.asp') here
+  script(src="js/aboutalgorithms.js")

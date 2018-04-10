@@ -9,10 +9,14 @@
 *****************/
 
 .tab-holder {
-    position: absolute;
-    padding-left: 25%;
     margin: 0 auto;
-    width: 984px;
+    width: 580px;
+}
+
+.tab-content {
+    width: 75%;
+    margin: 0 auto;
+    
 }
 
 .tab {
@@ -49,7 +53,6 @@
 .tab-wrapper {
     display: none;
     padding: 10px 50px;
-    border: 1px solid #ccc;
     border-top: none;
 }
 
@@ -74,4 +77,9 @@
     font-family: sans-serif;
     font-size: 0.85em;
     text-align: center;
+}
+
+.active {
+    background-color: #43a047;
+    color: #F2F7F2;
 }
