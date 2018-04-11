@@ -14,6 +14,10 @@ console.log(passport);
 console.log(database);
 console.log(queries);
 
+router.get('/test', function(req, res, next) {
+  res.render('test');
+})
+
 router.get('/', function(req, res, next) {
   res.render('splash');
 });
