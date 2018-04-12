@@ -85,10 +85,13 @@ router.get('/tick-get', function(req, res, next) {
 });
 
 router.get('/investments-get', function(req, res, next) {
-  queries.getCurrentStockInfo(req.user.email, function(query){
-    req.session.stockInfo=query.rows;
-    console.log(req.session);
-    res.json(JSON.stringify(req.session));
+  queries.getCurrentStockInfo(req.user.email, function(queryStock){
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
+      req.session.stockInfo=queryStock.rows;
+      req.session.userInfo=queryUser.rows[0];
+      console.log(req.session);
+      res.json(JSON.stringify(req.session));
+    });
   });
 });
 

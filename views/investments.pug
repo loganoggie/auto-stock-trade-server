@@ -28,6 +28,8 @@ block bodyContent
           form(id='editForm', method='POST', action='/edit-algorithm')
             input(type='text', name='symbol', readonly="readonly")
             input(type='hidden', name='investID', readonly="readonly")
+            //Div to hold volumeBox and its label
+            input(type='number', name='volume' volumeOnChange='edit.volumeOnChange()')
             select(name='algorithm', onchange='edit.algorithmOnChange()')
             div.algorithm-params(id='edit-params')
             input(type='submit', value='Confirm')

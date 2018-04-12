@@ -1,32 +1,11 @@
 //assume that stocks.js is included
 //For local testing of the functions - these will be gone when the backend is ready to deal with it
-var stocks = new Stocks('QSZQSTA7ZLPXTAZO');//AlphaVantage API Key
-var tempStocks = ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
-var algor = ['BETA', 'BETA', 'BETA', 'BETA', 'BETA', 'Moving Averages']
-var stat = ['active', 'active', 'active', 'active', 'active', 'active']
-var volumes = [40, 80, 20, 32, 76, 135]//Volumes of stocks
-var algoIDs = [1, 2, 3, 4, 5, 6];
-var params = ['med', 'low', 'high', 'low', 'high', '13'];
 
 //var ALGORITHM_NAME = ['RSI', 'BETA', 'Moving Averages']//Names of all the algorithms
 
 //LOOKUP stuff
 
 //Modal stuff
-
-$.ajax({//Get investments from server
-  url: '/investments-get',
-  dataType: 'json',
-  success: function(data) {
-    var json = $.parseJSON(data);
-    console.log(json);
-    stocks = new Stocks(json.api)//use the API that the node server provides.
-    //createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
-  },//end success
-  error: function(data) {
-    console.log('Error in AJAX responce');
-  }//end error
-});
 
 //-------------------------------getText NAMESPACE-------------------------------
 var getText = {
@@ -65,7 +44,8 @@ async function resultMin(tickerID) {//
 var myModal = {
   lookupBox: document.getElementsByName('lookup')[0],
   symbols: [[],[]],
-  ALGORITHM_NAME: ['RSI', 'BETA', 'Moving Averages'],
+  ALGORITHM_NAME: ['RSI', 'Beta', 'Moving Averages'],
+  PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
 
   modal: document.getElementById('modal'),
   bttn: document.getElementById('add'),//The Add Button
@@ -108,9 +88,9 @@ var myModal = {
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
       if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI or BETA
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'low\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'med\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'high\'>' + 'High Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[0] + '\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[1] + '\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[2] + '\'>' + 'High Risk';
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
         params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
@@ -189,12 +169,13 @@ var myModal = {
 //-------------------------------EDIT MODAL-------------------------------
 var edit = {
 
-  ALGORITHM_NAME: ['RSI', 'BETA', 'Moving Averages'],
+  ALGORITHM_NAME: ['RSI', 'Beta', 'Moving Averages'],
   RADIO_GROUP: 'radio',
-  PARAM_RADIO_RISK: ['low', 'med', 'high'],
+  PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
   modal: document.getElementById('edit'),
   investID: document.getElementsByName('investID')[0],//this is the first investID on the page
   symbol: document.getElementsByName('symbol')[1],
+  volume: document.getElementsByName('volume')[1],//this is the second box called volume
   close: document.getElementsByClassName('close')[1],//the second closed
   select: document.getElementsByName('algorithm')[1],
   index: 0,//generator.investments index
@@ -207,7 +188,16 @@ var edit = {
     /*num is the index that this investment is located in inside the generator.investments array.*/
     this.symbol.value = generator.investments[num].symbol;
     this.investID.value = generator.investments[num].investID;
-    this.select.value = generator.investments[num].algorithm;
+    this.volume.value = generator.investments[num].volume;
+    if(generator.investments[num].algorithm == this.ALGORITHM_NAME[0])//if we have RSI selected
+      this.select.value = this.ALGORITHM_NAME[0];
+    else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[1])//if we have Beta selected
+      this.select.value = this.ALGORITHM_NAME[1];
+    else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[2])
+      this.select.value = this.ALGORITHM_NAME[2];
+    else {
+
+    }//The algorithm name didn't match anything.
     this.algorithmOnChange();//We changed the algorithm
     this.getParams(generator.investments[num].param);
     this.index = num;//for remembering what index we used for this modal.
@@ -221,9 +211,9 @@ var edit = {
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
       if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'low\'>' + 'Low Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'med\'>' + 'Medium Risk';
-        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'high\'>' + 'High Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[0] + '\'>' + 'Low Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[1] + '\'>' + 'Medium Risk';
+        params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[2] + '\'>' + 'High Risk';
         if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
           this.getParams(generator.investments[this.index].param);//check that ond value.
       }//end if
@@ -267,23 +257,26 @@ var edit = {
 //-------------------------------END EDIT MODAL-------------------------------
 
 
-async function generateInvestment(symbol, investNum, volume, algorithm, status, investID) {
-      resultMin(symbol).then(async function(valueMin) {
+async function generateInvestment(stockData, investNum) {
+      resultMin(stockData.stockticker).then(async function(valueMin) {
         try {
           var jsonToday = JSON.stringify(valueMin[0])
           if(jsonToday != undefined) {
             var today = JSON.parse(jsonToday)
             var investHolder = document.getElementById('investments')
             var price = Number(today.close).toFixed(2)
-            var share = (price*volume).toFixed(2)
+            var share = (price*stockData.numstocks).toFixed(2)
+            var status = "active";
+            if(stockData.enabled != '1')//maybe remove later
+              status = "inactive";
             //Display an investment
             investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + '>'
             var investLoc = document.getElementById(investNum)
-            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + symbol + '</span>';
+            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + stockData.stockticker + '</span>';
             investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>';
-            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + volume +'</span>';
+            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + stockData.numstocks +'</span>';
             investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>';
-            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + algorithm +'</span>';
+            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + stockData.algorithm +'</span>';
             investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>';
             investLoc.innerHTML += '<span class = \'edit\' onclick=\'edit.constructEdit(' + investNum + ')\'>Edit</span>';
             await sleep(1*1000)//let the API catch up
@@ -294,9 +287,10 @@ async function generateInvestment(symbol, investNum, volume, algorithm, status, 
           }
         }
     catch(err) {
-      console.log("Error: Investment with symbol with " + symbol + " has failed to generate!");
+      console.log("Error: Investment with symbol with " + stockData.stockticker + " has failed to generate!");
       console.log("Retrying in 30 seconds");
-      setTimeout(generateInvestment.bind(null, symbol, investNum, volume, algorithm, status, 30*1000))
+      console.log(err);
+      setTimeout(generateInvestment.bind(null, stockData, investNum), 30*1000)
     }
   });
 }//end generateInvestment
@@ -330,13 +324,13 @@ function sortInvestments() {
 
 var generator = {
   investments: new Array(),
-  createAllInvestments: async function(symbols, volumes, algorithms, status, algoIDs, params) {
-    for(i = 0; i < symbols.length; i++) {
-      generateInvestment(symbols[i], i ,volumes[i], algorithms[i], status[i]);
+  createAllInvestments: async function(stockData) {
+    for(i = 0; i < stockData.length; i++) {
+      generateInvestment(stockData[i], i);
       /*investID is the unique ID for that investment, investNum is the unquite ID that this script generats
       //so elements on the page have a unique ID. investNum domain: 0<= num < n where n is the number of investments the user has
       InvestID domain: 0<= id < m, where m is the total number of investments the shite has stored*/
-      this.investments.push({symbol: symbols[i], volume:volumes[i], algorithm: algorithms[i], status: status[i], investID: algoIDs[i], investNum: i, param: params[i]})
+      this.investments.push({symbol: stockData[i].stockticker, volume: stockData[i].numstocks, algorithm: stockData[i].algorithm, status: stockData[i].enabled, investID: stockData[i].id, investNum: i, param: stockData[i].params})
     }//end for
   }//end function createAllInvestments
 }//end generator object
@@ -378,10 +372,27 @@ function loaded(symbols) {//sees if all the symbols are loaded on the page
 $('document').ready( function() {
   getText.nasdaq();
   getText.other();
+
+  $.ajax({//Get investments from server
+    url: '/investments-get',
+    dataType: 'json',
+    success: function(data) {
+      var json = $.parseJSON(data);
+      console.log(json);
+      stocks = new Stocks(json.userInfo.avkey)//use the API that the node server provides.
+      console.log(json.stockInfo.length);
+      generator.createAllInvestments(json.stockInfo);
+      //createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
+    },//end success
+    error: function(data) {
+      console.log('Error in AJAX responce');
+    }//end error
+  });
+
 });
 
 //modalAlgorithms(ALGORITHM_NAME);//FEED MODAL ALGORITHMS
 myModal.initializeAlgorithms();
 edit.initializeAlgorithms();//initialize both
-generator.createAllInvestments(tempStocks, volumes, algor, stat, algoIDs, params)//GENRATE ALL TEMP STOCK DATA
-loaded(tempStocks)
+//generator.createAllInvestments(tempStocks, volumes, algor, stat, algoIDs, params)//GENRATE ALL TEMP STOCK DATA
+//loaded(tempStocks)
