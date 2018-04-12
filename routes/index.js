@@ -10,8 +10,11 @@ var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
 
+// console.log(passport);
+// console.log(database);
+// console.log(queries);
+
 router.get('/', function(req, res, next) {
-  console.log(req.user);
   res.render('splash');
 });
 
@@ -52,9 +55,10 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
-    // BUG -- queries.getCurrentUserInfo cannot return the needed info because client.query is an async
-    // function. Promises need to be implemented to return needed data when available.
-    console.log("Result of Query: " + queries.getCurrentUserInfo(req.user.id, req.user.email));
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('dashboard');
   }
 });
@@ -80,6 +84,14 @@ router.get('/tick-get', function(req, res, next) {
   res.json(JSON.stringify(myObj));
 });
 
+router.get('/investments-get', function(req, res, next) {
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    console.log(req.session);
+    res.json(JSON.stringify(req.session));
+  });
+});
+
 //--------------------------------------------------------------END OF EXAMPLES --------------------------------------------------------
 
 router.get('/investments', function(req, res, next) {
@@ -88,7 +100,16 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    res.render('investments');
+    //console.log("Result of Query: " + queries.getCurrentUserStockInfo(req.user.id, req.user.email));
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows[0];
+      console.log(req.session);
+    });
+    res.render('investments', req);
   }
 });
 
@@ -98,6 +119,10 @@ router.get('/aboutalgorithms', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('aboutalgorithms');
   }
 });
@@ -108,6 +133,10 @@ router.get('/accountsettings', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('accountsettings');
   }
 });
@@ -118,6 +147,10 @@ router.get('/dataanalytics', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
     res.render('dataanalytics');
   }
 });
