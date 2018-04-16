@@ -2,8 +2,6 @@ extends masterPug.pug
 
 block headContent
   link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
-  script(src='js/stocks.js')
-  script(src='js/investments.js')
 
 block investmentsLink
   li.nav-item.active
@@ -11,22 +9,34 @@ block investmentsLink
 
 block bodyContent
   div.investments
-    button(type='button', id='add') Add
+    button(type='button', id='add', onclick='myModal.showModal()') Add
     //A Modal
-    div.modal(id='myModal')
+    div.modal(id='modal')
       div.modal-content(id='modal-content')
-        span.close &times;
+        span.close(onclick='myModal.hideModal()') &times;
         form(id='modalForm', method="POST", action="/add")
-          input(type='text', name='lookup', placeholder='Company Name')
+          input(type='text', name='lookup', placeholder='Company Name', oninput='myModal.lookupOnInput()')
           div.select(id='results')
-          input(type='text', name='symbol', placeholder='Symbol', disabled)
-          input(type='number', name='volume', onchange='volumeOnChange()', placeholder='Volume')
+          input(type='text', name='symbol', placeholder='Symbol', readonly="readonly")
+          input(type='number', name='volume', onchange='myModal.volumeOnChange()', placeholder='Volume')
           span(id='priceConversion')
           //algorithm delection stuff is generated dynamically
-          select(name='algorithm')
+          select(name='algorithm', onchange='myModal.algorithmOnChange()')
             option(value='default') Select an Algorithm
           div.algorithm-params(id='params')
           input(type='submit', value='Add')
+    //Edit modal
+    div.modal(id='edit')
+        div.modal-content(id='edit-content')
+          span.close(onclick='edit.hideModal()') &times;
+          form(id='editForm', method='POST', action='/edit-algorithm')
+            input(type='text', name='symbol', readonly="readonly")
+            input(type='hidden', name='investID', readonly="readonly")
+            //Div to hold volumeBox and its label
+            input(type='number', name='volume' volumeOnChange='edit.volumeOnChange()')
+            select(name='algorithm', onchange='edit.algorithmOnChange()')
+            div.algorithm-params(id='edit-params')
+            input(type='submit', value='Confirm')
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
@@ -39,6 +49,6 @@ block bodyContent
         span.algorithm Algorithm
         span.status Status
       div.holders(id='investments')
-  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
   script(src='js/stocks.js')
   script(src='js/investments.js')
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
