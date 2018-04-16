@@ -21,28 +21,28 @@ html {
 .account-standing {
     width: 100%;
     min-width: 400px;
-    margin-bottom: 20px;
     text-align: center;
+    /* background-color: cyan; */
 }
 
-.account-standing-label {
-    font-size: 2em;
-    line-height: 1.7em;
-    padding: 0;
-    margin: 0;
-}
-
-.account-analytics-heading, .suggested-actions-heading {
+.account-standing-label, .suggested-actions-heading {
     height: 50px;
     text-align: center;
     font-size: 1.75em;
-    margin-bottom: 30px;
     /* background-color: yellow; */
 }
 
 .account-analytics {
     margin: 0 auto;
     margin-top: 30px;
+    /* background-color: green; */
+}
+
+.auxillary-analytics {
+    margin: 0 auto;
+    /* margin-top: 30px; */
+    padding-top: 30px;
+    /* background-color: cyan; */
 }
 
 .account-graph-holder {
@@ -50,16 +50,16 @@ html {
     min-height: 300px;
     max-width: 800px;
     min-width: 400px;
-    margin-top: 30px;
+    /* margin-top: 30px; */
 }
 
 .account-graph-holder2 {
+    /* background-color: cyan; */
     margin: 0 auto;
     min-height: 300px;
     max-width: 800px;
     min-width: 400px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    /* margin-top: 30px; */
 }
 
 .suggested-actions-wrapper {
@@ -85,29 +85,36 @@ html {
 }
 
 .suggested-action {
+    position: relative;
     width: 100%;
     height: 50px;
+    border-bottom: 1px solid lightgrey;
+    box-sizing: border-box;
 }
 
-.suggested-action:nth-child(odd) {
-    background-color: lightgray;
+.suggested-action-ticker {
+
+}
+
+.suggested-action:last-child {
+    border: none;   
 }
 
 .suggested-action:nth-child(even) {
-    background-color: white;
+    /* background-color: black; */
 }
 
 .investment-link-wrapper {
     text-align: center;
     margin: 0 auto;
-    margin-bottom: 30px;
-    min-height: 150px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     /* background-color: rgb(0, 255, 34); */
 }
 
 .investment-verbage {
     display: block;
-    line-height: 100px;
+    line-height: 70px;
     font-size: 1.2em;
 }
 
@@ -115,6 +122,7 @@ html {
     display: block;
     margin: 0 auto;
     width: 200px;
+    height: 50px;
     line-height: 50px;
     color: white;
     text-decoration: none;
@@ -139,18 +147,22 @@ html {
     }
 
     .account-analytics {
+        float: left;
         margin-top: 30px;
+    }
+
+    .auxillary-analytics {
+        display: block;
+        clear: both;
+        width: 100%;
+        padding-top: 50px;
+        /* background-color: green; */
     }
 
     .account-graph-holder, .account-graph-holder2 {
         width: 90%;
         margin: 0 auto;
-        margin-bottom: 30px;
-    }
-
-    .account-analytics {
-        margin-top: 30px;
-        float: left;
+        /* margin-bottom: 30px; */
     }
 
     .suggested-actions-wrapper, .investment-link-wrapper {
@@ -159,5 +171,9 @@ html {
     
     .suggested-actions-wrapper {
         margin-top: 30px;
+    }
+
+    .investment-link-wrapper {
+        clear: right;
     }
 }

@@ -8,24 +8,14 @@ block dashboardLink
     a.nav-link(href="/dashboard") Dashboard 
 
 block bodyContent
-  div.navbar-content-spacer
-  div.account-standing
-    p.account-standing-label Account Standing: 
-      span.account-standing-value $10,000
-  div.content-divider 
   div.account-analytics
-    h1.account-analytics-heading Account Analytics
+    div.account-standing
+      h1.account-standing-label Account Standing:
+        span.account-standing-value  $10,000
     div.account-graph-holder
       script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
       div.account-graph
         canvas(id='folio-value', height='600', width='800')
-        //Import the chart.js library
-        script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
-        script(src='js/dash-chart.js')
-    div.account-graph-holder2
-      script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-      div.account-graph
-        canvas(id='folio-value2', height='600', width='800')
         //Import the chart.js library
         script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
         script(src='js/dash-chart.js')
@@ -41,16 +31,16 @@ block bodyContent
       div.suggested-action
       div.suggested-action
       div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
   div.investment-link-wrapper
     p.investment-verbage Want to edit your current investments?
       a.investment-link(href='/investments') Click Here!
+  div.auxillary-analytics
+    div.account-graph-holder2
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+      div.account-graph
+        canvas(id='folio-value2', height='600', width='800')
+        //Import the chart.js library
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
+        script(src='js/dash-chart.js')
   //- div.current-investment-wrapper
   //-   div.current-investment-feed
