@@ -4,11 +4,15 @@ block headContent
     link(rel='stylesheet',type='text/css', href='stylesheets/css/accountSettings.css')
     script(src="js/accountSettings.js")
 
+block accountSettingsLink
+    li.nav-item.active
+        a.nav-link(href="/accountsettings") Settings
+
 block bodyContent
     div.settings-accordion-menu
         h3.accordion-header Password Settings
         div.accordion-section-contents
-            form.change-password-form
+            form.change-password-form(method="POST", action="/updatePassword")
                 p.change-pwd-field-label Current Password:
                 input(type='text', name="currentPassword", class='pwdSettingsTxtBox')
                 p.change-pwd-field-label New Password:

@@ -31,20 +31,27 @@ head
     block headContent
 
 body
-    nav.navbar.navbar-expand-md.navbar-dark.myNavbarTheme
+    nav.navbar.navbar-expand-md.navbar-dark.myNavbarTheme.fixed-top
         a.navbar-brand.myFolio-brand(href="#") myFolio
         button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
             span.navbar-toggler-icon
         #navbarSupportedContent.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
-                li.nav-item.active
-                    a.nav-link(href="#") Dashboard 
-                li.nav-item
-                    a.nav-link(href="#") Investments
-                li.nav-item
-                    a.nav-link(href="#") About Algorithms
-                li.nav-item
-                    a.nav-link(href="#") Settings
+                block dashboardLink
+                    li.nav-item
+                        a.nav-link(href="/dashboard") Dashboard 
+                block investmentsLink
+                    li.nav-item
+                        a.nav-link(href="/investments") Investments
+                block aboutAlgorithmsLink
+                    li.nav-item
+                        a.nav-link(href="/aboutalgorithms") About Algorithms
+                block accountSettingsLink
+                    li.nav-item
+                        a.nav-link(href="/accountsettings") Settings
+                block logoutLink
+                    li.nav-item
+                        a.nav-link(href="/logout") Logout
     div.content-wrapper
 
         //where the body contents of the pages will go:
