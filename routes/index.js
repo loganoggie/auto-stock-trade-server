@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
   res.render('splash');
 });
 
-router.post('/login', passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/'}));
+router.post('/login', passport.authenticate('local-login', {successRedirect: '/dashboard', failureRedirect: '/'}));
 
 router.post('/register', function(req, res, next) {
 
@@ -51,16 +51,15 @@ router.post('/register', function(req, res, next) {
     console.log(hash);
 
     client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+hash+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
-    if(err)
-    {
-      throw err;
-      console.log("in here");
-    }
-    else
-    {
-      console.log('dashboard'); //pass the user in optional parameters
-    }
-    client.end();
+      if(err)
+      {
+        throw err;
+        console.log("in here");
+      }
+      else
+      {
+        console.log("User insertion successful.");
+      }
     });
   }
   res.redirect('/')

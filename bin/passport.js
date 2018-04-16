@@ -12,7 +12,7 @@ var {client} = require('./database.js');
 
 
 
-passport.use(new LocalStrategy({session: true}, function(email, password, cb) {
+passport.use('local-login', new LocalStrategy({session: true}, function(email, password, cb) {
   client.query("SELECT id, email, password FROM users WHERE email = $1", [email], (err, result) => {
     if(err) {
       console.log('Error when selecting user on login', err)
