@@ -43,9 +43,13 @@ async function resultMin(tickerID) {//
 //-------------------------------MODAL NAMESPACE-------------------------------
 var myModal = {
   lookupBox: document.getElementsByName('lookup')[0],
-  symbols: [[],[]],
+  company: {
+    symbol_name: [[],[]],
+    type: []
+  },
   ALGORITHM_NAME: ['RSI', 'Beta', 'Moving Averages'],
   PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
+  ACCEPTED_TYPES: ['common', 'ordinary', 'portfolio', 'equity Fund', 'etf', 'depositary shares'],
 
   modal: document.getElementById('modal'),
   bttn: document.getElementById('add'),//The Add Button
@@ -55,8 +59,9 @@ var myModal = {
 
   injectText: function(data) {
     for(i = 1; i < data.length; i++) {
-      this.symbols[0].push(String(data[i].split('|')[0]));//get company symbol
-      this.symbols[1].push(String(String(data[i].split('|')[1]).split('-')[0]));//get company name
+      this.company.symbol_name[0].push(String(data[i].split('|')[0]));//get company symbol
+      this.company.symbol_name[1].push(String(String(data[i].split('|')[1]).split('-')[0]));//get company name
+      this.company.type.push(String(String(data[i].split('|')[1]).split('-')))//Check of this is a common stock
     }//end for
   },//end injectText
 
@@ -69,7 +74,7 @@ var myModal = {
   },//end if
 
   get: function(index) {
-    document.getElementsByName('symbol')[0].value = this.symbols[0][index]
+    document.getElementsByName('symbol')[0].value = this.company.symbol_name[0][index]
     this.volumeBox.value = '';//reset value
     this.volumeOnChange();
   },
@@ -104,10 +109,11 @@ var myModal = {
     div.innerHTML = ''
     var counter = 0;
     if(this.lookupBox.value != '') {
-      for(i = 0; i < this.symbols[0].length; i++) {//I just need one of the two for this
-        if(this.isSubString(this.lookupBox.value, this.symbols[1][i]) && counter <= OUTPUT_MAX) {
+      for(i = 0; i < this.company.symbol_name[0].length; i++) {//I just need one of the two for this
+        if(this.isSubString(this.lookupBox.value, this.company.symbol_name[1][i]) && counter <= OUTPUT_MAX) {
           counter++;
-          div.innerHTML += '<span id=' + i + ' class=\'optn\' onclick=\'myModal.get(' + i + ')\'>' + this.symbols[0][i] + ' - ' + this.symbols[1][i] + '</span></br>';
+          if(new RegExp(this.ACCEPTED_TYPES.join("|")).test(this.company.type[i].toLowerCase()))//If the index is -1, type is does not contain
+            div.innerHTML += '<span id=' + i + ' class=\'optn\' onclick=\'myModal.get(' + i + ')\'>' + this.company.symbol_name[0][i] + ' - ' + this.company.symbol_name[1][i] + '</span></br>';
         }//end if
       }//end for
     }//end i
