@@ -16,7 +16,9 @@ block bodyContent
       script(src='js/dash-chart.js')
   div.tickers
     span(id='warn')
-    span(id='load')
+    span(id='load') Loading Data...
+    button(type='button' onclick='namespace.prevTickers()') Previous
+    button(type='button' onclick='namespace.nextTickers()') Next
     div.tick(id='tick')
     script(src='js/stocks.js')
     script(src='js/ticker.js')
