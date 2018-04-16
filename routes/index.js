@@ -1,4 +1,5 @@
 // Global Module Handling -----------------------------------------------
+var bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
 //-----------------------------------------------------------------------
@@ -14,19 +15,28 @@ var pool = database.pool;
 // console.log(database);
 // console.log(queries);
 
+router.get('/test', function(req, res, next) {
+  res.render('test');
+})
+
 router.get('/', function(req, res, next) {
   res.render('splash');
 });
 
-router.post('/login', passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/'}));
+router.post('/login', passport.authenticate('local-login', {successRedirect: '/dashboard', failureRedirect: '/'}));
 
 router.post('/register', function(req, res, next) {
 
   var fName = req['body']['first'];
   var lName = req['body']['last'];
   var email = req['body']['email'];
-  var pass1 = req['body']['password'][0];
-  var pass2 = req['body']['password'][1];
+  var pass1 = req['body']['rpassword'];
+  var pass2 = req['body']['crpassword'];
+
+  console.log("Pass1:" + pass1);
+  console.log("Pass2:" + pass2);
+
+
 
   if(pass1!=pass2)
   {
@@ -34,20 +44,25 @@ router.post('/register', function(req, res, next) {
   }
   else
   {
-    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
-    if(err)
-    {
-      throw err;
-      console.log("in here");
-    }
-    else
-    {
-      console.log('dashboard'); //pass the user in optional parameters
-    }
-    client.end();
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(pass1, salt);
+
+    console.log(salt);
+    console.log(hash);
+
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+hash+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
+      if(err)
+      {
+        throw err;
+        console.log("in here");
+      }
+      else
+      {
+        console.log("User insertion successful.");
+      }
     });
   }
-  res.render('register');
+  res.redirect('/')
 });
 
 router.get('/dashboard', function(req, res, next) {
@@ -59,7 +74,7 @@ router.get('/dashboard', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
-    res.render('dashboard');
+    res.render('dashboard2');
   }
 });
 
@@ -144,6 +159,31 @@ router.get('/accountsettings', function(req, res, next) {
   }
 });
 
+router.post('/updatePassword', async function(req, res, next) {
+  console.log('Password Changed!');
+
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+    req.session.userInfo=query.rows[0];
+    console.log(req.session);
+  });
+
+  var currentPassword = req['body']['currentPassword'];
+  var newPassword = req['body']['newPassword'];
+  var newPasswordConfirm = req['body']['newPasswordConfirm'];
+  
+  console.log(req.session);
+  console.log(req.session.userInfo);
+  console.log(req.session.userInfo.password);
+
+  if(bcrypt.compareSync(currentPassword, req.session.userInfo.password) && newPassword === newPasswordConfirm) {
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(newPassword, salt);
+
+    client.query("UPDATE users SET password = " + hash + ";");
+  }
+
+});
+
 router.get('/dataanalytics', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
@@ -163,6 +203,6 @@ router.get('/logout', function(req, res) {
   req.logout();
   console.log(req.user);
   res.redirect('/');
-})
+});
 
 module.exports = router;

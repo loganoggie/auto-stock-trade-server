@@ -3,6 +3,10 @@ extends masterPug.pug
 block headContent
   link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
 
+block investmentsLink
+  li.nav-item.active
+    a.nav-link(href="/investments") Investments
+
 block bodyContent
   div.investments
     button(type='button', id='add', onclick='myModal.showModal()') Add
@@ -38,12 +42,12 @@ block bodyContent
       span(id='warn')
       span(id='load') Loading Data...
       div.invest-holder-base(id='base')
-          span.symbol Symbol
-          span.share Share
-          span.volume Volume
-          span.price Price
-          span.algorithm Algorithm
-          span.status Status
+        span.symbol Symbol
+        span.share Share
+        span.volume Volume
+        span.price Price
+        span.algorithm Algorithm
+        span.status Status
       div.holders(id='investments')
   script(src='js/stocks.js')
   script(src='js/investments.js')

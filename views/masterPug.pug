@@ -5,8 +5,9 @@ head
     //nice fonts for the website:
     link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
 
-    //stylesheet for the title bar:
-    link(rel='stylesheet', type='text/css', href='stylesheets/css/titleBar.css')
+    //stylesheet for the title bar and master page:
+    //link(rel='stylesheet', type='text/css', href='stylesheets/css/titleBar.css')
+    link(rel='stylesheet', type='text/css', href='stylesheets/css/masterPage.css')
 
     //stylesheet that anchors the title bar to the top left corner and makes browser adjustments:
     link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
@@ -14,8 +15,14 @@ head
     //master jquery-ui stylesheet:
     link(href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css", rel="stylesheet")
 
+    //bootstrap cdn
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
+    script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous")
+
     //the jquery library:
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+    //- script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
 
     //the jquery-UI library:
     script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
@@ -24,22 +31,28 @@ head
     block headContent
 
 body
-    //BEGIN: TITLE BAR "HTML"
-    div.page-wrapper
-        div.header
-            div.dropdown-button-container
-                div.dropdown
-                    div.burger-holder.drop-button
-                    div.dropdown-content
-                        a(href='/dashboard') Dashboard
-                        a(href='/investments') Investments
-                        a(href='/dataanalytics') Analytics
-                        a(href='/aboutalgorithms') Algorithm Information
-                        a(href='/accountsettings') Account Settings
-                        a(href='/logout') Log Out
-            div.logo-holder
-        div.content-wrapper
-            //END: TITLE BAR "HTML"
+    nav.navbar.navbar-expand-md.navbar-dark.myNavbarTheme.fixed-top
+        a.navbar-brand.myFolio-brand(href="#") myFolio
+        button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+            span.navbar-toggler-icon
+        #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.mr-auto
+                block dashboardLink
+                    li.nav-item
+                        a.nav-link(href="/dashboard") Dashboard 
+                block investmentsLink
+                    li.nav-item
+                        a.nav-link(href="/investments") Investments
+                block aboutAlgorithmsLink
+                    li.nav-item
+                        a.nav-link(href="/aboutalgorithms") About Algorithms
+                block accountSettingsLink
+                    li.nav-item
+                        a.nav-link(href="/accountsettings") Settings
+                block logoutLink
+                    li.nav-item
+                        a.nav-link(href="/logout") Logout
+    div.content-wrapper
 
-            //where the body contents of the pages will go:
-            block bodyContent
+        //where the body contents of the pages will go:
+        block bodyContent

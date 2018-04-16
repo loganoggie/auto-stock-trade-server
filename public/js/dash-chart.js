@@ -31,6 +31,7 @@ var numData = getData(10000);*/
 //----END TESTING FUNCTIONS----
 //----BEGINNING STUFF----
 var ctx = document.getElementById('folio-value');
+var ctx2 = document.getElementById('folio-value2');
 
 $.ajax({//Get porfolio value from server
   url: '/dash-get',
@@ -39,6 +40,7 @@ $.ajax({//Get porfolio value from server
     var json = $.parseJSON(data);
     console.log(json);
     genChart(json);
+    genChart2(json);
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce')
@@ -47,6 +49,31 @@ $.ajax({//Get porfolio value from server
 
 function genChart(data) {
   var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.dates,
+      datasets: [{
+        label: 'Portfolio Value',
+        data: data.price,
+        backgroundColor: [
+          'rgba(67, 160, 71, 0.4)'
+        ]
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:false
+          }
+        }]
+      }
+    }
+  });
+}
+
+function genChart2(data) {
+  var myChart = new Chart(ctx2, {
     type: 'line',
     data: {
       labels: data.dates,
