@@ -1,0 +1,46 @@
+extends masterPug.pug 
+
+block headContent
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard2.css')
+
+block dashboardLink
+  li.nav-item.active
+    a.nav-link(href="/dashboard") Dashboard 
+
+block bodyContent
+  div.account-analytics
+    div.account-standing
+      h1.account-standing-label Account Standing:
+        span.account-standing-value  $10,000
+    div.account-graph-holder
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+      div.account-graph
+        canvas(id='folio-value', height='600', width='800')
+        //Import the chart.js library
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
+        script(src='js/dash-chart.js')
+  div.suggested-actions-wrapper 
+    h1.suggested-actions-heading Suggested Actions
+    p.no-actions-notification There are no actions to take at the moment
+    div.suggested-actions-feed 
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+      div.suggested-action
+  div.investment-link-wrapper
+    p.investment-verbage Want to edit your current investments?
+      a.investment-link(href='/investments') Click Here!
+  div.auxillary-analytics
+    div.account-graph-holder2
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+      div.account-graph
+        canvas(id='folio-value2', height='600', width='800')
+        //Import the chart.js library
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
+        script(src='js/dash-chart.js')
+  //- div.current-investment-wrapper
+  //-   div.current-investment-feed

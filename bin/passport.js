@@ -2,6 +2,7 @@
 console.log('passport.js initiated');
 
 // Global Module Handling ---------------------------------------------
+var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 //---------------------------------------------------------------------
@@ -9,21 +10,32 @@ var LocalStrategy = require('passport-local').Strategy;
 var {client} = require('./database.js');
 //---------------------------------------------------------------------
 
+
+
 passport.use(new LocalStrategy({session: true}, function(email, password, cb) {
-  client.query("SELECT id, email, password FROM users WHERE email = $1 AND password = $2", [email, password], (err, result) => {
+  client.query("SELECT id, email, password FROM users WHERE email = $1", [email], (err, result) => {
     if(err) {
       console.log('Error when selecting user on login', err)
       return cb(err)
     }
 
+    console.log('Did we get a result?');
     if(result.rows.length > 0) {
       const first = result.rows[0];
-      cb(null, first);
+      console.log("-------------------- Checking 1")
+      if(bcrypt.compareSync(password, first.password)) {
+        cb(null, first);
+      } else {
+        console.log('Passwords didnt match.');
+        cb(null, false);
+      }
+      console.log("------------------------ Checking 2")
     } else {
       console.log('Logging in was unsuccessful.');
       cb(null, false);
     }
   });
+  console.log("-----------------------End of passport function");
 }));
 
 passport.serializeUser((user, done) => {

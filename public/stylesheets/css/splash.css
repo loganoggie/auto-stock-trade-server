@@ -1,25 +1,22 @@
 html {
   height: 100%;
-  min-width: 400px;
-  min-height: 800px;
   font-family: 'Lato', sans-serif;
   font-size: 20px;
   color: #1C2321;
 }
 
-body {
-  height: 100%;
-  min-height: 100%;
-  background-image: url('../../images/mstcampus.jpg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.myBody {
+  min-width: 400px;
 }
 
-.page-wrapper {
-  position: relative;
-  width: 100%;
-  min-height: 100%;
+.page-background {
+  height: 100vh;
+  min-width: 400px;
+  min-height: 600px;
+  background-image: url('../../images/mstcampus.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
 }
 
 /* Logo CSS */
@@ -41,7 +38,7 @@ body {
   text-align: center;
   line-height: 100px;
   font-size: 3em;
-  /*background-color: cyan;*/
+  margin: 0;
   color: #F48F4B;
   font-family: 'Ubuntu', sans-serif;
   font-style: italic;
@@ -52,19 +49,16 @@ body {
   font-family: 'Ubuntu', sans-serif;
 }
 
-
-
 /* Login Form CSS */
 
 .login-form-container {
   display: block;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  left: 0%;
+  top: 0%;
   width: 400px;
   min-height: 100px;
-  background-color: #ECEFF1D8;
+  background-color: #ECEFF1E8;
   font-family: 'Lato', sans-serif;
 }
 
@@ -127,14 +121,14 @@ body {
 
 /* End of Login CSS */
 
+
 /* Register Form CSS */
 
 .register-form-container {
   display: none;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  left: 0%;
+  top: 0%;
   width: 400px;
   min-height: 100px;
   background-color: #ECEFF1D8;
@@ -199,3 +193,50 @@ body {
 }
 
 /* End of Register CSS */
+
+@media (min-width: 401px) {
+  
+  .login-form-container {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .register-form-container {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+}
+
+@media (min-height: 401px) {
+  .login-form-container {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+@media (min-height: 401px) and (min-width: 401px) {
+
+  .login-form-container {
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+}
+
+@media (min-height: 601px) {
+
+  .register-form-container {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+}
+
+@media (min-height: 601px) and (min-width: 401px) {
+
+  .register-form-container {
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+}
+
