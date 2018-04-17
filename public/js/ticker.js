@@ -81,7 +81,7 @@ $.ajax({//Get tickers from server
   success: function(data) {
     var json = $.parseJSON(data);
     console.log(json);
-    stocks = new Stocks(json.api)//use the API that the node server provides
+    stocks = new Stocks(json.userInfo.avkey)//use the API that the node server provides
     namespace.setSymbols(json.symbols);
     namespace.createTickers(json.symbols, STARTING_INDEX);//create the initial tickers
   },//end success

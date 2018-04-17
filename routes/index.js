@@ -82,21 +82,24 @@ router.get('/dashboard', function(req, res, next) {
 
 router.get('/dash-get', function(req, res, next) {
   //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
-  var myObj = {
-    worth: 10000.00,//current portfolio worth
-    price: [9000, 9200, 9460.43, 9750, 10000],//array of the portfolio worth day by day, first enrty is earliest data. Maybe keep size fix so the x-axis isnt hard to read.
-    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]//Value of dates corresponding to the dollar amounts.
-  }
-  res.json(JSON.stringify(myObj));
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
+    req.session.userInfo=queryUser.rows[0];
+    req.session.worth_day = {
+      worth: [9000, 9200, 9460.43, 9750, 10000],
+      day: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
+    };
+    req.session.total_worth = 10000.00;
+    res.json(JSON.stringify(req.session));
+  });
 });
 
 router.get('/tick-get', function(req, res, next) {
   //Example of how this ojject should be constructed to generate tickers on the dashboard
-  var myObj = {
-    api: 'QSZQSTA7ZLPXTAZO',//AlphaVantage API key that the user table has
-    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC', 'BABA', 'EEP', 'EPD', 'JMP', 'GE', 'TWTR', 'FB', 'CHU'/*, 'TEP'*/]//An array of some of the most common stocks.
-  }
-  res.json(JSON.stringify(myObj));
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
+    req.session.userInfo=queryUser.rows[0];
+    req.session.symbols=['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC', 'BABA', 'EEP', 'EPD', 'JMP', 'GE', 'TWTR', 'FB', 'CHU'/*, 'TEP'*/]//An array of some of the most common stocks.
+    res.json(JSON.stringify(req.session));
+  });
 });
 
 router.get('/investments-get', function(req, res, next) {
@@ -170,7 +173,7 @@ router.post('/updatePassword', async function(req, res, next) {
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
   var newPasswordConfirm = req['body']['newPasswordConfirm'];
-  
+
   console.log(req.session);
   console.log(req.session.userInfo);
   console.log(req.session.userInfo.password);

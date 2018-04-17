@@ -51,10 +51,10 @@ function genChart(data) {
   var myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: data.dates,
+      labels: data.worth_day.day,
       datasets: [{
         label: 'Portfolio Value',
-        data: data.price,
+        data: data.worth_day.worth,
         backgroundColor: [
           'rgba(67, 160, 71, 0.4)'
         ]
@@ -73,13 +73,14 @@ function genChart(data) {
 }
 
 function genChart2(data) {
+
   var myChart = new Chart(ctx2, {
     type: 'line',
     data: {
-      labels: data.dates,
+      labels: data.worth_day.day,
       datasets: [{
         label: 'Portfolio Value',
-        data: data.price,
+        data: data.worth_day.worth,
         backgroundColor: [
           'rgba(67, 160, 71, 0.4)'
         ]
