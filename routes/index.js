@@ -70,7 +70,7 @@ router.get('/run', function(req, res, next) {
         day="0"+day;
       }
       var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
-
+      console.log("Current date: "+stringDate);
       request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=1"+day+"&series_type=close&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
@@ -81,11 +81,17 @@ router.get('/run', function(req, res, next) {
           console.log("Moving Average Value: "+movingAverageValue);     
           if(currentPrice>movingAverageValue)
           {
-            console.log("User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".");
+            queries.addNotification(email,"User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".",function(query)
+            {
+              console.log("User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".");
+            });
           }
           else
           {
-            console.log("User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.");
+            queries.addNotification(email,"User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.",function(query)
+            {
+              console.log("User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.");
+            });
           }
         });
       });
@@ -93,10 +99,6 @@ router.get('/run', function(req, res, next) {
   });
   res.render('splash');
 });
-
-router.get('/test', function(req, res, next) {
-  res.render('test');
-})
 
 router.get('/', function(req, res, next) {
   res.render('splash');
@@ -114,8 +116,6 @@ router.post('/register', function(req, res, next) {
 
   console.log("Pass1:" + pass1);
   console.log("Pass2:" + pass2);
-
-
 
   if(pass1!=pass2)
   {
@@ -153,43 +153,17 @@ router.get('/dashboard', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('dashboard2');
   }
 });
-
-//---------------------------------------------------------JSON SENDING EXAMPLES---------------------------------------------------------
-
-router.get('/dash-get', function(req, res, next) {
-  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
-  var myObj = {
-    worth: 10000.00,//current portfolio worth
-    price: [9000, 9200, 9460.43, 9750, 10000],//array of the portfolio worth day by day, first enrty is earliest data. Maybe keep size fix so the x-axis isnt hard to read.
-    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]//Value of dates corresponding to the dollar amounts.
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-router.get('/tick-get', function(req, res, next) {
-  //Example of how this ojject should be constructed to generate tickers on the dashboard
-  var myObj = {
-    api: 'QSZQSTA7ZLPXTAZO',//AlphaVantage API key that the user table has
-    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC', 'BABA', 'EEP', 'EPD', 'JMP', 'GE', 'TWTR', 'FB', 'CHU'/*, 'TEP'*/]//An array of some of the most common stocks.
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-router.get('/investments-get', function(req, res, next) {
-  queries.getCurrentStockInfo(req.user.email, function(queryStock){
-    queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
-      req.session.stockInfo=queryStock.rows;
-      req.session.userInfo=queryUser.rows[0];
-      console.log(req.session);
-      res.json(JSON.stringify(req.session));
-    });
-  });
-});
-
-//--------------------------------------------------------------END OF EXAMPLES --------------------------------------------------------
 
 router.get('/investments', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
@@ -197,13 +171,16 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    //console.log("Result of Query: " + queries.getCurrentUserStockInfo(req.user.id, req.user.email));
     queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
     queries.getCurrentStockInfo(req.user.email, function(query){
-      req.session.stockInfo=query.rows[0];
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
       console.log(req.session);
     });
     res.render('investments', req);
@@ -220,6 +197,14 @@ router.get('/aboutalgorithms', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('aboutalgorithms');
   }
 });
@@ -234,6 +219,14 @@ router.get('/accountsettings', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('accountsettings');
   }
 });
@@ -242,9 +235,17 @@ router.post('/updatePassword', async function(req, res, next) {
   console.log('Password Changed!');
 
   queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
-    req.session.userInfo=query.rows[0];
-    console.log(req.session);
-  });
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
 
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
@@ -271,6 +272,14 @@ router.get('/dataanalytics', function(req, res, next) {
   } else {
     queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
       req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
       console.log(req.session);
     });
     res.render('dataanalytics');
