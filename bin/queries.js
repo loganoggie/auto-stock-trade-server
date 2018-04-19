@@ -16,8 +16,6 @@ var pool = database.pool;
 
 /*------------------Useful queries------------------*/
 
-//Drop data from users and userstocks
-
 //Drop table users
 // client.query("DROP TABLE users;", (err,res) => {
 //   console.log("users dropped.");
@@ -25,10 +23,15 @@ var pool = database.pool;
 
 
 //Drop table userstocks
-
 // client.query("DROP TABLE userstocks;", (err,res) => {
 //   console.log("userstocks dropped.");
 // });
+
+
+//Drop table usernotifications
+//client.query("DROP TABLE usernotifications;", (err,res) => {
+//  console.log("usernotifications dropped.");
+//});
 
 
 //Make table users
@@ -36,6 +39,11 @@ var pool = database.pool;
 //   console.log("users created");
 // });
 
+
+//Make table usernotifications
+//client.query("CREATE TABLE usernotifications (id bigserial, notification varchar, email varchar, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
+//  console.log("usernotification created");
+//});
 
 
 //Make table userstocks
@@ -50,38 +58,48 @@ var pool = database.pool;
 // });
 
 
-
 //Insert into userstocks
 //client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('jwbhvb@mst.edu','F','100000','MovingAverages','19','1')", (err,res) => {
-  //console.log("userstocks added to database.");
+//  console.log("userstocks added to database.");
 //});
 
-// Alter users table to have id column
-// client.query("ALTER TABLE users DROP PRIMARY KEY", (err, res) => {
-//   console.log("drop pk");
-// });
-//
-// client.query("ALTER TABLE users ADD id bigserial", (err, res) => {
-//   console.log("added id");
-// });
-//
-// client.query("ALTER TABLE users ADD PRIMARY KEY(id, email)", (err, res) => {
-//   console.log("added pk");
-// });
 
-// Print # of users and all rows in users
-// client.query("SELECT * FROM users", (err,res) => {
-//   console.log("Number of users: "+res.rowCount);
-//   console.log(res.rows);
-// });
+//Insert into usernotifications
+//client.query("INSERT INTO usernotifications (email, notification) VALUES ('jwbhvb@mst.edu','Blah blah blah')", (err,res) => {
+//  console.log("notification added to database.");
+//});
+
+//Alter users table to have id column
+//client.query("ALTER TABLE users DROP PRIMARY KEY", (err, res) => {
+//  console.log("drop pk");
+//});
+
+//client.query("ALTER TABLE users ADD id bigserial", (err, res) => {
+//  console.log("added id");
+//});
+
+//client.query("ALTER TABLE users ADD PRIMARY KEY(id, email)", (err, res) => {
+//  console.log("added pk");
+//});
+
+//Print # of users and all rows in users
+//client.query("SELECT * FROM users", (err,res) => {
+//  console.log("Number of users: "+res.rowCount);
+//  console.log(res.rows);
+//});
 
 //Print # of userstocks and all rows in userstocks
-/*
-client.query("SELECT * FROM userstocks", (err,res) => {
-  console.log("Number of userstocks: "+res.rowCount);
-  console.log(res.rows);
-});
-*/
+//client.query("SELECT * FROM userstocks", (err,res) => {
+//  console.log("Number of userstocks: "+res.rowCount);
+//  console.log(res.rows);
+//});
+
+//Print # of usernotifications and all rows in usernotifications
+//client.query("SELECT * FROM usernotifications", (err,res) => {
+//  console.log("Number of usernotifications: "+res.rowCount);
+//  console.log(res.rows);
+//});
+
 
 /*------------------End of queries------------------*/
 
@@ -103,16 +121,13 @@ async function getAllInvestments(algorithm, callback)
   callback(stockInfo);
 }
 
-async function getCallApi(callback)
+async function getNotifications(email, callback)
 {
-  var apistuff = await request('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', { json: true }, (err, res, body) => {
-    apistuff=body.explanation;
-    console.log(apistuff);
-  });
-  callback(apistuff);
+  var notifications = await client.query("SELECT * FROM usernotifications WHERE email=$1",[email]);
+  callback(notifications);
 }
 
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
-module.exports.getCallApi = getCallApi;
+module.exports.getNotifications = getNotifications;
