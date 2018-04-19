@@ -9,6 +9,7 @@ on the database. Feel free to add any queries that you use while developing.
 //-----------------------------------------------------------------------
 // Local Module Handling ------------------------------------------------
 var database = require('../bin/database.js');
+var request = require('request');
 var client = database.client;
 var pool = database.pool;
 //-----------------------------------------------------------------------
@@ -51,9 +52,9 @@ var pool = database.pool;
 
 
 //Insert into userstocks
-// client.query("INSERT INTO userstocks (id, email, stockticker, numstocks, algorithm, params, enabled) VALUES ('2','jwbhvb@mst.edu','AMD','40','Beta','highrisk','1')", (err,res) => {
-//   console.log("userstocks added to database.");
-// });
+//client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('jwbhvb@mst.edu','F','100000','MovingAverages','19','1')", (err,res) => {
+  //console.log("userstocks added to database.");
+//});
 
 // Alter users table to have id column
 // client.query("ALTER TABLE users DROP PRIMARY KEY", (err, res) => {
@@ -86,15 +87,32 @@ client.query("SELECT * FROM userstocks", (err,res) => {
 
 async function getCurrentUserInfo(id, email, callback)
 {
-  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email])
+  var userInfo = await client.query("SELECT * FROM users WHERE id = $1 and email = $2", [id, email]);
   callback(userInfo);
 }
 
 async function getCurrentStockInfo(email, callback)
 {
-  var stockInfo = await client.query("SELECT * FROM userstocks WHERE email = $1", [email])
+  var stockInfo = await client.query("SELECT * FROM userstocks WHERE email = $1", [email]);
   callback(stockInfo);
+}
+
+async function getAllInvestments(algorithm, callback)
+{
+  var stockInfo = await client.query("SELECT * FROM userstocks WHERE enabled='1' AND algorithm = $1",[algorithm]);
+  callback(stockInfo);
+}
+
+async function getCallApi(callback)
+{
+  var apistuff = await request('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', { json: true }, (err, res, body) => {
+    apistuff=body.explanation;
+    console.log(apistuff);
+  });
+  callback(apistuff);
 }
 
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
+module.exports.getAllInvestments = getAllInvestments;
+module.exports.getCallApi = getCallApi;
