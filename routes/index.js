@@ -153,6 +153,14 @@ router.get('/dashboard', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('dashboard2');
   }
 });
@@ -163,13 +171,16 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    //console.log("Result of Query: " + queries.getCurrentUserStockInfo(req.user.id, req.user.email));
     queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
     queries.getCurrentStockInfo(req.user.email, function(query){
-      req.session.stockInfo=query.rows[0];
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
       console.log(req.session);
     });
     res.render('investments', req);
@@ -186,6 +197,14 @@ router.get('/aboutalgorithms', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('aboutalgorithms');
   }
 });
@@ -200,6 +219,14 @@ router.get('/accountsettings', function(req, res, next) {
       req.session.userInfo=query.rows[0];
       console.log(req.session);
     });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('accountsettings');
   }
 });
@@ -208,9 +235,17 @@ router.post('/updatePassword', async function(req, res, next) {
   console.log('Password Changed!');
 
   queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
-    req.session.userInfo=query.rows[0];
-    console.log(req.session);
-  });
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
 
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
@@ -237,6 +272,14 @@ router.get('/dataanalytics', function(req, res, next) {
   } else {
     queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
       req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
       console.log(req.session);
     });
     res.render('dataanalytics');
