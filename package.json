@@ -12,6 +12,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "http": "0.0.0",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
     "node-bcrypt": "0.0.1",
@@ -19,6 +20,7 @@
     "passport-local": "^1.0.0",
     "pg": "7.4.1",
     "pug": "2.0.0-beta11",
+    "request": "^2.85.0",
     "serve-favicon": "~2.4.5"
   },
   "description": "CS4096 Senior Design project - SP18 Missouri University of Science and Technology",

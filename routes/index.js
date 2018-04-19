@@ -5,15 +5,94 @@ var router = express.Router();
 //-----------------------------------------------------------------------
 // Local Module Handling ------------------------------------------------
 var {passport} = require('../bin/passport.js');
+var request = require('request');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var client = database.client;
 var pool = database.pool;
+var fetch;
+
+
 //-----------------------------------------------------------------------
 
 // console.log(passport);
 // console.log(database);
 // console.log(queries);
+
+/*Runs the correct algorithm for every investment.*/
+router.get('/run', function(req, res, next) {
+
+  
+     
+  /*
+  queries.getAllInvestments("RSI",function(query) {
+    for(var i=0;i<query.rows.length;i++) //for each investment
+    {
+      if(query.rows[i].params=="low") //low risk RSI
+      {
+        //console.log("low");
+      }
+      else if(query.rows[i].params=="medium") //medium risk RSI
+      {
+        //console.log("medium");
+      }
+      else if(query.rows[i].params=="high") //high risk RSI
+      {
+        //console.log("high");
+      }
+      else
+      {
+        //console.log("Error");
+      }
+    }
+  });
+  */
+
+  queries.getAllInvestments("MovingAverages",function(query) {
+    for(var i=0;i<query.rows.length;i++) //for each investment
+    {
+      var email = query.rows[i].email;
+      var numstocks = query.rows[i].numstocks;
+      var day = parseInt(query.rows[i].params); //day that the user passes in for moving averages
+      var stockTicker = query.rows[i].stockticker; //stock ticker
+
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1;
+      var day = date.getDate(); 
+
+      if(month<10)
+      {
+        month="0"+month;
+      }
+      if(day<10)
+      {
+        day="0"+day;
+      }
+      var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+
+      request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=1"+day+"&series_type=close&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
+      {
+        var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
+        request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=2&series_type=close&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        {
+          var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
+          console.log("Current Price: "+currentPrice);
+          console.log("Moving Average Value: "+movingAverageValue);     
+          if(currentPrice>movingAverageValue)
+          {
+            console.log("User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".");
+          }
+          else
+          {
+            console.log("User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.");
+          }
+        });
+      });
+    }
+  });
+  res.render('splash');
+});
 
 router.get('/test', function(req, res, next) {
   res.render('test');
@@ -62,7 +141,7 @@ router.post('/register', function(req, res, next) {
       }
     });
   }
-  res.redirect('/')
+  res.redirect('/dashboard',req);
 });
 
 router.get('/dashboard', function(req, res, next) {
