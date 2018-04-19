@@ -127,7 +127,14 @@ async function getNotifications(email, callback)
   callback(notifications);
 }
 
+async function addNotification(email, notification, callback)
+{
+  var notifications = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
+  callback(notifications);
+}
+
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
 module.exports.getNotifications = getNotifications;
+module.exports.addNotification = addNotification;
