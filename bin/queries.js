@@ -30,7 +30,7 @@ var pool = database.pool;
 
 //Drop table usernotifications
 //client.query("DROP TABLE usernotifications;", (err,res) => {
-//  console.log("usernotifications dropped.");
+ // console.log("usernotifications dropped.");
 //});
 
 
@@ -42,7 +42,7 @@ var pool = database.pool;
 
 //Make table usernotifications
 //client.query("CREATE TABLE usernotifications (id bigserial, notification varchar, email varchar, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
-//  console.log("usernotification created");
+ // console.log("usernotification created");
 //});
 
 
@@ -59,8 +59,8 @@ var pool = database.pool;
 
 
 //Insert into userstocks
-//client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('jwbhvb@mst.edu','F','100000','MovingAverages','19','1')", (err,res) => {
-//  console.log("userstocks added to database.");
+//client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('jwbhvb@mst.edu','BAC','100000','MovingAverages','19','1')", (err,res) => {
+  //console.log("userstocks added to database.");
 //});
 
 
@@ -90,8 +90,8 @@ var pool = database.pool;
 
 //Print # of userstocks and all rows in userstocks
 //client.query("SELECT * FROM userstocks", (err,res) => {
-//  console.log("Number of userstocks: "+res.rowCount);
-//  console.log(res.rows);
+  //console.log("Number of userstocks: "+res.rowCount);
+  //console.log(res.rows);
 //});
 
 //Print # of usernotifications and all rows in usernotifications
