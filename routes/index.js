@@ -10,8 +10,6 @@ var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var client = database.client;
 var pool = database.pool;
-var fetch;
-
 
 //-----------------------------------------------------------------------
 
@@ -71,10 +69,10 @@ router.get('/run', function(req, res, next) {
       }
       var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
       console.log("Current date: "+stringDate);
-      request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=1"+day+"&series_type=close&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
+      request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=1"+day+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
-        request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=2&series_type=close&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
           console.log("Current Price: "+currentPrice);
