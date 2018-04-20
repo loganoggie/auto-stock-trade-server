@@ -66,21 +66,12 @@ router.get('/run', function(req, res, next) {
       console.log("Current date: "+stringDate);
       request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
-<<<<<<< HEAD
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
         request("https://www.alphavantage.co/query?function=SMA&symbol="+this.query.rows[this.i].stockticker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
           console.log("Current Price: "+currentPrice);
           console.log("Moving Average Value: "+movingAverageValue);
-=======
-        var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
-        console.log("Moving Average Value: "+movingAverageValue);     
-        request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(body, query, i, error,response,body2)
-        {
-          var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
-          console.log("Current Price: "+currentPrice);
->>>>>>> f88d0d03f8dab941f32fe29ba3ef1517e332502d
           if(currentPrice>movingAverageValue)
           {
             queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
