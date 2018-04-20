@@ -7,6 +7,8 @@
 
 //Modal stuff
 
+
+
 //-------------------------------getText NAMESPACE-------------------------------
 var getText = {
   nasdaq:  function() {
@@ -47,7 +49,7 @@ var myModal = {
     symbol_name: [[],[]],
     type: []
   },
-  ALGORITHM_NAME: ['RSI', 'Beta', 'Moving Averages'],
+  ALGORITHM_NAME: ['RSI', 'BBands', 'Moving Averages'],
   PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
   ACCEPTED_TYPES: ['common', 'ordinary', 'portfolio', 'equity Fund', 'etf', 'depositary shares'],
 
@@ -92,10 +94,21 @@ var myModal = {
     params.innerHTML = ''//Reset it back to blank
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
-      if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI or BETA
+      if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[0] + '\'>' + 'Low Risk';
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[1] + '\'>' + 'Medium Risk';
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[2] + '\'>' + 'High Risk';
+      }//end if
+      if(this.select.value == this.ALGORITHM_NAME[1]) {
+        params.innerHTML += '<select name=\'interval\'>';
+        var bbands = document.getElementsByName('interval')[0];
+        //Bbands Time intervals
+        bbands.innerHTML += '<option value=\'default\'> Select a Time Period';
+        bbands.innerHTML += '<option value=\'daily\'> Daily';
+        bbands.innerHTML += '<option value=\'weekly\'> Weekly';
+        bbands.innerHTML += '<option value=\'monthly\'> Monthly';
+        //Time_period number
+        params.innerHTML += '<input type=\'number\', \'name=\'num_points\', placeholder=\'Number of Data Points\'>'
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
         params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
@@ -148,13 +161,18 @@ var myModal = {
   checkParams: function() {
     var params = document.getElementById('params')
     var children = params.childNodes;
-    if(select.value == this.ALGORITHM_NAME[0]) {//RSI is selected
+    if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI is selected
       if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
     }
-    if(select.value == this.ALGORITHM_NAME[1]) {//Beta is selected
-      if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+    if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
+      if(children[1].value == '' || children[1].value <= 1)
+      {
+        alert("Please enter a number of data points greater than or equal to 2");
+        return false;
+      }
+      if(children[0].value == 'default'){return false}
     }
-    if(select.value == this.ALGORITHM_NAME[2]) {//Moving Averages is selected
+    if(this.select.value == this.ALGORITHM_NAME[2]) {//Moving Averages is selected
       if(children[0].value == '' || children[0].value <= 0){return false}//if the days field is blank and a positive
     }
     return true;//no errors encountered
@@ -175,7 +193,7 @@ var myModal = {
 //-------------------------------EDIT MODAL-------------------------------
 var edit = {
 
-  ALGORITHM_NAME: ['RSI', 'Beta', 'Moving Averages'],
+  ALGORITHM_NAME: ['RSI', 'BBands', 'Moving Averages'],
   RADIO_GROUP: 'radio',
   PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
   modal: document.getElementById('edit'),
@@ -216,14 +234,27 @@ var edit = {
     params.innerHTML = ''//Reset it back to blank
     if(this.select.value != 'default') {
       //example showing that we can dynamically generate forms to use. Needs to discuss a formatting
-      if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {//RSI
+      if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[0] + '\'>' + 'Low Risk';
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[1] + '\'>' + 'Medium Risk';
         params.innerHTML += '<input type=\'radio\' name=\'radio\' value=\'' + this.PARAM_RADIO_RISK[2] + '\'>' + 'High Risk';
         if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
           this.getParams(generator.investments[this.index].param);//check that ond value.
       }//end if
-      if(this.select.value == this.ALGORITHM_NAME[2]) {
+      if(this.select.value = this.ALGORITHM_NAME[1]) {//BBands
+        params.innerHTML += '<select name=\'interval\'>';
+        var bbands = document.getElementsByName('interval')[0];
+        //Bbands Time intervals
+        bbands.innerHTML += '<option value=\'default\'> Select a Time Period';
+        bbands.innerHTML += '<option value=\'daily\'> Daily';
+        bbands.innerHTML += '<option value=\'weekly\'> Weekly';
+        bbands.innerHTML += '<option value=\'monthly\'> Monthly';
+        //Time_period number
+        params.innerHTML += '<input type=\'number\', \'name=\'num_points\', placeholder=\'Number of Data Points\'>'
+        if(this.select.value == generator.investments[this.index].algorithm)
+          this.getParams(generator.investments[this.index].param);
+      }//end if
+      if(this.select.value == this.ALGORITHM_NAME[2]) {//Moving Averages
         params.innerHTML += '<input type=\'number\', name=\'days\', placeholder=\'Number of Days\'>'
         if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
           this.getParams(generator.investments[this.index].param);//check that ond value
@@ -232,7 +263,7 @@ var edit = {
   },
 
   getParams: function(param) {
-    if(this.select.value == this.ALGORITHM_NAME[0] || this.select.value == this.ALGORITHM_NAME[1]) {
+    if(this.select.value == this.ALGORITHM_NAME[0]) {
       if(param == this.PARAM_RADIO_RISK[0]) {//low risk
         document.getElementsByName(this.RADIO_GROUP)[0].checked = true;
       }//end if the param is low
@@ -243,10 +274,33 @@ var edit = {
         document.getElementsByName(this.RADIO_GROUP)[2].checked = true;
       }//ense else param is high
     }//end if this is RSI or BETA
+    if(this.select.value == this.ALGORITHM_NAME[1]) {
+      document.getElementsByName('interval') = params.inteval
+      document.getElementsByName('num_points') = params.time_period
+    }
     if(this.select.value == this.ALGORITHM_NAME[2]) {//moving averages
       document.getElementsByName('days')[0].value = param;//set it to the days provided in param
     }
   },
+
+  checkParams: function() {
+    var params = document.getElementById('edit-params')
+    var children = params.childNodes;
+    if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI is selected
+      if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+    }
+    if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
+      if(children[1].value == '' || children[1].value <= 1) {
+        alert("Please enter a number of data points greater than or equal to 2")
+        return false;
+      }
+      if(children[0].value == 'default' || children[1].value == '' || children[1].value <= 1){return false}
+    }
+    if(this.select.value == this.ALGORITHM_NAME[2]) {//Moving Averages is selected
+      if(children[0].value == '' || children[0].value <= 0){return false}//if the days field is blank and a positive
+    }
+    return true;//no errors encountered
+  },//end checkParams function
 
   modalAlgorithms: function(algorithms) {
     for(i = 0; i < algorithms.length; i++) {
@@ -342,13 +396,13 @@ var generator = {
 }//end generator object
 
 $('#modalForm').submit(function() {
-  if(modal.select.value == "default") {
+  if(myModal.select.value == "default") {
     //dont submit if they havent selected an algorithm
     console.log("They didn't select an algorithm");
     alert('Please select a valid algorithm.');
     return false;
   }
-  if(modal.volumeBox.value <= 0) {
+  if(myModal.volumeBox.value <= 0) {
     console.log("They had a non-positive integer")
     alert("Volume field must be a positive integer")
     return false
@@ -358,7 +412,7 @@ $('#modalForm').submit(function() {
     alert("Please choose a  vaiuld stock option")
     return false;
   }
-  if(!modal.checkParams()) {
+  if(!myModal.checkParams()) {
     console.log("Parameters are not valid")
     alert("Please enter valid parameters!")
     return false;
