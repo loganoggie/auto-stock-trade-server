@@ -95,10 +95,10 @@ var pool = database.pool;
 //});
 
 //Print # of usernotifications and all rows in usernotifications
-//client.query("SELECT * FROM usernotifications", (err,res) => {
-//  console.log("Number of usernotifications: "+res.rowCount);
-//  console.log(res.rows);
-//});
+client.query("SELECT * FROM usernotifications", (err,res) => {
+  console.log("Number of usernotifications: "+res.rowCount);
+  console.log(res.rows);
+});
 
 
 /*------------------End of queries------------------*/
