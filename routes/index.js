@@ -67,11 +67,11 @@ router.get('/run', function(req, res, next) {
       request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
-        request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        console.log("Moving Average Value: "+movingAverageValue);     
+        request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(body, query, i, error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
           console.log("Current Price: "+currentPrice);
-          console.log("Moving Average Value: "+movingAverageValue);     
           if(currentPrice>movingAverageValue)
           {
             queries.addNotification(query.rows[i].email,"User "+query.rows[i].email+" should sell "+query.rows[i].numstocks+" of "+query.rows[i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*query.rows[i].numstocks+".",function(query)
