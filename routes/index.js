@@ -49,11 +49,6 @@ router.get('/run', function(req, res, next) {
   queries.getAllInvestments("MovingAverages",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
-      var email = query.rows[i].email;
-      var numstocks = query.rows[i].numstocks;
-      var day = parseInt(query.rows[i].params); //day that the user passes in for moving averages
-      var stockTicker = query.rows[i].stockticker; //stock ticker
-
       var date = new Date();
       var year = date.getFullYear();
       var month = date.getMonth()+1;
@@ -69,26 +64,26 @@ router.get('/run', function(req, res, next) {
       }
       var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
       console.log("Current date: "+stringDate);
-      request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=1"+day+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
+      request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average  
-        request("https://www.alphavantage.co/query?function=SMA&symbol="+stockTicker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=2&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the current price
           console.log("Current Price: "+currentPrice);
           console.log("Moving Average Value: "+movingAverageValue);     
           if(currentPrice>movingAverageValue)
           {
-            queries.addNotification(email,"User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".",function(query)
+            queries.addNotification(query.rows[i].email,"User "+query.rows[i].email+" should sell "+query.rows[i].numstocks+" of "+query.rows[i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*query.rows[i].numstocks+".",function(query)
             {
-              console.log("User "+email+" should sell "+numstocks+" of "+stockTicker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*numstocks+".");
+              console.log("User "+query.rows[i].email+" should sell "+query.rows[i].numstocks+" of "+query.rows[i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*query.rows[i].numstocks+".");
             });
           }
           else
           {
-            queries.addNotification(email,"User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.",function(query)
+            queries.addNotification(query.rows[i].email,"User "+query.rows[i].email+" should buy "+query.rows[i].stockticker+" at a price of "+currentPrice+" each.",function(query)
             {
-              console.log("User "+email+" should buy "+stockTicker+" at a price of "+currentPrice+" each.");
+              console.log("User "+query.rows[i].email+" should buy "+query.rows[i].stockticker+" at a price of "+currentPrice+" each.");
             });
           }
         });
