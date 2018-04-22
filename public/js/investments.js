@@ -217,7 +217,7 @@ var edit = {
     this.volume.value = generator.investments[num].volume;
     if(generator.investments[num].algorithm == this.ALGORITHM_NAME[0])//if we have RSI selected
       this.select.value = this.ALGORITHM_NAME[0];
-    else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[1])//if we have Beta selected
+    else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[1])
       this.select.value = this.ALGORITHM_NAME[1];
     else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[2])
       this.select.value = this.ALGORITHM_NAME[2];
@@ -243,7 +243,7 @@ var edit = {
         if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
           this.getParams(generator.investments[this.index].param);//check that ond value.
       }//end if
-      if(this.select.value = this.ALGORITHM_NAME[1]) {//BBands
+      if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands
         params.innerHTML += '<select name=\'interval\'>';
         var bbands = document.getElementsByName('interval')[0];
         //Bbands Time intervals
@@ -276,11 +276,11 @@ var edit = {
         document.getElementsByName(this.RADIO_GROUP)[2].checked = true;
       }//ense else param is high
     }//end if this is RSI or BETA
-    if(this.select.value == this.ALGORITHM_NAME[1]) {
-      document.getElementsByName('interval') = params.inteval
-      document.getElementsByName('num_points') = params.time_period
+    else if(this.select.value == this.ALGORITHM_NAME[1]) {
+      document.getElementsByName('interval')[0] = params.inteval;
+      document.getElementsByName('num_points')[0] = params.time_period;
     }
-    if(this.select.value == this.ALGORITHM_NAME[2]) {//moving averages
+    else if(this.select.value == this.ALGORITHM_NAME[2]) {//moving averages
       document.getElementsByName('days')[0].value = param;//set it to the days provided in param
     }
   },
@@ -427,11 +427,21 @@ $('#modalForm').submit(function() {
   return true;
 });
 
-$('#deleteForm').submit(function() {
-  var r = confirm("Delete Investment?");
-  if(r)
-    return true;
-  return false;
+$('#deleteForm').submit(function(e) {
+  e.preventDefault();
+  var form = this;
+  var submit = false;
+  swal({
+    title: "Are you sure?",
+    text: "Your investment will be removed form your portfolio.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true
+  }).then(function(isConfirm) {
+    if(isConfirm) {
+      form.submit();
+    }
+  });
 });
 
 function loaded(symbols) {//sees if all the symbols are loaded on the page
