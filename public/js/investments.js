@@ -167,7 +167,7 @@ var myModal = {
     if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
       if(children[1].value == '' || children[1].value <= 1)
       {
-        alert("Please enter a number of data points greater than or equal to 2");
+        swal("Please enter a number of data points greater than or equal to 2");
         return false;
       }
       if(children[0].value == 'default'){return false}
@@ -202,6 +202,7 @@ var edit = {
   volume: document.getElementsByName('volume')[1],//this is the second box called volume
   close: document.getElementsByClassName('close')[1],//the second closed
   select: document.getElementsByName('algorithm')[1],
+  deleteID: document.getElementsByName('delete')[0],
   index: 0,//generator.investments index
 
   hideModal: function() {
@@ -212,6 +213,7 @@ var edit = {
     /*num is the index that this investment is located in inside the generator.investments array.*/
     this.symbol.value = generator.investments[num].symbol;
     this.investID.value = generator.investments[num].investID;
+    this.deleteID.value = generator.investments[num].investID;//fill for deletion
     this.volume.value = generator.investments[num].volume;
     if(generator.investments[num].algorithm == this.ALGORITHM_NAME[0])//if we have RSI selected
       this.select.value = this.ALGORITHM_NAME[0];
@@ -291,7 +293,7 @@ var edit = {
     }
     if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
       if(children[1].value == '' || children[1].value <= 1) {
-        alert("Please enter a number of data points greater than or equal to 2")
+        swal("Please enter a number of data points greater than or equal to 2")
         return false;
       }
       if(children[0].value == 'default' || children[1].value == '' || children[1].value <= 1){return false}
@@ -399,31 +401,43 @@ $('#modalForm').submit(function() {
   if(myModal.select.value == "default") {
     //dont submit if they havent selected an algorithm
     console.log("They didn't select an algorithm");
-    alert('Please select a valid algorithm.');
+    swal('Please select a valid algorithm.');
     return false;
   }
   if(myModal.volumeBox.value <= 0) {
     console.log("They had a non-positive integer")
-    alert("Volume field must be a positive integer")
+    swal("Volume field must be a positive integer")
     return false
   }
   if(document.getElementsByName('symbol')[0].value == '') {
     console.log("They did not choose a stock")
-    alert("Please choose a  vaiuld stock option")
+    swal("Please choose a  vaiuld stock option")
     return false;
   }
   if(!myModal.checkParams()) {
     console.log("Parameters are not valid")
-    alert("Please enter valid parameters!")
+    if(myModal.select.value == "RSI")
+      swal("Please enter valid parameters!", 'Please select a risk.');
+    else if(myModal.select.value == "BBands")
+      swal("Please enter valid parameters!", 'Please select a time interval and a number of data points greater than 1.');
+    else if(myModal.select.value == "Moving Averages")
+      swal("Please enter valid parameters!", 'Number of days is a positive integer!');
     return false;
   }
   return true;
 });
 
+$('#deleteForm').submit(function() {
+  var r = confirm("Delete Investment?");
+  if(r)
+    return true;
+  return false;
+});
+
 function loaded(symbols) {//sees if all the symbols are loaded on the page
   setInterval(function (symbols) {
     var investments = document.getElementsByClassName('invest-holder')
-    if(investments.length == symbols.length) {
+    if(investments.length == symbols.length || symbols.length == 0) {
       document.getElementById('load').innerHTML = ''
     }//all loaded
   }, 1000, symbols);
@@ -442,6 +456,7 @@ $('document').ready( function() {
       stocks = new Stocks(json.userInfo.avkey)//use the API that the node server provides.
       console.log(json.stockInfo.length);
       generator.createAllInvestments(json.stockInfo);
+      loaded(json.stockInfo);
       //createAllInvestments(json.symbols, json.volumes, json.algorithms, json.status);//create all the tickers for the page once an object is recieved
     },//end success
     error: function(data) {
