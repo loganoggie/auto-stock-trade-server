@@ -219,7 +219,7 @@ router.get('/tick-get', function(req, res, next) {
 });
 
 router.get('/investments-get', function(req, res, next) {
-    queries.getCurrentStockInfo(req.user.email, function(query){
+  queries.getCurrentStockInfo(req.user.email, function(query){
     req.session.stockInfo=query.rows;
     res.json(JSON.stringify(req.session));
   });
