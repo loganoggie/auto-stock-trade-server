@@ -8,6 +8,7 @@ var {passport} = require('../bin/passport.js');
 var request = require('request');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
+var funcs = require('./funcs.js')
 var client = database.client;
 var pool = database.pool;
 
@@ -17,8 +18,11 @@ var pool = database.pool;
 // console.log(database);
 // console.log(queries);
 
+
+const DEFAULT_URL = 'https://www.alphavantage.co/query?'
+
 /*Runs the correct algorithm for every investment.*/
-router.get('/run', function(req, res, next) {
+router.get('/runRSI', function(req, res, next) {
 
   queries.getAllInvestments("RSI",function(query) {
     console.log("PROCESSING RSI ALGO");
@@ -27,24 +31,17 @@ router.get('/run', function(req, res, next) {
       if(query.rows[i].params=="low") //low risk RSI
       {
         //console.log("low");
-        var date = new Date();
-        var year = date.getFullYear();
-        var month = date.getMonth()+1;
-        var day = date.getDate()-2;
 
-        if(month<10)
-        {
-          month="0"+month;
-        }
-        if(day<10)
-        {
-          day="0"+day;
-        }
+        var stringDate = funcs.right_now();
 
+        var params = funcs.make_params('RSI', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
+        var encoded = Object.keys(params).map(
+        key => `${key}=${params[key]}`
+        ).join('&');
 
-      var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+        var url = DEFAULT_URL + encoded
         //https://www.alphavantage.co/query?function=RSI&symbol="+this.query.rows[this.i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0
-        request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        request(url, function(error,response,body2)
         {
           console.log("RSIDate: "+stringDate);
           var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the current price
@@ -85,31 +82,38 @@ router.get('/run', function(req, res, next) {
     }
   });
 
+});
+
+router.get('/runSMA', function(req, res, next) {
+
   queries.getAllInvestments("MovingAverages",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth()+1;
-      var day = date.getDate()-1;
 
-      if(month<10)
-      {
-        month="0"+month;
-      }
-      if(day<10)
-      {
-        day="0"+day;
-      }
+      var stringDate = funcs.right_now();
 
-      var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+      var params = funcs.make_params('SMA', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
+      var encoded = Object.keys(params).map(
+      key => `${key}=${params[key]}`
+      ).join('&');
+
+      var url = DEFAULT_URL + encoded
 
       console.log("Current date: "+stringDate);
-      request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
+      console.log(url)
+      request(url, function(error,response,body)
       {
         console.log("CHECK this stringdate:"+stringDate);
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
-        request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        
+        var params2 = funcs.make_params('TIME_SERIES_INTRADAY', this.query.rows[this.i].stockticker, '60min', req.session.userInfo.avkey)
+        var encoded2 = Object.keys(params).map(
+        key => `${key}=${params[key]}`
+        ).join('&');
+
+        var url2 = DEFAULT_URL + encoded2
+
+        request(url2, function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
           console.log("Current Price: "+currentPrice);
@@ -222,38 +226,50 @@ router.get('/investments-get', function(req, res, next) {
   queries.getCurrentStockInfo(req.user.email, function(query){
     req.session.stockInfo=query.rows;
     res.json(JSON.stringify(req.session));
+  // console.log(req.body)
   });
+});
+
+router.post('/edit', function(req, res, next) {
+  
+  // var update_id = 0;
+  // client.query("UPDATE userstocks SET WHERE id=$1", [del_id]);
+  
+});
+
+router.post('/delete', function(req, res, next) {
+  
+  // var del_id = 0;
+  // client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
+  
 });
 
 router.post('/add', function(req, res, next) {
 
-  var tmp_param1 = 80;
-  var tmp_param2 = 20;
-  var time_interval = '1min';
+  console.log(req.body)
+  var params;
 
-  var params = {}
-
-  if (req.body.symbol == 'RSI')
-  {
-    params.upper_bound = tmp_param1;
-    params.lower_bound = tmp_param2;
-
-  }
-  else if (req.body.symbol == 'BBANDS')
+  if (req.body.algorithm == 'BBands')
   {
 
+    params = JSON.stringify({
+      'interval': req.body.interval,
+      'num_points': req.body.num_points
+    })
   }
-  else if (req.body.symbol == 'SMA')
+  else if (req.body.algorithm == 'Moving Averages')
   {
-
+    params = req.body.days;
+  }
+  else if (req.body.algorithm == 'RSI')
+  {
+    params = req.body.radio;
   }
 
-  // console.log(JSON.stringify(params))
+  console.log(params)
 
   client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
     "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.radio + "','" + 1 + "')")
-
-  console.log(req.session);
 
   res.render('investments')
   

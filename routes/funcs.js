@@ -1,5 +1,5 @@
 "use strict";
-var fetch = require('node-fetch')
+// var fetch = require('node-fetch')
 var express = require('express');
 var router = express.Router();
 
@@ -35,69 +35,24 @@ async function do_alpha_job(getFunc, get_args, doFunc)
  
 function right_now()
 {
-	var date = new Date()
-	var right_now = [date.getFullYear(), (date.getMonth()+1), (date.getDay()+1), (date.getHours()+1), (date.getMinutes())]
-	
-	// AlphaVantage errors very often and returns blanks, stick to lower intervals
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth()+1;
+	var day = date.getDate()-2;
 
-	if (args[2] == "daily")
+	if(month<10)
 	{
-		right_now[right_now.length-1]='';
+	  month="0"+month;
 	}
-	if (args[2] == "60min")
+	if(day<10)
 	{
-		while (right_now[right_now.length-1] != 0)
-		{
-			right_now[right_now.length-1]=0;
-		}
-	}
-	else if (args[2] == "30min")
-	{
-		while (right_now[right_now.length-1] % 30 != 0)
-		{
-			right_now[right_now.length-1]-=1;
-		}
-	}
-	else if (args[2] == "15min")
-	{
-		while (right_now[right_now.length-1] % 15 != 0)
-		{
-			right_now[right_now.length-1]-=1;
-		}
+	  day="0"+day;
 	}
 
-	else if (args[2] == "5min")
-	{
-		while (right_now[right_now.length-1] % 5 != 0)
-		{
-			right_now[right_now.length-1]-=1;
-		}
-	}
-
-	if (right_now[1] < 10)
-	{
-		right_now[1] = "0" + right_now[1]
-	}
-
-	if (right_now[2] < 10)
-	{
-		right_now[2] = "0" + right_now[2]
-	}
-
-	if (right_now[3] < 10)
-	{
-		right_now[3] = "0" + right_now[3]
-	}
-
-	if (right_now[4] < 10)
-	{
-		right_now[4] = "0" + right_now[4]
-	}
-
-	var format_rn = right_now[0] + "-" + right_now[1] + "-" + right_now[2] + " " + right_now[3] + ":" + right_now[4]
+	var stringDate = year+"-"+month+"-"+day;
 
 
-	return format_rn;
+	return stringDate;
 }
 
 function print_earliest(alpha_obj, args) // this is an example, write your own in index.js
@@ -106,28 +61,30 @@ function print_earliest(alpha_obj, args) // this is an example, write your own i
 	console.log(alpha_obj['Technical Analysis: ' + args[0]][format_rn].RSI)
 }
 
-function make_params(ind, tick, inter, time=0, apikey)
+function make_params(ind, tick=0, inter, time=0, apikey)
 {
   var params = {
 	function: ind,
-	ticker: tick,
-	interval: inter,
   };
 
   if (ind == "SMA")
   {
+  	params.ticker = tick;
   	params.time_period = time;
   }
   else if (ind == "MACD")
   {
+  	params.ticker = tick;
   	params.series_type = 'open';
   }
   else if (ind == "RSI" || ind == "BBANDS")
   {
+  	params.ticker = tick;
   	params.time_period = time;
   	params.series_type = 'open';
   }
-  
+
+  params.interval = inter;
   params.apikey = apikey;
 
   return params;
@@ -162,43 +119,10 @@ function getTechnical(ind, sym, inter, time, apikey)
   });
 }
 
-// function getTechnical(ind, sym, inter, time='undefined')
-
-function algoGen(algoObj)
-{
-	if (algoObj.indicator == "RSI")
-	{
-		switch (algoObj.risk)
-		{
-			case 0:
-				// low risk
-				break;
-			case 1:
-				// medium risk
-				break;
-			case 2:
-				// high risk
-				algoObj.signal = function(json) // might have a json passed to it or not, depends on what we wanna do
-				{
-					// if we're not preloading with json
-					// json = getTechnical(this.indicator, this.stock_symbol, this.interval)
-
-				}
-
-				break;
-			default:
-				console.log("Invalid switch case")
-				throw new Error("error")
-				break;
-		}
-	}
-}
-
 module.exports = {
 	do_alpha_job: do_alpha_job,
 	right_now: right_now,
 	print_earliest: print_earliest,
 	make_params: make_params,
 	getTechincal: getTechnical,
-	algoGen: algoGen
 }
