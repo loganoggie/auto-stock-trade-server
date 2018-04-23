@@ -234,8 +234,32 @@ router.post('/edit-algorithm', function(req, res, next) {
 
   console.log(req.body)
   
-  // var update_id = 0;
-  // client.query("UPDATE userstocks SET WHERE id=$1", [del_id]);
+  var ID = req.body.investID;
+  var params;
+
+  if (req.body.algorithm == 'BBands')
+  {
+
+    params = {
+      'interval': req.body.interval,
+      'num_points': req.body.num_points
+    }
+  }
+  else if (req.body.algorithm == 'Moving Averages')
+  {
+    params = req.body.days;
+  }
+  else if (req.body.algorithm == 'RSI')
+  {
+    params = req.body.radio;
+  }
+
+  client.query("DELETE FROM userstocks WHERE id=$1", [ID]);
+
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
+  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+
+  res.render('investments', req);
   
 });
 
@@ -243,8 +267,10 @@ router.post('/delete', function(req, res, next) {
 
   console.log(req.body)
   
-  // var del_id = 0;
-  // client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
+  var del_id = req.body.delete;
+  client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
+
+  res.render('investments', req);
   
 });
 
