@@ -111,7 +111,7 @@ var myModal = {
         params.innerHTML += '<input type=\'number\', \'name=\'num_points\', placeholder=\'Number of Data Points\'>'
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
-        params.innerHTML += '<input type=\'number\', \'name=\'days\', placeholder=\'Number of Days\'>'
+        params.innerHTML += '<input type=\'number\' \'name=\'days\' placeholder=\'Number of Days\'>'
       }//end if
     }//end if
   },
