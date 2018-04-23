@@ -108,10 +108,10 @@ var myModal = {
         bbands.innerHTML += '<option value=\'weekly\'> Weekly';
         bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
-        params.innerHTML += '<input type=\'number\' \'name=\'num_points\' placeholder=\'Number of Data Points\'>'
+        params.innerHTML += '<input type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
-        params.innerHTML += '<input type=\'number\' \'name=\'days\' placeholder=\'Number of Days\'>'
+        params.innerHTML += '<input type=\'number\' name=\'days\' placeholder=\'Number of Days\'>'
       }//end if
     }//end if
   },
@@ -252,12 +252,12 @@ var edit = {
         bbands.innerHTML += '<option value=\'weekly\'> Weekly';
         bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
-        params.innerHTML += '<input type=\'number\' \'name=\'num_points\' placeholder=\'Number of Data Points\'>'
+        params.innerHTML += '<input type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
         if(this.select.value == generator.investments[this.index].algorithm)
           this.getParams(generator.investments[this.index].param);
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {//Moving Averages
-        params.innerHTML += '<input type=\'number\', name=\'days\', placeholder=\'Number of Days\'>'
+        params.innerHTML += '<input type=\'number\' name=\'days\' placeholder=\'Number of Days\'>'
         if(this.select.value == generator.investments[this.index].algorithm)//if this new option is the one it started with.
           this.getParams(generator.investments[this.index].param);//check that ond value
       }//end if
