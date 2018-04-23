@@ -5,18 +5,6 @@ var router = express.Router();
 
 const DEFAULT_URL = 'https://www.alphavantage.co/query?'
 
-var algoObj = {
-	email: "",
-	stock_symbol: "",
-	indicator: "",
-	param1: "",
-	param2: "",
-	// 3, etc
-	risk: 0,
-	interval: "daily",
-	signal: function(){}
-}
-
 async function do_alpha_job(getFunc, get_args, doFunc)
 {
 	var a = await getFunc.apply(this, ...get_args)

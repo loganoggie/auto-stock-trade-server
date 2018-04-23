@@ -240,10 +240,10 @@ router.post('/edit-algorithm', function(req, res, next) {
   if (req.body.algorithm == 'BBands')
   {
 
-    params = {
+    params = JSON.stringify({
       'interval': req.body.interval,
       'num_points': req.body.num_points
-    }
+    })
   }
   else if (req.body.algorithm == 'Moving Averages')
   {
@@ -256,8 +256,10 @@ router.post('/edit-algorithm', function(req, res, next) {
 
   client.query("DELETE FROM userstocks WHERE id=$1", [ID]);
 
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
-  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+  console.log(req.session.userInfo)
+
+  // client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
+  // "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
 
   res.render('investments', req);
   
@@ -282,10 +284,10 @@ router.post('/add', function(req, res, next) {
   if (req.body.algorithm == 'BBands')
   {
 
-    params = {
+    params = JSON.stringify({
       'interval': req.body.interval,
       'num_points': req.body.num_points
-    }
+    })
   }
   else if (req.body.algorithm == 'Moving Averages')
   {
