@@ -256,10 +256,10 @@ router.post('/add', function(req, res, next) {
   if (req.body.algorithm == 'BBands')
   {
 
-    params = JSON.stringify({
+    params = {
       'interval': req.body.interval,
       'num_points': req.body.num_points
-    })
+    }
   }
   else if (req.body.algorithm == 'Moving Averages')
   {
