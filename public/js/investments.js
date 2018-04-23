@@ -51,11 +51,11 @@ var myModal = {
   },
   ALGORITHM_NAME: ['RSI', 'BBands', 'Moving Averages'],
   PARAM_RADIO_RISK: ['lowrisk', 'mediumrisk', 'highrisk'],
-  ACCEPTED_TYPES: ['common', 'ordinary', 'portfolio', 'equity Fund', 'etf', 'depositary shares'],
+  ACCEPTED_TYPES: ['common', 'ordinary', 'portfolio', 'equity Fund', 'etf'],
 
   modal: document.getElementById('modal'),
   bttn: document.getElementById('add'),//The Add Button
-  volumeBox: document.getElementsByName('volume')[0],
+  volume: document.getElementsByName('volume')[0],
   close: document.getElementsByClassName('close')[0],
   select: document.getElementsByName('algorithm')[0],
 
@@ -77,7 +77,7 @@ var myModal = {
 
   get: function(index) {
     document.getElementsByName('symbol')[0].value = this.company.symbol_name[0][index]
-    this.volumeBox.value = '';//reset value
+    this.volume.value = '';//reset value
     this.volumeOnChange();
   },
 
@@ -86,6 +86,10 @@ var myModal = {
   },
 
   hideModal: function() {
+    document.getElementById('params').innerHTML = '';//clear params
+    this.volume.value = '';
+    this.select.value = 'default';
+    document.getElementById('results').innerHTML = '';
     this.modal.style.display = 'none';
   },
 
@@ -134,14 +138,14 @@ var myModal = {
 
   volumeOnChange: function() {//calculate the amount of money used for buying z amount of stock
     var symbol = document.getElementsByName('symbol')[0].value
-    if(symbol != '' && this.volumeBox.value != '') {
+    if(symbol != '' && this.volume.value != '') {
       document.getElementById('priceConversion').innerHTML = 'Calculating Price...';
       resultMin(symbol).then(async function(valueMin) {
         try {
           var jsonToday = JSON.stringify(valueMin[0])
           if(jsonToday != undefined) {
             var today = JSON.parse(jsonToday)
-            document.getElementById('priceConversion').innerHTML = (Number(myModal.volumeBox.value)*Number(today.close)).toFixed(2)//calc money spent
+            document.getElementById('priceConversion').innerHTML = (Number(myModal.volume.value)*Number(today.close)).toFixed(2)//calc money spent
             //We are no longer in the scope of the modal, so we must use the moda object name
           }//end if
           else {
@@ -206,6 +210,8 @@ var edit = {
   index: 0,//generator.investments index
 
   hideModal: function() {
+    document.getElementById('edit-params').innerHTML = '';//clear params
+
     this.modal.style.display = 'none';
   },
 
@@ -244,15 +250,15 @@ var edit = {
           this.getParams(generator.investments[this.index].param);//check that ond value.
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands
-        params.innerHTML += '<select name=\'interval\'>';
-        var bbands = document.getElementsByName('interval')[0];
+        params.innerHTML += '<select id=\'edit-interval\' name=\'interval\'>';
+        var bbands = document.getElementById('edit-interval');
         //Bbands Time intervals
         bbands.innerHTML += '<option value=\'default\'> Select a Time Period';
         bbands.innerHTML += '<option value=\'daily\'> Daily';
         bbands.innerHTML += '<option value=\'weekly\'> Weekly';
         bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
-        params.innerHTML += '<input type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
+        params.innerHTML += '<input id=\'edit-num_points\' type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
         if(this.select.value == generator.investments[this.index].algorithm)
           this.getParams(generator.investments[this.index].param);
       }//end if
@@ -277,11 +283,11 @@ var edit = {
       }//ense else param is high
     }//end if this is RSI or BETA
     else if(this.select.value == this.ALGORITHM_NAME[1]) {
-      document.getElementsByName('interval')[0] = params.inteval;
-      document.getElementsByName('num_points')[0] = params.time_period;
+      document.getElementById('edit-interval').value = param.interval;
+      document.getElementById('edit-num_points').value = Number(param.num_points);
     }
     else if(this.select.value == this.ALGORITHM_NAME[2]) {//moving averages
-      document.getElementsByName('days')[0].value = param;//set it to the days provided in param
+      document.getElementsByName('days')[0].value = Number(param);//set it to the days provided in param
     }
   },
 
@@ -292,11 +298,12 @@ var edit = {
       if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
     }
     if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
-      if(children[1].value == '' || children[1].value <= 1) {
-        swal("Please enter a number of data points greater than or equal to 2")
+      if(children[1].value == '' || children[1].value <= 1)
+      {
+        swal("Please enter a number of data points greater than or equal to 2");
         return false;
       }
-      if(children[0].value == 'default' || children[1].value == '' || children[1].value <= 1){return false}
+      if(children[0].value == 'default'){return false}
     }
     if(this.select.value == this.ALGORITHM_NAME[2]) {//Moving Averages is selected
       if(children[0].value == '' || children[0].value <= 0){return false}//if the days field is blank and a positive
@@ -392,7 +399,14 @@ var generator = {
       /*investID is the unique ID for that investment, investNum is the unquite ID that this script generats
       //so elements on the page have a unique ID. investNum domain: 0<= num < n where n is the number of investments the user has
       InvestID domain: 0<= id < m, where m is the total number of investments the shite has stored*/
-      this.investments.push({symbol: stockData[i].stockticker, volume: stockData[i].numstocks, algorithm: stockData[i].algorithm, status: stockData[i].enabled, investID: stockData[i].id, investNum: i, param: stockData[i].params})
+      var paramWrapper = {}
+      try {
+        paramWrapper = $.parseJSON(stockData[i].params)
+      }
+      catch(e) {
+        paramWrapper = stockData[i].params
+      }
+      this.investments.push({symbol: stockData[i].stockticker, volume: stockData[i].numstocks, algorithm: stockData[i].algorithm, status: stockData[i].enabled, investID: stockData[i].id, investNum: i, param: paramWrapper})
     }//end for
   }//end function createAllInvestments
 }//end generator object
@@ -404,14 +418,14 @@ $('#modalForm').submit(function() {
     swal('Please select a valid algorithm.');
     return false;
   }
-  if(myModal.volumeBox.value <= 0) {
+  if(myModal.volume.value <= 0 || myModal.volume.value == '') {
     console.log("They had a non-positive integer")
-    swal("Volume field must be a positive integer")
+    swal("Volume field must be a positive integer!")
     return false
   }
   if(document.getElementsByName('symbol')[0].value == '') {
     console.log("They did not choose a stock")
-    swal("Please choose a  vaiuld stock option")
+    swal("Please choose a valid stock option!")
     return false;
   }
   if(!myModal.checkParams()) {
@@ -421,6 +435,28 @@ $('#modalForm').submit(function() {
     else if(myModal.select.value == "BBands")
       swal("Please enter valid parameters!", 'Please select a time interval and a number of data points greater than 1.');
     else if(myModal.select.value == "Moving Averages")
+      swal("Please enter valid parameters!", 'Number of days is a positive integer!');
+    return false;
+  }
+  return true;
+});
+
+$('#editForm').submit(function() {
+  if(edit.select.value == 'default') {
+    swal('Please select a valid algorithm.');
+    return false;
+  }//end if
+  if(edit.volume.value <= 0 || edit.volume.value == '') {
+    swal("Volume field must be a positive integer!")
+    return false;
+  }//end if
+  if(!edit.checkParams()) {
+    console.log("Parameters are not valid")
+    if(edit.select.value == "RSI")
+      swal("Please enter valid parameters!", 'Please select a risk.');
+    else if(edit.select.value == "BBands")
+      swal("Please enter valid parameters!", 'Please select a time interval and a number of data points greater than 1.');
+    else if(edit.select.value == "Moving Averages")
       swal("Please enter valid parameters!", 'Number of days is a positive integer!');
     return false;
   }
@@ -456,7 +492,7 @@ function loaded(symbols) {//sees if all the symbols are loaded on the page
 $('document').ready( function() {
   getText.nasdaq();
   getText.other();
-
+  window.history.pushState("object or string", "Title", "/investments");
   $.ajax({//Get investments from server
     url: '/investments-get',
     dataType: 'json',
