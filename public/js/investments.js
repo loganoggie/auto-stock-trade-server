@@ -108,7 +108,7 @@ var myModal = {
         bbands.innerHTML += '<option value=\'weekly\'> Weekly';
         bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
-        params.innerHTML += '<input type=\'number\', \'name=\'num_points\', placeholder=\'Number of Data Points\'>'
+        params.innerHTML += '<input type=\'number\' \'name=\'num_points\' placeholder=\'Number of Data Points\'>'
       }//end if
       if(this.select.value == this.ALGORITHM_NAME[2]) {
         params.innerHTML += '<input type=\'number\' \'name=\'days\' placeholder=\'Number of Days\'>'
