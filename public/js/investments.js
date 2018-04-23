@@ -252,7 +252,7 @@ var edit = {
         bbands.innerHTML += '<option value=\'weekly\'> Weekly';
         bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
-        params.innerHTML += '<input type=\'number\', \'name=\'num_points\', placeholder=\'Number of Data Points\'>'
+        params.innerHTML += '<input type=\'number\' \'name=\'num_points\' placeholder=\'Number of Data Points\'>'
         if(this.select.value == generator.investments[this.index].algorithm)
           this.getParams(generator.investments[this.index].param);
       }//end if
