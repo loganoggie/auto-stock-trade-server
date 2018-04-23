@@ -230,7 +230,9 @@ router.get('/investments-get', function(req, res, next) {
   });
 });
 
-router.post('/edit', function(req, res, next) {
+router.post('/edit-algorithm', function(req, res, next) {
+
+  console.log(req.body)
   
   // var update_id = 0;
   // client.query("UPDATE userstocks SET WHERE id=$1", [del_id]);
@@ -238,6 +240,8 @@ router.post('/edit', function(req, res, next) {
 });
 
 router.post('/delete', function(req, res, next) {
+
+  console.log(req.body)
   
   // var del_id = 0;
   // client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
@@ -269,7 +273,7 @@ router.post('/add', function(req, res, next) {
   console.log(params)
 
   client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
-    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + req.body.radio + "','" + 1 + "')")
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
 
   res.render('investments')
   
