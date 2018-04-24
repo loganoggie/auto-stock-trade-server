@@ -37,6 +37,9 @@ block bodyContent
             select(name='algorithm', onchange='edit.algorithmOnChange()')
             div.algorithm-params(id='edit-params')
             input(type='submit', value='Confirm')
+          form(id='deleteForm', method='POST', action='/delete')
+            input(type='hidden', name='delete' readonly='readonly')
+            input(type='submit', value='Delete')
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
@@ -50,5 +53,6 @@ block bodyContent
         span.status Status
       div.holders(id='investments')
   script(src='js/stocks.js')
-  script(src='js/investments.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')
+  script(src='js/investments.js')

@@ -46,6 +46,11 @@
   padding: 0.5%
 }
 
+.invest-holder:hover {
+  background-color: #F48F4B;
+  cursor: default;
+}
+
 .symbol {
   padding: 0.5%
 }
@@ -63,6 +68,10 @@
 }
 
 .algorithm {
+  padding: 0.5%
+}
+
+.edit {
   padding: 0.5%
 }
 
