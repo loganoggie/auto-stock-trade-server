@@ -128,16 +128,17 @@ function genChart(data) {
       datasets: [{
         label: 'Portfolio Value',
         data: data.worth_day.worth,
-        backgroundColor: [
-          'rgba(67, 160, 71, 0.4)'
-        ]
+        backgroundColor: ['rgba(67, 160, 71, 0.4)']
       }]
     },
     options: {
       scales: {
         yAxes: [{
           ticks: {
-            beginAtZero:false
+            beginAtZero:false,
+            callback: function(label, index, labels) {
+              return '$' + label;
+            }
           }
         }]
       }
