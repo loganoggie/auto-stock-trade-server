@@ -150,11 +150,11 @@ function genChart2(symbols, volumes, api) {
     var shares = [];
     //Create shares
     for(i = 0; i < symbols.length; i++) {
-      shares.push(Number(Number(Number(prices[i]) * Number(volumes[i])).toFixed(2)));
+      shares.push(Number(Number(Number(prices[i]) * Number(volumes[i]))).toFixed(2));
     }//end for calculating shares
     //We need to split everything up...
 
-    var sorted = sortTogether(shares, symbols);
+    var sorted = sortTogether(shares, symbols);//sort based on chare value
     shares = sorted.shr;
     symbols = sorted.sym;
 
@@ -164,7 +164,7 @@ function genChart2(symbols, volumes, api) {
     var ceiling = Math.min(5, symbols.length);
     for(i = 0; i < ceiling; i++) {//top
       topFiveSymbols.push(symbols[i]);
-      topFiveShares.push(shares[i]);
+      topFiveShares.push(Number(shares[i]));//make sure we're  pushing a number
     }//end forloop
 
     //We if celing is 5 and we have more than 5 stocks we need to add a 6th number that is the sum of the shares of all other Stocks
@@ -186,13 +186,26 @@ function genChart2(symbols, volumes, api) {
         datasets: [{
           label: 'Portfolio Value',
           data: topFiveShares,
-          backgroundColor: ['#43a047', '#f48f4b', '#3e95cd', '#8e5ea2', '#c45850', '#e8c3b9']
+          backgroundColor: ['#43a047', '#f48f4b', '#3e95cd', '#8e5ea2', '#c45850', '#e8c3b9']//colors
         }]
       },
       options: {
         title: {
           display: true,
           text: 'Top 5 Shares'
+        },
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              var dataset = data.datasets[tooltipItem.datasetIndex];
+              var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                return previousValue + currentValue;
+              });
+              var currentValue = dataset.data[tooltipItem.index];
+              var percent = Math.floor(((currentValue/total) * 100)+0.5);
+              return '$' + currentValue + " - " + percent + "%";
+            }
+          }
         }
       }
     });

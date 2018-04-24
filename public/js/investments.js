@@ -339,7 +339,7 @@ async function generateInvestment(stockData, investNum) {
             if(stockData.enabled != '1')//maybe remove later
               status = "inactive";
             //Display an investment
-            investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + '>'
+            investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + ' onclick=\'edit.constructEdit(' + investNum + ')\'>'
             var investLoc = document.getElementById(investNum)
             investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + stockData.stockticker + '</span>';
             investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>';
@@ -347,7 +347,6 @@ async function generateInvestment(stockData, investNum) {
             investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>';
             investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + stockData.algorithm +'</span>';
             investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>';
-            investLoc.innerHTML += '<span class = \'edit\' onclick=\'edit.constructEdit(' + investNum + ')\'>Edit</span>';
             await sleep(1*1000)//let the API catch up
             sortInvestments()
           }//end if
