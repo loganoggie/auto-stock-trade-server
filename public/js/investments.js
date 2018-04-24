@@ -164,9 +164,10 @@ var myModal = {
 
   checkParams: function() {
     var params = document.getElementById('params')
+    var radioButtons = document.getElementsByName('radio');
     var children = params.childNodes;
     if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI is selected
-      if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+      if(!radioButtons[0].checked && !radioButtons[1].checked && !radioButtons[2].checked){return false}//If none of the radioboxes are checked, then dont submit
     }
     if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
       if(children[1].value == '' || children[1].value <= 1)
@@ -211,7 +212,6 @@ var edit = {
 
   hideModal: function() {
     document.getElementById('edit-params').innerHTML = '';//clear params
-
     this.modal.style.display = 'none';
   },
 
@@ -293,9 +293,10 @@ var edit = {
 
   checkParams: function() {
     var params = document.getElementById('edit-params')
+    var radioButtons = document.getElementsByName('radio');
     var children = params.childNodes;
     if(this.select.value == this.ALGORITHM_NAME[0]) {//RSI is selected
-      if(!children[0].checked && !children[1].checked && !children[2].checked){return false}//If none of the radioboxes are checked, then dont submit
+      if(!radioButtons[0].checked && !radioButtons[1].checked && !radioButtons[2].checked){return false}//If none of the radioboxes are checked, then dont submit
     }
     if(this.select.value == this.ALGORITHM_NAME[1]) {//BBands is selected
       if(children[1].value == '' || children[1].value <= 1)
@@ -508,7 +509,6 @@ $('document').ready( function() {
       console.log('Error in AJAX responce');
     }//end error
   });
-
 });
 
 //modalAlgorithms(ALGORITHM_NAME);//FEED MODAL ALGORITHMS

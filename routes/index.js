@@ -105,7 +105,7 @@ router.get('/runSMA', function(req, res, next) {
       {
         console.log("CHECK this stringdate:"+stringDate);
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
-        
+
         var params2 = funcs.make_params('TIME_SERIES_INTRADAY', this.query.rows[this.i].stockticker, '60min', req.session.userInfo.avkey)
         var encoded2 = Object.keys(params).map(
         key => `${key}=${params[key]}`
@@ -233,7 +233,7 @@ router.get('/investments-get', function(req, res, next) {
 router.post('/edit-algorithm', function(req, res, next) {
 
   console.log(req.body)
-  
+
   var ID = req.body.investID;
   var params;
 
@@ -258,22 +258,22 @@ router.post('/edit-algorithm', function(req, res, next) {
 
   console.log(req.session.userInfo)
 
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
   "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
 
   res.render('investments', req);
-  
+
 });
 
 router.post('/delete', function(req, res, next) {
 
   console.log(req.body)
-  
+
   var del_id = req.body.delete;
   client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
 
   res.render('investments', req);
-  
+
 });
 
 router.post('/add', function(req, res, next) {
@@ -300,11 +300,11 @@ router.post('/add', function(req, res, next) {
 
   console.log(params)
 
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email + 
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
     "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
 
   res.render('investments')
-  
+
 });
 
 router.get('/investments', function(req, res, next) {
@@ -346,7 +346,7 @@ router.post('/updatePassword', async function(req, res, next) {
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
   var newPasswordConfirm = req['body']['newPasswordConfirm'];
-  
+
   console.log(req.session);
   console.log(req.session.userInfo);
   console.log(req.session.userInfo.password);

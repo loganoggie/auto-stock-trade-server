@@ -31,7 +31,7 @@ var numData = getData(10000);*/
 //----END TESTING FUNCTIONS----
 //----BEGINNING STUFF----
 
-function doRequest(url) {
+/*function doRequest(url) {
   return new Promise((resolve, reject) => {
     fetch(url).then(function(responce) {
       return responce.json();
@@ -80,45 +80,41 @@ async function batchStock(symbols, api) {
     prices.push(converted[i].price);
   }//end for
   return prices;
+}*/
+
+async function resultMin(symbol) {//This will get the stock data for the past minute
+  try {
+    var result = await stocks.timeSeries({//Result is an array, and is indexable. contents is JSON
+      symbol: symbol,
+      interval: '1min',
+      amount: 1
+     });
+     return result
+  }
+  catch(err) {
+    console.log(err)
+  }
 }
 
 var ctx = document.getElementById('folio-value');
-var ctx2 = document.getElementById('folio-value2');
 
-$.ajax({//Get porfolio value from server
+
+$.ajax({//Get porfolio value from server - PUT IN ONREADY LATER
   url: '/dash-get',
   dataType: 'json',
   success: function(data) {
     var json = $.parseJSON(data);
     console.log(json);
     genChart(json);
-    //genChart2(json);
+    //var symbols = json.stockInfo.map(a => a.stockticker);
+    //var volumes = json.stockInfo.map(a => a.numstocks);
+    //var api = json.userInfo.avkey;
+    //genChart2(symbols, volumes, api);
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce')
   }//end error
 })
-
-function sortTogether(shares, symbols) {
-  var all = []
-  for(i = 0; i < shares.length; i++) {
-    all.push({'A': shares[i], 'B': symbols[i]})
-  }//end for
-
-  all.sort(function(a, b) {
-    return b.A - a.A;
-  });
-
-  shares = []
-  symbols = []
-
-  for(i = 0; i < all.length; i++) {
-    shares.push(all[i].A);
-    symbols.push(all[i].B);
-  }//end for loop
-
-  return {shr: shares, sym: symbols}
-}
 
 function genChart(data) {
   var myChart = new Chart(ctx, {
@@ -146,7 +142,7 @@ function genChart(data) {
   });
 }
 
-function genChart2(symbols, volumes, api) {
+/*function genChart2(symbols, volumes, api) {
   batchStock(symbols, api).then(function(prices) {
     var shares = [];
     //Create shares
@@ -211,8 +207,8 @@ function genChart2(symbols, volumes, api) {
       }
     });
   });
-}
+}*/
 
 
 //testings batch
-genChart2(['GOOG', 'TSLA', 'AAPL', 'COWN', 'AMD', 'F', 'ADM'], [40, 20, 13, 70, 20, 200, 100], 'QSZQSTA7ZLPXTAZO');
+//genChart2(['GOOG', 'TSLA', 'AAPL', 'COWN', 'AMD', 'F', 'ADM'], [40, 20, 13, 70, 20, 200, 100], 'QSZQSTA7ZLPXTAZO');

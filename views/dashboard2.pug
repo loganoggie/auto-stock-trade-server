@@ -39,15 +39,16 @@ block bodyContent
       div.account-graph
         canvas(id='folio-value2', height='600', width='800')
         //Import the chart.js library
+        //Import stocks library
+        script(src='js/stocks.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
         script(src='js/dash-chart.js')
   div.tickers
     span(id='warn')
     span(id='load') Loading Data...
-    button(type='button' onclick='namespace.prevTickers()') Previous
-    button(type='button' onclick='namespace.nextTickers()') Next
+    button(type='button' id='prev' onclick='namespace.prevTickers()' disabled) Previous
+    button(type='button' id='next' onclick='namespace.nextTickers()' disabled) Next
     div.tick(id='tick')
-    script(src='js/stocks.js')
     script(src='js/ticker.js')
   //- div.current-investment-wrapper
   //-   div.current-investment-feed
