@@ -80,10 +80,10 @@ $.ajax({//Get tickers from server
   dataType: 'json',
   success: function(data) {
     var json = $.parseJSON(data);
-    console.log(json);
     stocks = new Stocks(json.userInfo.avkey)//use the API that the node server provides
-    namespace.setSymbols(json.symbols);
-    namespace.createTickers(json.symbols, STARTING_INDEX);//create the initial tickers
+    var symbols = json.stockInfo.map(a => a.stockticker);
+    namespace.setSymbols(symbols);
+    namespace.createTickers(symbols, STARTING_INDEX);//create the initial tickers
   },//end success
   error: function(data) {
     console.log('Error in AJAX responce');

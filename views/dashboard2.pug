@@ -41,5 +41,13 @@ block bodyContent
         //Import the chart.js library
         script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
         script(src='js/dash-chart.js')
+  div.tickers
+    span(id='warn')
+    span(id='load') Loading Data...
+    button(type='button' onclick='namespace.prevTickers()') Previous
+    button(type='button' onclick='namespace.nextTickers()') Next
+    div.tick(id='tick')
+    script(src='js/stocks.js')
+    script(src='js/ticker.js')
   //- div.current-investment-wrapper
   //-   div.current-investment-feed
