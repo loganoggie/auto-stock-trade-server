@@ -97,7 +97,7 @@ html {
 }
 
 .suggested-action:last-child {
-    border: none;   
+    border: none;
 }
 
 .suggested-action:nth-child(even) {
@@ -168,7 +168,7 @@ html {
     .suggested-actions-wrapper, .investment-link-wrapper {
         float: right;
     }
-    
+
     .suggested-actions-wrapper {
         margin-top: 30px;
     }
@@ -176,4 +176,8 @@ html {
     .investment-link-wrapper {
         clear: right;
     }
+}
+
+.ticker {
+  display: none;//Start off hidden by default
 }
