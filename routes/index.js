@@ -9,6 +9,7 @@ var request = require('request');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var funcs = require('./funcs.js')
+var schedule = require('node-schedule');
 var client = database.client;
 var pool = database.pool;
 var cp = require('child_process');
@@ -392,10 +393,25 @@ function allUsersWorthDay() {
   });
 }
 
+//Execute at 5:00pm CT right now.
+// var worthSchedule = schedule.scheduleJob({hour: 18, minute: 45}, function() {
+//   console.log("Generating portfolio worth for all users.")
+//   allUsersWorthDay();
+// });
+
+client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
+
 child.on('message', function(result) {//When we recieve a sum, add it to the db
   var obj = JSON.parse(result);
-  console.log('User ID Recieved: ' + obj.id);
-  console.log('User portfolio worth: ' + obj.result);
+  //console.log('User ID Recieved: ' + obj.email);
+  //console.log('User portfolio worth: ' + obj.result);
+  var email = obj.email;
+  var worth = Number(obj.result).toFixed(2);
+  var today = new Date().toISOString().slice(0, 10).replace('T', ' ');//todays date
+
+  queries.addWorth(email, worth, today, function(result) {
+    console.log("Added data to email: " + email);
+  });
 });
 
-allUsersWorthDay();
+//allUsersWorthDay();

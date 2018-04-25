@@ -3,8 +3,8 @@ var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var Stocks = require('../public/js/stocks.js')
 
-function Summation(api, stockInfo, id) {
-  this.id = id
+function Summation(api, stockInfo, email) {
+  this.email = email;
   this.api = api;
   this.symbols = stockInfo.map(a => a.stockticker);
   this.symbols_clone = this.symbols;
@@ -50,7 +50,7 @@ Summation.prototype.sumInvestments = async function(sumInstance) {
 					sum += Number(share);//sum the share for the person.
 					if(sumInstance.symbols_clone.length == 0){
             done = true;
-            var obj = {result: sum, id: sumInstance.id}
+            var obj = {result: sum, email: sumInstance.email}
             var json = JSON.stringify(obj);
             console.log('Done summing');
             process.send(json);//send data
@@ -72,7 +72,7 @@ Summation.prototype.sumInvestments = async function(sumInstance) {
 	return sum;
 }	//end sumInvestments
 
-async function stuff(users) {
+async function sumUsers(users) {
   var length = users.length;
   for(var i = 0; i < length; i++) {
     console.log("Interation " + i);
@@ -80,11 +80,11 @@ async function stuff(users) {
     await queries.getCurrentStockInfo(users[i].email, function(query){
       var stockInfo = query.rows;
       if(stockInfo.length != 0) {
-        var sum = new Summation(users[i].avkey, stockInfo, users[i].id);
+        var sum = new Summation(users[i].avkey, stockInfo, users[i].email);
         sum.sumInvestments(sum);
       }//end if
       else {
-        var obj = {result: 0, id: users[i].id}
+        var obj = {result: 0, email: users[i].email}
         var json = JSON.stringify(obj);
         process.send(json);//send data
       }//end if
@@ -95,6 +95,6 @@ async function stuff(users) {
 process.on('message', function(json) {
   var users = JSON.parse(json);
   console.log('Start summation');
-  stuff(users);
+  sumUsers(users);
   console.log(users.length);
 });
