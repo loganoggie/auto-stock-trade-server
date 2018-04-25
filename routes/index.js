@@ -11,7 +11,11 @@ var queries = require('../bin/queries.js');
 var funcs = require('./funcs.js')
 var client = database.client;
 var pool = database.pool;
+var cp = require('child_process');
 
+//-----------------------------------------------------------------------
+//SUMMATION WORKER
+var child = cp.fork('routes/summing.js');//summs up everything
 //-----------------------------------------------------------------------
 
 // console.log(passport);
@@ -378,4 +382,20 @@ router.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
+
 module.exports = router;
+
+function allUsersWorthDay() {
+  queries.getAllUsers(function(query) {
+    var json = JSON.stringify(query.rows);
+    child.send(json);
+  });
+}
+
+child.on('message', function(result) {//When we recieve a sum, add it to the db
+  var obj = JSON.parse(result);
+  console.log('User ID Recieved: ' + obj.id);
+  console.log('User portfolio worth: ' + obj.result);
+});
+
+allUsersWorthDay();

@@ -133,8 +133,15 @@ async function addNotification(email, notification, callback)
   callback(notifications);
 }
 
+async function getAllUsers(callback)
+{
+  var allUsers = await client.query("SELECT * FROM users");
+  callback(allUsers);
+}
+
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
 module.exports.getNotifications = getNotifications;
 module.exports.addNotification = addNotification;
+module.exports.getAllUsers = getAllUsers;
