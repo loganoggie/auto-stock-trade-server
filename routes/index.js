@@ -9,7 +9,6 @@ var request = require('request');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var funcs = require('./funcs.js')
-var schedule = require('node-schedule');
 var client = database.client;
 var pool = database.pool;
 var cp = require('child_process');
@@ -392,12 +391,6 @@ function allUsersWorthDay() {
     child.send(json);
   });
 }
-
-//Execute at 5:00pm CT right now.
-// var worthSchedule = schedule.scheduleJob({hour: 18, minute: 45}, function() {
-//   console.log("Generating portfolio worth for all users.")
-//   allUsersWorthDay();
-// });
 
 client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
 
