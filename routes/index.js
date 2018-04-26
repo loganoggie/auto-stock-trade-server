@@ -207,12 +207,12 @@ router.get('/dash-get', function(req, res, next) {
       req.session.notifications=query2.rows;
       queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
         req.session.userInfo=queryUser.rows[0];
-        req.session.worth_day = {
-          worth: [9000, 9200, 9460.43, 9750, 10000],
-          day: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
-          };
-        req.session.total_worth = 10000.00;
-        res.json(JSON.stringify(req.session));
+        queries.getWorth(req.user.email, function(queryWorth) {
+          console.log(queryWorth.rows);
+          req.session.worth = queryWorth.rows;
+          req.session.total_worth = 10000;
+          res.json(JSON.stringify(req.session));
+        });
       });
     });
   });
@@ -382,8 +382,9 @@ router.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-
-module.exports = router;
+router.get('/sum', function(req, res) {
+  allUsersWorthDay();
+});
 
 function allUsersWorthDay() {
   queries.getAllUsers(function(query) {
@@ -392,8 +393,7 @@ function allUsersWorthDay() {
   });
 }
 
-client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
-
+//client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
 child.on('message', function(result) {//When we recieve a sum, add it to the db
   var obj = JSON.parse(result);
   //console.log('User ID Recieved: ' + obj.email);
@@ -407,4 +407,7 @@ child.on('message', function(result) {//When we recieve a sum, add it to the db
   });
 });
 
+module.exports = router;
+
+//make();
 //allUsersWorthDay();

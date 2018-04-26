@@ -52,8 +52,13 @@ var pool = database.pool;
 // });
 
 //Make portfolioworth table;
-// client.query("CREATE TABLE portfolioworth (id INT, email VARCHAR, worth DOUBLE, date DATE, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err, res) => {
-//   console.log("portfolioworth created");
+// client.query("CREATE TABLE portfolioworth (id INT NOT NULL AUTO_INCREMENT, email VARCHAR, worth DOUBLE, date DATE, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err, res) => {
+//   console.log(err);
+// });
+
+//DROP
+// client.query("DROP TABLE portfolioworth", (err, res) => {
+//   console.log(err);
 // });
 
 
@@ -146,13 +151,13 @@ async function getAllUsers(callback)
 
 async function addWorth(email, worth, day, callback)
 {
-  var add = await client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",[email, worth, day]);
+  var add = await client.query("INSERT INTO portfolioworth (email, worth, date) VALUES ($1,$2,$3)",[email, worth, day]);
   callback(add);
 }
 
 async function getWorth(email, callback) {
   var worth = await client.query("SELECT * FROM portfolioworth WHERE email=$1",[email]);
-  callback(email);
+  callback(worth);
 }
 
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
