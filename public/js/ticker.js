@@ -9,19 +9,20 @@ const TICKERS_ON_PAGE = 5;//number of tickers on a page
 var namespace = {//namespace to hold allSymbols and indexTickers to avoid global variables
   //namespace vars
   allSymbols: new Array(),//array of ticker symbols
+  allVolumes: new Array(),
   activeIntervals: new Array(),//array of intervals that are updating tickers ever minute, stored in this so they can be cleared
   currentPage: 0,//pages start at zero
 
   createAllTickers: function() {
     for(i = 0; i < this.allSymbols.length; i++)
-      generators.genTicker(this.allSymbols[i], i);
+      generators.genTicker(this.allSymbols[i], i, this.allVolumes[i]);
   },
 
   showStartTickers: function() {
     this.showTickers(this.allSymbols, 0);
   },
 
-  setSymbols: function(symbols) {this.allSymbols = symbols},//set this array to the array of symbol fetched from backend
+  setSymbols_Volume: function(symbols, volumes) {this.allSymbols = symbols; this.allVolumes = volumes},//set this array to the array of symbol fetched from backend
   nextTickers: function() {
     var totalPages = Math.ceil(this.allSymbols.length / TICKERS_ON_PAGE)-1;
     //var length = TICKERS_ON_PAGE;//default length
@@ -117,11 +118,11 @@ async function resultMin(symbol) {//This will get the stock data for the past mi
 
 var generators = {//generation namespace. Using to avoid an other global variable
 
-  symbol_price: new Array(),
+  symbol_price_volume: new Array(),
   retry: new Array(),
   loadInterval: {},
 
-  genTicker: async function(symbol, tickerNum) {
+  genTicker: async function(symbol, tickerNum, volume) {
     resultDaily(symbol).then(async function(valueDaily) {
       await sleep(1*1000);
       resultMin(symbol).then(async function(valueOpen) {
@@ -132,7 +133,7 @@ var generators = {//generation namespace. Using to avoid an other global variabl
             var today = JSON.parse(JSON.stringify(valueOpen[0]))
             var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
             var tickersHolder = document.getElementById('tick');
-            generators.symbol_price.push({sym: symbol, prc: today.close});
+            generators.symbol_price_volume.push({sym: symbol, prc: today.close, vol: volume});
             var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
             var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
             tickersHolder.innerHTML += '<div class=\'ticker\' id=' + tickerNum + '>'
@@ -196,7 +197,7 @@ var generators = {//generation namespace. Using to avoid an other global variabl
     }//end for
   },//end function clearTimeouts
 
-  loaded: function(length, volumes) {
+  loaded: function(length) {
     var prev = document.getElementById('prev');
     var next = document.getElementById('next');
     loadInterval = setInterval(function(length){
@@ -210,7 +211,7 @@ var generators = {//generation namespace. Using to avoid an other global variabl
         clearInterval(loadInterval);
         //Done with ticker stuff
         //Start pie chart stuff
-        genChart2(generators.symbol_price, volumes)
+        genChart2(generators.symbol_price_volume)
       }//end if
     }, 1000, length);
   },//end loaded function
@@ -268,9 +269,10 @@ function sortTogether(shares, symbols) {
   return {shr: shares, sym: symbols}
 }
 
-function genChart2(symbol_price, volumes) {
-  var symbols = symbol_price.map(a => a.sym);
-  var prices = symbol_price.map(a => a.prc);
+function genChart2(symbol_price_volume) {
+  var symbols = symbol_price_volume.map(a => a.sym);
+  var prices = symbol_price_volume.map(a => a.prc);
+  var volumes = symbol_price_volume.map(a => a.vol);
   var shares = [];
   //Create shares
   for(i = 0; i < symbols.length; i++) {
@@ -343,9 +345,9 @@ $.ajax({//Get tickers from server
     stocks = new Stocks(json.userInfo.avkey)//use the API that the node server provides
     var symbols = json.stockInfo.map(a => a.stockticker);
     var volumes = json.stockInfo.map(a => a.numstocks);
-    namespace.setSymbols(symbols);
+    namespace.setSymbols_Volume(symbols, volumes);
     namespace.createAllTickers();
-    generators.loaded(symbols.length, volumes);
+    generators.loaded(symbols.length);
     //namespace.createTickers(symbols, STARTING_INDEX);//create the initial tickers
   },//end success
   error: function(data) {

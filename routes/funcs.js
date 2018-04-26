@@ -1,6 +1,7 @@
 "use strict";
 // var fetch = require('node-fetch')
 var express = require('express');
+var Stocks = require('../public/js/stocks.js')
 var router = express.Router();
 
 const DEFAULT_URL = 'https://www.alphavantage.co/query?'
@@ -20,7 +21,7 @@ async function do_alpha_job(getFunc, get_args, doFunc)
 
 // do_alpha_job(getTechnical, ['RSI', 'MSFT', '15min', 200, apikey], print_earliest_RSI)
 
- 
+
 function right_now()
 {
 	var date = new Date();
@@ -106,6 +107,11 @@ function getTechnical(ind, sym, inter, time, apikey)
 	});
   });
 }
+
+//SUMMATION NAMEPACE
+//TESTING
+//summation.setApi('QSZQSTA7ZLPXTAZO')
+//summation.sumInvestments([{stockticker: 'GOOG', numstocks:20}, {stockticker:'TSLA', numstocks: 15}]);
 
 module.exports = {
 	do_alpha_job: do_alpha_job,
