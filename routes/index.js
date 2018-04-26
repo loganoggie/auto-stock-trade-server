@@ -246,12 +246,12 @@ router.post('/updatePassword', function(req, res, next) {
 
       //console.log(req.session.userInfo);
 
-      client.query("SELECT * FROM users", (err,res) => {
-       console.log("Number of users: "+res.rowCount);
-       console.log(res.rows);
-      });
+      // client.query("SELECT * FROM users", (err,res) => {
+      //  console.log("Number of users: "+res.rowCount);
+      //  console.log(res.rows);
+      // });
 
-      if(newPassword === newPasswordConfirm)  //if new password fields match
+      if(newPassword === newPasswordConfirm)  //if new password feilds match
       {
           //run compare to make sure the currentPassword is actually the user's current password in the database
           bcrypt.compare(currentPassword, req.session.userInfo.password, function (err, res)
@@ -284,7 +284,7 @@ router.post('/updatePassword', function(req, res, next) {
                           }
 
                           console.log(result);
-                          client.query("UPDATE users SET password = '" + result + "' where email = '" + req.session.userInfo.email + "';");
+                          client.query("UPDATE users SET password = '" + result + "' where id = '" + req.session.userInfo.id + "';");
                           //client.query("UPDATE users SET password = '" + result + "';");
                       });
                   });
