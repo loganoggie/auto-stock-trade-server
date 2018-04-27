@@ -8,26 +8,49 @@ var {passport} = require('../bin/passport.js');
 var request = require('request');
 var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
-var funcs = require('./funcs.js')
 var client = database.client;
 var pool = database.pool;
-var cp = require('child_process');
+var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954cd4e84950c98dbdde099f8');
 
 //-----------------------------------------------------------------------
-//SUMMATION WORKER
-var child = cp.fork('routes/summing.js');//summs up everything
-//-----------------------------------------------------------------------
 
-// console.log(passport);
-// console.log(database);
-// console.log(queries);
-
-
-const DEFAULT_URL = 'https://www.alphavantage.co/query?'
+router.get('/demo', function(req,res,next){
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+16365380210', //John
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+16604221182', //Gunner
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+16362841357', //Derek
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+14173984675', //Tanner
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+15734654549', //Logan
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: Eat my ass.',
+    to: '+15733304861', //Joey
+    from: '+13146674809'
+  }).then();
+});
 
 /*Runs the correct algorithm for every investment.*/
-router.get('/runRSI', function(req, res, next) {
+router.get('/run', function(req, res, next) {
 
+  /*
   queries.getAllInvestments("RSI",function(query) {
     console.log("PROCESSING RSI ALGO");
     for(var i=0;i<query.rows.length;i++) //for each investment
@@ -35,40 +58,29 @@ router.get('/runRSI', function(req, res, next) {
       if(query.rows[i].params=="low") //low risk RSI
       {
         //console.log("low");
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        var day = date.getDate()-2;
 
-        var stringDate = funcs.right_now();
+        if(month<10)
+        {
+          month="0"+month;
+        }
+        if(day<10)
+        {
+          day="0"+day;
+        }
 
-        var params = funcs.make_params('RSI', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
-        var encoded = Object.keys(params).map(
-        key => `${key}=${params[key]}`
-        ).join('&');
 
-        var url = DEFAULT_URL + encoded
+      var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
         //https://www.alphavantage.co/query?function=RSI&symbol="+this.query.rows[this.i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0
-        request(url, function(error,response,body2)
+        request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           console.log("RSIDate: "+stringDate);
           var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the current price
           //console.log("Current Price: "+currentPrice);
           console.log("RSI Value: "+RSIvalue);
-          /*
-          if(currentPrice>RSIvalue)
-          {
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
-            {
-              //console.log("User "+query.rows[this.i].email+" should sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each. This would make the investment worth $"+this.currentPrice*query.rows[this.i].numstocks+".");//UnhandledPromiseRejection???
-              console.log("SELL THE STOCK:");
-            }.bind({ i: this.i, currentPrice: currentPrice}));
-          }
-          else
-          {
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
-            {
-              //console.log("User "+query.rows[this.i].email+" should buy "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each.");//UnhandledPromiseRejection???
-              console.log("BUY THE STOCK:");
-            }.bind({ i: this.i, currentPrice: currentPrice}));
-          }
-          */
         }.bind({ query: query, i: i }));
       }
       else if(query.rows[i].params=="medium") //medium risk RSI
@@ -85,58 +97,47 @@ router.get('/runRSI', function(req, res, next) {
       }
     }
   });
+  */
 
-});
-
-router.get('/runSMA', function(req, res, next) {
-
-  queries.getAllInvestments("MovingAverages",function(query) {
+  queries.getAllInvestments("Moving Averages",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1;
+      var day = date.getDate()-1;
 
-      var stringDate = funcs.right_now();
-
-      var params = funcs.make_params('SMA', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
-      var encoded = Object.keys(params).map(
-      key => `${key}=${params[key]}`
-      ).join('&');
-
-      var url = DEFAULT_URL + encoded
-
-      console.log("Current date: "+stringDate);
-      console.log(url)
-      request(url, function(error,response,body)
+      if(month<10)
       {
-        console.log("CHECK this stringdate:"+stringDate);
+        month="0"+month;
+      }
+      if(day<10)
+      {
+        day="0"+day;
+      }
+      var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+
+      request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
+      {
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
-
-        var params2 = funcs.make_params('TIME_SERIES_INTRADAY', this.query.rows[this.i].stockticker, '60min', req.session.userInfo.avkey)
-        var encoded2 = Object.keys(params).map(
-        key => `${key}=${params[key]}`
-        ).join('&');
-
-        var url2 = DEFAULT_URL + encoded2
-
-        request(url2, function(error,response,body2)
+        request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
-          console.log("Current Price: "+currentPrice);
-          console.log("Moving Average Value: "+movingAverageValue);
           if(currentPrice>movingAverageValue)
           {
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
-            {
-              //console.log("User "+query.rows[this.i].email+" should sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each. This would make the investment worth $"+this.currentPrice*query.rows[this.i].numstocks+".");//UnhandledPromiseRejection???
-              console.log("SELL THE STOCK:");
-            }.bind({ i: this.i, currentPrice: currentPrice}));
+            queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+              queries.addNotification(query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+              {
+              }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+            }.bind({i: this.i, query: this.query}));
           }
           else
           {
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
-            {
-              //console.log("User "+query.rows[this.i].email+" should buy "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each.");//UnhandledPromiseRejection???
-              console.log("BUY THE STOCK:");
-            }.bind({ i: this.i, currentPrice: currentPrice}));
+            queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+              queries.addNotification(this.query.rows[this.i].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              {
+              }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+            }.bind({i: this.i, query: this.query}));
           }
         }.bind({ query: this.query, i: this.i }));
       }.bind({ query: query, i: i }));
@@ -144,6 +145,7 @@ router.get('/runSMA', function(req, res, next) {
   });
   res.render('splash');
 });
+
 
 router.get('/', function(req, res, next) {
   res.render('splash');
@@ -271,24 +273,15 @@ router.post('/edit-algorithm', function(req, res, next) {
 });
 
 router.post('/delete', function(req, res, next) {
-
-  console.log(req.body)
-
   var del_id = req.body.delete;
   client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
-
   res.render('investments', req);
-
 });
 
 router.post('/add', function(req, res, next) {
-
-  console.log(req.body)
   var params;
-
   if (req.body.algorithm == 'BBands')
   {
-
     params = JSON.stringify({
       'interval': req.body.interval,
       'num_points': req.body.num_points
@@ -302,14 +295,19 @@ router.post('/add', function(req, res, next) {
   {
     params = req.body.radio;
   }
-
-  console.log(params)
-
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
-    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
-
-  res.render('investments')
-
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+    req.session.userInfo=query.rows[0];
+    console.log(req.session);
+  });
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    console.log(req.session);
+  });
+  queries.getNotifications(req.user.email, function(query){
+    req.session.notifications=query.rows;
+    console.log(req.session);
+  });
+  res.render('dashboard2');
 });
 
 router.get('/investments', function(req, res, next) {
@@ -318,7 +316,18 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('investments', req);
   }
 });
@@ -329,7 +338,18 @@ router.get('/aboutalgorithms', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('aboutalgorithms');
   }
 });
@@ -340,29 +360,47 @@ router.get('/accountsettings', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('accountsettings');
   }
 });
 
 router.post('/updatePassword', async function(req, res, next) {
-  console.log('Password Changed!');
-
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
   var newPasswordConfirm = req['body']['newPasswordConfirm'];
-
-  console.log(req.session);
-  console.log(req.session.userInfo);
-  console.log(req.session.userInfo.password);
-
+  
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+    req.session.userInfo=query.rows[0];
+    console.log(req.session);
+  });
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    console.log(req.session);
+  });
+  queries.getNotifications(req.user.email, function(query){
+    req.session.notifications=query.rows;
+    console.log(req.session);
+  });
+  
   if(bcrypt.compareSync(currentPassword, req.session.userInfo.password) && newPassword === newPasswordConfirm) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(newPassword, salt);
 
     client.query("UPDATE users SET password = " + hash + ";");
   }
-
+  
 });
 
 router.get('/dataanalytics', function(req, res, next) {
@@ -371,7 +409,18 @@ router.get('/dataanalytics', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
     res.render('dataanalytics');
   }
 });
@@ -411,11 +460,8 @@ function toLocal(day) {//for local time
         ':' + pad(tzo % 60);
 }
 
-//client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
 child.on('message', function(result) {//When we recieve a sum, add it to the db
   var obj = JSON.parse(result);
-  //console.log('User ID Recieved: ' + obj.email);
-  //console.log('User portfolio worth: ' + obj.result);
   var email = obj.email;
   var worth = Number(obj.result).toFixed(2);
   var today = toLocal(new Date()).slice(0, 10).replace('T', ' ');
@@ -426,6 +472,3 @@ child.on('message', function(result) {//When we recieve a sum, add it to the db
 });
 
 module.exports = router;
-
-//make();
-//allUsersWorthDay();

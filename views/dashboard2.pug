@@ -17,19 +17,18 @@ block bodyContent
       div.account-graph
         canvas(id='folio-value', height='600', width='800')
         //Import the chart.js library
-  div.suggested-actions-wrapper 
+  div.suggested-actions-wrapper
     h1.suggested-actions-heading Suggested Actions
-    p.no-actions-notification There are no actions to take at the moment
     div.suggested-actions-feed 
-      div.suggested-action
-        div
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
+      each notif in notifications
+        div.suggested-action
+          p.investment-name #{notif.name} 
+          p.investment-action #{notif.action}
+          p.investment-action-date #{notif.action_date}
+          p.investment-quantity #{notif.quantity}
+          p.investment-price $#{notif.price}
+      else
+        p.no-actions-notification There are no actions to take at the moment
   div.investment-link-wrapper
     p.investment-verbage Want to edit your current investments?
       a.investment-link(href='/investments') Click Here!

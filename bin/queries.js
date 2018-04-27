@@ -12,6 +12,8 @@ var database = require('../bin/database.js');
 var request = require('request');
 var client = database.client;
 var pool = database.pool;
+var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954cd4e84950c98dbdde099f8');
+
 //-----------------------------------------------------------------------
 
 /*------------------Useful queries------------------*/
@@ -23,9 +25,9 @@ var pool = database.pool;
 
 
 //Drop table userstocks
-// client.query("DROP TABLE userstocks;", (err,res) => {
-//   console.log("userstocks dropped.");
-// });
+//client.query("DROP TABLE userstocks;", (err,res) => {
+//  console.log("userstocks dropped.");
+//});
 
 
 //Drop table usernotifications
@@ -41,15 +43,15 @@ var pool = database.pool;
 
 
 //Make table usernotifications
-//client.query("CREATE TABLE usernotifications (id bigserial, notification varchar, email varchar, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
+//client.query("CREATE TABLE usernotifications (id bigserial, notification varchar UNIQUE, email varchar, date varchar, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
 //  console.log("usernotification created");
 //});
 
 
 //Make table userstocks
-// client.query("CREATE TABLE userstocks (id int, email varchar, stockticker varchar, numstocks int, algorithm varchar, params varchar, enabled bit, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
-//   console.log("userstocks created");
-// });
+//client.query("CREATE TABLE userstocks (id bigserial, email varchar, stockticker varchar, numstocks int, algorithm varchar, params varchar, enabled bit DEFAULT '1', twiliobit bit DEFAULT '0', PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err,res) => {
+//  console.log("userstocks created");
+//});
 
 //Make portfolioworth table;
 // client.query("CREATE TABLE portfolioworth (id INT NOT NULL AUTO_INCREMENT, email VARCHAR, worth DOUBLE, date DATE, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err, res) => {
@@ -69,7 +71,7 @@ var pool = database.pool;
 
 
 //Insert into userstocks
-//client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('jwbhvb@mst.edu','F','100000','MovingAverages','19','1')", (err,res) => {
+//client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled, twiliobit) VALUES ('jwbhvb@mst.edu','BAC','100000','Moving Averages','19','1','1')", (err,res) => {
 //  console.log("userstocks added to database.");
 //});
 
@@ -92,11 +94,21 @@ var pool = database.pool;
 //  console.log("added pk");
 //});
 
-//Print # of users and all rows in users
-//client.query("SELECT * FROM users", (err,res) => {
-//  console.log("Number of users: "+res.rowCount);
+client.query("UPDATE users SET phonenumber='6362841357' WHERE email='tanner0397x@gmail.com'", (err,res) => {
+  console.log("UPDATING users.");
+  console.log(res.rows);
+});
+
+//client.query("UPDATE userstocks SET twiliobit='1' WHERE email='tanner0397x@gmail.com' AND id='2'", (err,res) => {
+//  console.log("UPDATING users.");
 //  console.log(res.rows);
 //});
+
+//Print # of users and all rows in users
+client.query("SELECT * FROM users", (err,res) => {
+  console.log("Number of users: "+res.rowCount);
+  console.log(res.rows);
+});
 
 //Print # of userstocks and all rows in userstocks
 //client.query("SELECT * FROM userstocks", (err,res) => {
@@ -127,8 +139,8 @@ async function getCurrentStockInfo(email, callback)
 
 async function getAllInvestments(algorithm, callback)
 {
-  var stockInfo = await client.query("SELECT * FROM userstocks WHERE enabled='1' AND algorithm = $1",[algorithm]);
-  callback(stockInfo);
+  var stockInfo2 = await client.query("SELECT * FROM userstocks WHERE enabled='1' AND algorithm = $1",[algorithm]);
+  callback(stockInfo2);
 }
 
 async function getNotifications(email, callback)
@@ -137,10 +149,22 @@ async function getNotifications(email, callback)
   callback(notifications);
 }
 
-async function addNotification(email, notification, callback)
+async function addNotification(phonenumber, email, notification, callback)
 {
-  var notifications = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
-  callback(notifications);
+  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
+  twilio.messages.create({
+    body: notification,
+    to: '+1'+phonenumber,
+    from: '+13146674809'
+  });
+  callback(notifications2);
+}
+
+
+async function getPhoneNumber(email, callback)
+{
+  var phonenumber = await client.query("SELECT phonenumber FROM users WHERE email=$1",[email]);
+  callback(phonenumber);
 }
 
 async function getAllUsers(callback)
@@ -165,6 +189,7 @@ module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
 module.exports.getNotifications = getNotifications;
 module.exports.addNotification = addNotification;
+module.exports.getPhoneNumber = getPhoneNumber;
 module.exports.getAllUsers = getAllUsers;
 module.exports.addWorth = addWorth;
 module.exports.getWorth = getWorth;
