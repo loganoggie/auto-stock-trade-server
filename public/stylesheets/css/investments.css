@@ -119,3 +119,50 @@
   background-color: #F48F4B;
   cursor: default;
 }
+
+#add{
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  margin-bottom: 30px;
+  width: 200px;
+  height: 40px;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 3px;
+  background-color: #43A047;
+  transition: background-color .15s ease-in-out;
+}
+
+.holders{
+  text-align: center;
+}
+
+.invest-holder-base{
+  text-align: center;
+}
+
+.investments-table{
+  border-collapse: collapse;
+  width: 100%;
+
+}
+
+.investments-table td, .investments-table th{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.investments-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.investments-table tr:hover {background-color: #ddd;}
+
+.investments-table  th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
