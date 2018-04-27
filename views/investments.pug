@@ -36,6 +36,8 @@ block bodyContent
             input(type='number', name='volume' volumeOnChange='edit.volumeOnChange()')
             select(name='algorithm', onchange='edit.algorithmOnChange()')
             div.algorithm-params(id='edit-params')
+            p Enable Notifications: 
+              input(type='checkbox', name='editTwilio')
             input(type='submit', value='Confirm')
           form(id='deleteForm', method='POST', action='/delete')
             input(type='hidden', name='delete' readonly='readonly')
@@ -52,7 +54,7 @@ block bodyContent
             th Volume
             th Price
             th Algorithm
-            th Status
+            th Notifications
         tbody.tbody
   script(src='js/stocks.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')

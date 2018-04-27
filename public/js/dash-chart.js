@@ -98,23 +98,24 @@ async function resultMin(symbol) {//This will get the stock data for the past mi
 
 var ctx = document.getElementById('folio-value');
 
-
-$.ajax({//Get porfolio value from server - PUT IN ONREADY LATER
-  url: '/dash-get',
-  dataType: 'json',
-  success: function(data) {
-    var json = $.parseJSON(data);
-    console.log(json);
-    genChart(json.worth);
-    //var symbols = json.stockInfo.map(a => a.stockticker);
-    //var volumes = json.stockInfo.map(a => a.numstocks);
-    //var api = json.userInfo.avkey;
-    //genChart2(symbols, volumes, api);
-  },//end success
-  error: function(data) {
-    console.log('Error in AJAX responce')
-  }//end error
-})
+$('document').ready(function () {
+  $.ajax({//Get porfolio value from server - PUT IN ONREADY LATER
+    url: '/dash-get',
+    dataType: 'json',
+    success: function(data) {
+      var json = $.parseJSON(data);
+      console.log(json);
+      genChart(json.worth);
+      //var symbols = json.stockInfo.map(a => a.stockticker);
+      //var volumes = json.stockInfo.map(a => a.numstocks);
+      //var api = json.userInfo.avkey;
+      //genChart2(symbols, volumes, api);
+    },//end success
+    error: function(data) {
+      console.log('Error in AJAX responce')
+    }//end error
+  });
+});
 
 function genChart(data) {
   var worth = data.map(a => Number(a.worth).toFixed(2));
