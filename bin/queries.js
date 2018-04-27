@@ -94,10 +94,10 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //  console.log("added pk");
 //});
 
-//client.query("UPDATE users SET phonenumber='4173984675' WHERE email='tanner0397x@gmail.com'", (err,res) => {
-//  console.log("UPDATING users.");
-//  console.log(res.rows);
-//});
+client.query("UPDATE users SET phonenumber='6362841357' WHERE email='tanner0397x@gmail.com'", (err,res) => {
+  console.log("UPDATING users.");
+  console.log(res.rows);
+});
 
 //client.query("UPDATE userstocks SET twiliobit='1' WHERE email='tanner0397x@gmail.com' AND id='2'", (err,res) => {
 //  console.log("UPDATING users.");
@@ -105,10 +105,10 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //});
 
 //Print # of users and all rows in users
-//client.query("SELECT * FROM users WHERE email='tanner0397x@gmail.com'", (err,res) => {
-//  console.log("Number of users: "+res.rowCount);
-//  console.log(res.rows);
-//});
+client.query("SELECT * FROM users", (err,res) => {
+  console.log("Number of users: "+res.rowCount);
+  console.log(res.rows);
+});
 
 //Print # of userstocks and all rows in userstocks
 //client.query("SELECT * FROM userstocks", (err,res) => {
@@ -139,8 +139,8 @@ async function getCurrentStockInfo(email, callback)
 
 async function getAllInvestments(algorithm, callback)
 {
-  var stockInfo = await client.query("SELECT * FROM userstocks WHERE enabled='1' AND algorithm = $1",[algorithm]);
-  callback(stockInfo);
+  var stockInfo2 = await client.query("SELECT * FROM userstocks WHERE enabled='1' AND algorithm = $1",[algorithm]);
+  callback(stockInfo2);
 }
 
 async function getNotifications(email, callback)
@@ -149,21 +149,22 @@ async function getNotifications(email, callback)
   callback(notifications);
 }
 
-async function addNotification(email, notification, callback)
+async function addNotification(phonenumber, email, notification, callback)
 {
-  var notifications = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
-  //twilio.messages.create({
-  //  body: notification,
-  //  to: '+16365380210', //John
-  //  from: '+13146674809'
-  //});
-  callback(notifications);
+  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
+  twilio.messages.create({
+    body: notification,
+    to: '+1'+phonenumber,
+    from: '+13146674809'
+  });
+  callback(notifications2);
 }
+
 
 async function getPhoneNumber(email, callback)
 {
   var phonenumber = await client.query("SELECT phonenumber FROM users WHERE email=$1",[email]);
-  callback(notifications);
+  callback(phonenumber);
 }
 
 async function getAllUsers(callback)

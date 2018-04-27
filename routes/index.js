@@ -130,39 +130,19 @@ router.get('/run', function(req, res, next) {
           var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
           if(currentPrice>movingAverageValue)
           {
-            if(this.query.rows[this.i].twiliobit==1)
-            {
-              //tanner
-              queries.getPhoneNumber(this.query.rows[this.i].email,function(query2) {
-                twilio.messages.create({
-                  body: "myFolio update: "+this.query.rows[this.i].email+ ":Sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at "+currentPrice,
-                  to: '1'+query2.phonenumber,
-                  from: '+13146674809'
-                });    
-              });
-            }
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
-            {
-
-            }.bind({i: this.i, currentPrice: currentPrice}));
+            queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+              queries.addNotification(query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+              {
+              }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+            }.bind({i: this.i, query: this.query}));
           }
           else
           {
-            if(this.query.rows[this.i].twiliobit==1)
-            {
-              //tanner
-              queries.getPhoneNumber(this.query.rows[this.i].email,function(query2) {
-                twilio.messages.create({
-                  body: "myFolio update: "+this.query.rows[this.i].email+ ":Buy "+query.rows[this.i].stockticker+" at "+currentPrice,
-                  to: '1'+query2.phonenumber,
-                  from: '+13146674809'
-                });    
-              });
-            }
-            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
-            {
-
-            }.bind({i: this.i, currentPrice: currentPrice}));
+            queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+              queries.addNotification(this.query.rows[this.i].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              {
+              }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+            }.bind({i: this.i, query: this.query}));
           }
         }.bind({ query: this.query, i: this.i }));
       }.bind({ query: query, i: i }));
