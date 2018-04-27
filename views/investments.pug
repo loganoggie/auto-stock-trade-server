@@ -43,25 +43,17 @@ block bodyContent
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
-      //span(id='load') Loading Data...
-      div.invest-holder-base(id='base')
-        span.symbol Symbol
-        span.share Share
-        span.volume Volume
-        span.price Price
-        span.algorithm Algorithm
-        span.status Status
-      div.holders(id='investments')
-        table.investments-table
+      span(id='load') Loading Data...
+      table.holders(id='investments')
+        thead
           tr
-            th Symbol
+            th Symbols
             th Share
             th Volume
             th Price
             th Algorithm
             th Status
-        span(id='load') Loading Data...
-      button(type='button', id='add', onclick='myModal.showModal()') Add Investments
+        tbody.tbody
   script(src='js/stocks.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
   script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')

@@ -53,6 +53,7 @@ Summation.prototype.calcPrices = async function() {
         else {
           throw "JSON is undefined";
         }
+        await sumInstance.sleep(5*1000);
       }
       catch(err) {
         console.log('FAILED AT SYMBOL ' + symbol);

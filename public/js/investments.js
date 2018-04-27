@@ -333,25 +333,52 @@ async function generateInvestment(stockData, investNum) {
           var jsonToday = JSON.stringify(valueMin[0])
           if(jsonToday != undefined) {
             var today = JSON.parse(jsonToday)
-            var investHolder = document.getElementById('investments')
+            var investHolder = document.getElementsByClassName('tbody')[0];
             var price = Number(today.close).toFixed(2)
             var share = (price*stockData.numstocks).toFixed(2)
             var status = "active";
             if(stockData.enabled != '1')//maybe remove later
               status = "inactive";
             //Display an investment
-            investHolder.innerHTML += '<div class=\'invest-holder\' id=' + investNum + ' onclick=\'edit.constructEdit(' + investNum + ')\'>'
-            var investLoc = document.getElementById(investNum)
-            investLoc.innerHTML += '<span id=\'symbol-' + investNum + '\' class=\'symbol\'>' + stockData.stockticker + '</span>';
-            investLoc.innerHTML += '<span id=\'share-' + investNum + '\' class=\'share\'>$' + share +'</span>';
-            investLoc.innerHTML += '<span id=\'volume-' + investNum + '\' class=\'volume\'>' + stockData.numstocks +'</span>';
-            investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>';
-            investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + stockData.algorithm +'</span>';
-            investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>';
+            var row = investHolder.insertRow(-1);//insert at end
+            row.className = 'invest-holder';
+            row.id = investNum
+            row.onclick = function() {edit.constructEdit(investNum)};
 
+            //Cells in the row
+            var cellSymbol = row.insertCell(-1);
+            var cellShare = row.insertCell(-1);
+            var cellVolume = row.insertCell(-1);
+            var cellPrice = row.insertCell(-1);
+            var cellAlgorithm = row.insertCell(-1);
+            var cellStatus = row.insertCell(-1);
 
+            //insert data
+            cellSymbol.innerHTML = stockData.stockticker;
+            cellSymbol.className = 'cell';
+            cellSymbol.id = 'symbol-' + investNum;
+
+            cellShare.innerHTML = share;
+            cellShare.className = 'cell';
+            cellShare.id = 'share-' + investNum;
+
+            cellVolume.innerHTML = stockData.numstocks;
+            cellVolume.className = 'cell';
+            cellVolume.id = 'volume-' + investNum;
+
+            cellPrice.innerHTML = price;
+            cellPrice.className = 'cell';
+            cellPrice.id = 'price-' + investNum;
+
+            cellAlgorithm.innerHTML = stockData.algorithm;
+            cellAlgorithm.className = 'cell';
+            cellAlgorithm.id = 'algorithm-' + investNum;
+
+            cellStatus.innerHTML = status;
+            cellStatus.className = 'cell';
+            cellStatus.id = 'status-' + investNum;
             await sleep(1*1000)//let the API catch up
-            sortInvestments()
+            //sortInvestments()
           }//end if
           else {
             throw "Generation Failed, json are undefined"
@@ -366,12 +393,15 @@ async function generateInvestment(stockData, investNum) {
   });
 }//end generateInvestment
 
-function sortInvestments() {
+/*function sortInvestments() {
   console.log();
   var investClone = [];
-  var investHolder = document.getElementById('investments');
+  const HEADERS = ['Symbols', 'Share', 'Volume', 'Price', 'Algorithm', 'Status'];
+  var parent = document.getElementById('investments');
+  var investHolder = document.getElementsByClassName('tbody')[0];
   var investments = document.getElementsByClassName('invest-holder');//get array of all the investments
   var numInvest = investments.length;
+
 
   for(i = 0; i < numInvest; i++) {//sort investments
     investClone.push(investments[i].cloneNode(true));
@@ -384,14 +414,34 @@ function sortInvestments() {
     if(aSymbol.innerHTML > bSymbol.innerHTML){return 1}
     return 0;
   });
+  // var header = investHolder.createTHead();//make the row
+  // var hRow = header.insertRow(0);
+  // for(var i = 0; i < HEADERS.length; i++) {
+  //   hRow.insertCell(i).innerHTML = HEADERS[i];
+  // }//end or
 
-  investHolder.innerHTML = '';
-  for(i = 0; i < numInvest; i++) {
-    investClone[i].style.display = 'block';
-    investHolder.appendChild(investClone[i]);
+  while(investHolder.rows.length > 0) {
+    investHolder.deleteRow(0);
   }
 
-}//end sortInvetments
+  for(i = 0; i < numInvest; i++) {
+    var children = investClone[i].children;
+    var row = investHolder.insertRow(-1);
+    row.className = 'invest-holder';
+    row.id = investClone[i].id;
+    row.onclick = function() {edit.constructEdit(this.id)}.bind(investClone[i]);
+    row.style.display = 'inline';
+
+    for(var j = 0; j < HEADERS.length; j++) {
+      var newCell = row.insertCell(-1);
+      newCell.innerHTML = children[j].innerHTML;
+      newCell.className = 'cell';
+      newCell.id = children[j].id;
+    }
+    console.log(investHolder.rows[0]);
+  }
+
+}//end sortInvetments*/
 
 var generator = {
   investments: new Array(),
