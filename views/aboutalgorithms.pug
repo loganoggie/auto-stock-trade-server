@@ -1,0 +1,84 @@
+extends masterPug.pug
+
+block headContent
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/aboutalgorithms.css')
+
+block aboutAlgorithmsLink
+  li.nav-item.active
+    a.nav-link(href="/aboutalgorithms") About Algorithms
+
+block bodyContent
+  div.tab-content
+    div.tab-holder 
+      div.tab
+        button(class="tablinks") Beta
+        button(class="tablinks") RSI 
+        button(class="tablinks") Moving Averages
+    
+    div(class="tab-wrapper" id="BETA")
+      div.tab-content-header What is Beta?
+      div.tab-content-body Beta is a measure of the volatility, or systematic risk, of a security 
+        | or a portfolio in comparison to the market as a whole. Beta is used in the capital 
+        | asset pricing model (CAPM), which calculates the expected return of an asset based on 
+        | its beta and expected market returns. Beta is also known as the beta coefficient. By 
+        | definition, the market has a beta of 1.0, and individual stocks are ranked according to 
+        | how much they deviate from the market. A stock that swings more than the market over 
+        | time has a beta above 1.0. If a stock moves less than the market, the stock's beta is 
+        | less than 1.0. High-beta stocks are supposed to be riskier but provide a potential for 
+        | higher returns; low-beta stocks pose less risk but also lower returns.
+      div.tab-content-header How is Beta calculated?
+      div.tab-content-body Beta is calculated using regression analysis. Beta represents the 
+        | tendency of a security's returns to respond to swings in the market. A security's beta 
+        | is calculated by dividing the covariance the security's returns and the benchmark's 
+        | returns by the variance of the benchmark's returns over a specified period.
+      div.tab-content-header Is Beta safe to use?
+      div.tab-content-body A stock's price variability is important to consider when assessing 
+        | risk. If you think about risk as the possibility of a stock losing its value, beta has 
+        | appeal as a proxy for risk. Intuitively, it makes plenty of sense. Think of an early-stage 
+        | technology stock with a price that bounces up and down more than the market. It's hard 
+        | not to think that stock will be riskier than, say, a safe-haven utility industry stock 
+        | with a low beta. There are variations on beta depending on things such as the market 
+        | index used and the time period measured – but broadly speaking, the notion of beta is 
+        | fairly straightforward. It's a convenient measure that can be used to calculate the costs 
+        | of equity used in a valuation method that discounts cash flows.
+      div.tab-content-footer Check out Investopedia's page on Beta 
+        a(href='https://www.investopedia.com/terms/b/beta.asp') here
+    
+    div(class="tab-wrapper" id="RSI")
+      div.tab-content-header What is RSI?
+      div.tab-content-body RSI stands for "Relative Strength Index". It is a momentum indicator 
+        | developed by noted technical analyst Welles Wilder, that compares the magnitude of recent 
+        | gains and losses over a specified time period to measure speed and change of price movements 
+        | of a security. It is primarily used to attempt to identify overbought or oversold conditions 
+        | in the trading of an asset.
+      div.tab-content-header How is RSI calculated?
+      div.tab-content-body The relative strength index is calculated using the following formula: 
+      div.tab-content-body
+      div.tab-content-body RSI = 100 - 100 / (1 + RS) 
+      div.tab-content-body
+      div.tab-content-body Where RS = [Average of Upward Price Change] / [Average of Downward Price Change]
+      div.tab-content-header How is RSI used?
+      div.tab-content-body Traditional interpretation and usage of the RSI is that RSI values of 
+        | 70 or above indicate that a security is becoming overbought or overvalued, and therefore 
+        | may be primed for a trend reversal or corrective pullback in price. On the other side of 
+        | RSI values, an RSI reading of 30 or below is commonly interpreted as indicating an oversold 
+        | or undervalued condition that may signal a trend change or corrective price reversal to 
+        | the upside.
+      div.tab-content-footer Check out Investopedia's page on RSI 
+        a(href='https://www.investopedia.com/terms/r/rsi.asp') here
+  
+    div(class="tab-wrapper" id="MAVGS")
+      div.tab-content-header What are Moving Averages?
+      div.tab-content-body A moving average (MA) is a commonly used technical indicator that is intended 
+        | to smooth out price action by filtering out "noise" caused by random price fluctuations. It is 
+        | considered a trend-following indicator because it is based on past prices. Moving Averages are 
+        | the basis for many different strategies, but for this program, we'll just be utilizing a Simple 
+        | Moving Average.
+      div.tab-content-header How does a Simple Moving Average work?
+      div.tab-content-body A Simple Moving Average is a customizable arithmetic moving average that is  
+        | calculated by adding the closing price of the security for a number of time periods, and then 
+        | dividing that sum by the total number of time periods. This gives the average price of the 
+        | security over the time period...
+      div.tab-content-footer Check out Investopedia's page on Simple Moving Averages 
+        a(href='https://www.investopedia.com/terms/s/sma.asp') here
+  script(src="js/aboutalgorithms.js")

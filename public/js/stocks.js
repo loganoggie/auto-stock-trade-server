@@ -19,7 +19,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * SOFTWARE
  *
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -155,19 +155,23 @@ Stocks.prototype = {
       this._throw(0, 'error');
     }
 
-    return new Promise((resolve, reject) => {
-      var url = this._createUrl(params);
+		return new Promise((resolve, reject) => {
+	     var url = this._createUrl(params);
 
-      fetch(url).then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        if (typeof data['Error Message'] !== 'undefined') {
-          this._throw(9, 'error');
-        }
+	     fetch(url).then(function (response) {
+	       return response.json();
+	     }).then(function (data) {
+	       if (typeof data['Error Message'] !== 'undefined') {
+	         //this._throw(9, 'error');
+					//Somethig has gone wrong with the API request.
+					console.log("Error in API request")
+					resolve(data);//what does this do exactly?
+					//throw "Error in API Request" //This is a modified line of something that was giving errors
+	       }
 
-        resolve(data);
-      });
-    });
+	       resolve(data);
+	     });
+	   });
   },
 
   _checkOptions: function (options, type) {
@@ -207,7 +211,8 @@ Stocks.prototype = {
     // Strip meta data
     var key = Object.keys(data).find(
       key => key.indexOf('Time Series') !== -1 ||
-      key.indexOf('Technical') !== -1
+      key.indexOf('Technical') !== -1 ||
+			key.indexOf("Stock Quotes") !== -1
     );
     data = data[key];
 
@@ -265,7 +270,13 @@ Stocks.prototype = {
     }
 
     // Get result
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
+
     var converted = this._convertData(result, options.amount);
 
     if (typeof options.start !== 'undefined') {
@@ -286,7 +297,12 @@ Stocks.prototype = {
     };
 
     // Get result
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
     var converted = this._convertData(result, options.amount);
 
     if (typeof options.start !== 'undefined') {
@@ -306,7 +322,12 @@ Stocks.prototype = {
       function: 'SECTOR'
     };
 
-    var result = await this._doRequest(params);
+		try {
+			var result = await this._doRequest(params);
+		}
+		catch(err) {
+			console.log(err)
+		}
 
     var found = Object.keys(result).find(key => {
       let noSpace = key.replace(/ /g, '').toLowerCase();

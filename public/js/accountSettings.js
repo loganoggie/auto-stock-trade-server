@@ -2,7 +2,7 @@ var counter = 0;
 
 $(document).ready(function(){
 
-    
+
     //when mouse is over one of the algorithm submenu buttons
     //  make it turn a darker color by toggling the hover class
     $(".submitButton").mouseenter(function(){
@@ -41,10 +41,22 @@ $(document).ready(function(){
     });
 
 
+    //when the check box for 2-factor authentication is clicked
+    $('#twoFactorEnableCheckbox').click(function(){
+        //toggle() will show an element if it is hidden and an element if it is not hidden
+        $('#phoneNumLabel').toggle(); //display or hide phone num text box label
+        $('.two-fact-phone-num-info').toggle(); //display or hide phone num text box
+    });
+
+    //hide phone number settings by defalt...
+    $('#phoneNumLabel').hide(); //hide phone num txt box label
+    $('.two-fact-phone-num-info').hide(); //hide div containing phone number info
+
+
     /* HOW TO CALL A FUNCTION AT A SET INTERVAL AND HOW TO CHANGE THE COLOR OF ELEMENTS
 
         var counter = 0;
-        var foo = function() 
+        var foo = function()
         {
             console.log($.now());
             var colors = ['green','orange'];

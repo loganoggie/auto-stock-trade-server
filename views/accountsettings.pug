@@ -1,76 +1,33 @@
-doctype html
-head
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
-  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
-  link(href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css", rel="stylesheet")
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
-  link(rel='stylesheet',type='text/css', href='stylesheets/css/accountSettings.css')
-  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
-  script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
-  script(src="js/accountSettings.js")
- 
-body
-    div.header
-      div.dropdown-button-container
-        div.dropdown
-          div.burger-holder.drop-button
-          div.dropdown-content
-            a link 1
-            a link 2
-            a link 3
-      div.logo-holder
-    div.content-wrapper
-        div.settings-accordion-menu
-            h3.accordion-header Algorithm Settings
-            div.accordion-section-contents
-                form.algorithm-select-form
-                    input(type='radio' name='algorithmSelect' value='beta' class="algoRadioButton" id='beta')
-                    | Beta
-                    br
-                    input(type='radio' name='algorithmSelect' value='rsi' class="algoRadioButton" id='rsi')
-                    | RSI
-                    div(class='algorithm-parameter-submenu' id='betaParamMenu')
-                        h4.param-submenu-label Beta Parameter Settings
-                        div.sub-menu-buttons
-                            form.algorithm-parameter-form
-                                input(type='radio' name='riskSelect' value='high' class="riskButton")
-                                p(class='riskRadioLabel') High Risk
-                                br
-                                input(type='radio' name='riskSelect' value='medium' class="riskButton")
-                                p(class='riskRadioLabel') Medium Risk
-                                br
-                                input(type='radio' name='riskSelect' value='low' class="riskButton")
-                                p(class='riskRadioLabel') Low Risk
-                                br
-                                input(type='submit', value='Apply', class='submitButton')
-                    div(class='algorithm-parameter-submenu' id='rsiParamMenu')
-                        h4.param-submenu-label RSI Parameter Settings
-                        div.sub-menu-buttons
-                            form.algorithm-parameter-form
-                                input(type='radio' name='riskSelect' value='high' class="riskButton")
-                                p(class='riskRadioLabel', style='display: inline-block; margin: 0px;') High Risk
-                                br
-                                input(type='radio' name='riskSelect' value='medium' class="riskButton")
-                                p(class='riskRadioLabel', style='display: inline-block; margin: 0px;') Medium Risk
-                                br
-                                input(type='radio' name='riskSelect' value='low' class="riskButton")
-                                p(class='riskRadioLabel', style='display: inline-block; margin: 0px;') Low Risk
-                                br
-                                input(type='submit', value='Apply', class='submitButton')
-                
-            h3.accordion-header Password Settings
-            div.accordion-section-contents
-                form.change-password-form
-                    p.change-pwd-field-label Current Password:
-                    input(type='text', name="currentPassword", class='pwdSettingsTxtBox')
-                    p.change-pwd-field-label New Password:
-                    input(type='text', name="newPassword", class='pwdSettingsTxtBox')
-                    p.change-pwd-field-label Confirm New Password:
-                    input(type='text', name="newPasswordConfirm", class='pwdSettingsTxtBox')
-                    br
-                    input(type='submit', value='Apply', class='submitButton', id='changePwdSubButton')
-            h3.accordion-header Authentication Settings
-            div.accordion-section-contents
-                form.two-factor-auth-form
-                    input(type='checkbox' value='twoFactorAuth')
-                    p.two-factor-auth-label Enable Two-factor Authentication
+extends masterPug.pug
+
+block headContent
+    link(rel='stylesheet',type='text/css', href='stylesheets/css/accountSettings.css')
+    script(src="js/accountSettings.js")
+
+block accountSettingsLink
+    li.nav-item.active
+        a.nav-link(href="/accountsettings") Settings
+
+block bodyContent
+    div.settings-accordion-menu
+        h3.accordion-header Password Settings
+        div.accordion-section-contents
+            form.change-password-form(method="POST", action="/updatePassword")
+                p.change-pwd-field-label Current Password:
+                input(type='text', name="currentPassword", class='pwdSettingsTxtBox')
+                p.change-pwd-field-label New Password:
+                input(type='text', name="newPassword", class='pwdSettingsTxtBox')
+                p.change-pwd-field-label Confirm New Password:
+                input(type='text', name="newPasswordConfirm", class='pwdSettingsTxtBox')
+                br
+                input(type='submit', value='Apply', class='submitButton', id='changePwdSubButton')
+        h3.accordion-header Authentication Settings
+        div.accordion-section-contents
+            form.two-factor-auth-form
+                div.check-box-section
+                    input(type='checkbox' value='twoFactorAuth' id='twoFactorEnableCheckbox')
+                    p(class='two-factor-auth-label' id='twoFactCheckboxLbl') Enable Two-factor Authentication
+                div.two-fact-phone-num-info
+                    p(class='two-factor-auth-label' id='phoneNumLabel') Phone Number:
+                    input(type='text', name="twoFactorPhoneNum", class='twoFactorSettingsTxtBox')
+                input(type='submit', value='Apply', class='submitButton', id='twoFactorSubButton')

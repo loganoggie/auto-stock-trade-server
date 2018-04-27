@@ -1,0 +1,85 @@
+/*****************
+
+  orange - #F48F4B
+  green - #43a047
+  black - #1c2321
+  gray - #7b7f7c
+  white - #f2f7f2
+
+*****************/
+
+.tab-holder {
+    margin: 0 auto;
+    width: 580px;
+}
+
+.tab-content {
+    width: 75%;
+    margin: 0 auto;
+    
+}
+
+.tab {
+    padding: 0px 1px;
+    overflow: hidden;
+    border: 1px solid #1C2321;
+    background-color: #F2F7F2;
+}
+
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 35px;
+    transition: 0.5s;
+    font-size: 2em;
+}
+
+
+.tab button:hover {
+    background-color: #7b7f7c;
+    color: #F2F7F2;
+}
+
+
+.tab button.active {
+    background-color: #43a047;
+    color: #F2F7F2;
+}
+
+.tab-wrapper {
+    display: none;
+    padding: 10px 50px;
+    border-top: none;
+}
+
+.tab-content-header {
+    padding-left: 0px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    font-family: sans-serif;
+    font-size: 1.75em;
+    text-decoration: underline;
+}
+
+.tab-content-body {
+    padding-left: 20px;
+    padding-bottom: 10px;
+    font-family: sans-serif;
+    font-size: 1.25em;
+}
+
+.tab-content-footer {
+    padding-top: 30px;
+    font-family: sans-serif;
+    font-size: 0.85em;
+    text-align: center;
+}
+
+.active {
+    background-color: #43a047;
+    color: #F2F7F2;
+}

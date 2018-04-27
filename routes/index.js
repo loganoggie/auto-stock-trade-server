@@ -1,119 +1,413 @@
+// Global Module Handling -----------------------------------------------
+var bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
-const {Client} = require('pg');
+//-----------------------------------------------------------------------
+// Local Module Handling ------------------------------------------------
+var {passport} = require('../bin/passport.js');
+var request = require('request');
+var database = require('../bin/database.js');
+var queries = require('../bin/queries.js');
+var funcs = require('./funcs.js')
+var client = database.client;
+var pool = database.pool;
+var cp = require('child_process');
 
-//db connection string
-var dbString = 'postgres://whiidzewjaaqzm:0001b1a8a6fa014941cfa07feb3bb8f8049f2210a11f1d5f14895ea6fac6f955@ec2-184-73-196-65.compute-1.amazonaws.com:5432/deacrvvlj7rj32';
+//-----------------------------------------------------------------------
+//SUMMATION WORKER
+var child = cp.fork('routes/summing.js');//summs up everything
+//-----------------------------------------------------------------------
 
-const client = new Client({
-  connectionString: dbString,
-  ssl: true,
+// console.log(passport);
+// console.log(database);
+// console.log(queries);
+
+
+const DEFAULT_URL = 'https://www.alphavantage.co/query?'
+
+/*Runs the correct algorithm for every investment.*/
+router.get('/runRSI', function(req, res, next) {
+
+  queries.getAllInvestments("RSI",function(query) {
+    console.log("PROCESSING RSI ALGO");
+    for(var i=0;i<query.rows.length;i++) //for each investment
+    {
+      if(query.rows[i].params=="low") //low risk RSI
+      {
+        //console.log("low");
+
+        var stringDate = funcs.right_now();
+
+        var params = funcs.make_params('RSI', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
+        var encoded = Object.keys(params).map(
+        key => `${key}=${params[key]}`
+        ).join('&');
+
+        var url = DEFAULT_URL + encoded
+        //https://www.alphavantage.co/query?function=RSI&symbol="+this.query.rows[this.i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0
+        request(url, function(error,response,body2)
+        {
+          console.log("RSIDate: "+stringDate);
+          var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the current price
+          //console.log("Current Price: "+currentPrice);
+          console.log("RSI Value: "+RSIvalue);
+          /*
+          if(currentPrice>RSIvalue)
+          {
+            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
+            {
+              //console.log("User "+query.rows[this.i].email+" should sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each. This would make the investment worth $"+this.currentPrice*query.rows[this.i].numstocks+".");//UnhandledPromiseRejection???
+              console.log("SELL THE STOCK:");
+            }.bind({ i: this.i, currentPrice: currentPrice}));
+          }
+          else
+          {
+            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
+            {
+              //console.log("User "+query.rows[this.i].email+" should buy "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each.");//UnhandledPromiseRejection???
+              console.log("BUY THE STOCK:");
+            }.bind({ i: this.i, currentPrice: currentPrice}));
+          }
+          */
+        }.bind({ query: query, i: i }));
+      }
+      else if(query.rows[i].params=="medium") //medium risk RSI
+      {
+        //console.log("medium");
+      }
+      else if(query.rows[i].params=="high") //high risk RSI
+      {
+        //console.log("high");
+      }
+      else
+      {
+        //console.log("Error");
+      }
+    }
+  });
+
 });
 
-//Print all rows in users
-/*
-client.connect();
-client.query("SELECT * FROM users;", (err,res) => {
-  console.log(res); //fix this shit front end
-});
-*/
+router.get('/runSMA', function(req, res, next) {
 
-/* GET home page. */
+  queries.getAllInvestments("MovingAverages",function(query) {
+    for(var i=0;i<query.rows.length;i++) //for each investment
+    {
+
+      var stringDate = funcs.right_now();
+
+      var params = funcs.make_params('SMA', query.rows[i].stockticker, "daily", 10, req.session.userInfo.avkey);
+      var encoded = Object.keys(params).map(
+      key => `${key}=${params[key]}`
+      ).join('&');
+
+      var url = DEFAULT_URL + encoded
+
+      console.log("Current date: "+stringDate);
+      console.log(url)
+      request(url, function(error,response,body)
+      {
+        console.log("CHECK this stringdate:"+stringDate);
+        var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
+
+        var params2 = funcs.make_params('TIME_SERIES_INTRADAY', this.query.rows[this.i].stockticker, '60min', req.session.userInfo.avkey)
+        var encoded2 = Object.keys(params).map(
+        key => `${key}=${params[key]}`
+        ).join('&');
+
+        var url2 = DEFAULT_URL + encoded2
+
+        request(url2, function(error,response,body2)
+        {
+          var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
+          console.log("Current Price: "+currentPrice);
+          console.log("Moving Average Value: "+movingAverageValue);
+          if(currentPrice>movingAverageValue)
+          {
+            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
+            {
+              //console.log("User "+query.rows[this.i].email+" should sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each. This would make the investment worth $"+this.currentPrice*query.rows[this.i].numstocks+".");//UnhandledPromiseRejection???
+              console.log("SELL THE STOCK:");
+            }.bind({ i: this.i, currentPrice: currentPrice}));
+          }
+          else
+          {
+            queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
+            {
+              //console.log("User "+query.rows[this.i].email+" should buy "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each.");//UnhandledPromiseRejection???
+              console.log("BUY THE STOCK:");
+            }.bind({ i: this.i, currentPrice: currentPrice}));
+          }
+        }.bind({ query: this.query, i: this.i }));
+      }.bind({ query: query, i: i }));
+    }
+  });
+  res.render('splash');
+});
+
 router.get('/', function(req, res, next) {
   res.render('splash');
 });
 
-router.post('/login', function(req, res, next) {
-  
-  
-  var username = (req['body']['username']);
-  var password = (req['body']['password']);
-
-  client.connect();
-  client.query("SELECT email,password FROM users WHERE email='"+username+"' AND password='"+password+"';", (err,res) => {
-    if(err) throw err;
-
-    if(res.rows.length>0)
-    {
-      console.log("Logged in"); //fix this shit front end
-    }
-    else
-    {
-      console.log("Wrong email/password"); //fix this shit front end
-    }
-  });
-
-  res.render('login');
-});
-
-//---JSON SENDING EXAMPLES---
-
-router.get('/dash-get', function(req, res, next) {
-  //Example of how this ojbect should be constructed for the simeple dashboard graph. More info about that on the google Doc.
-  var myObj = {
-    worth: 10000.00,
-    price: [9000, 9200, 9460.43, 9750, 10000],
-    dates: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-router.get('/tick-get', function(req, res, next) {
-  //Example of how this ojject should be constructed to generate tickers on the dashboard
-  var myObj = {
-    api: 'QSZQSTA7ZLPXTAZO',
-    symbols: ['GOOG', 'TSLA', 'AAPL', 'BA', 'AMD', 'BAC']
-  }
-  res.json(JSON.stringify(myObj));
-});
-
-//---END EXAMPLES---
+router.post('/login', passport.authenticate('local-login', {successRedirect: '/dashboard', failureRedirect: '/'}));
 
 router.post('/register', function(req, res, next) {
-  connection.query("INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-  [req.body.first, req.body.last, req.body.email, req.body.rpassword, "2018-01-01", "2018-01-01"],
-  function(err, results){
-    if(err){
-      console.log("An error has occured. This email address must already be in use!")
-    }});
 
   var fName = req['body']['first'];
   var lName = req['body']['last'];
   var email = req['body']['email'];
-  var pass1 = req['body']['password'][0];
-  var pass2 = req['body']['password'][1];
+  var pass1 = req['body']['rpassword'];
+  var pass2 = req['body']['crpassword'];
 
+  console.log("Pass1:" + pass1);
+  console.log("Pass2:" + pass2);
 
   if(pass1!=pass2)
   {
-    console.log("Passwords don't match"); //fix this shit front end
+    console.log("Passwords don't match");
   }
   else
   {
-    client.connect();
-    client.query("INSERT INTO users (fname, lname, email, password) VALUES ('"+fName+"','"+lName+"','"+email+"','"+pass1+"');", (err,res) => {
-    if(err) 
-    {
-      throw err;
-      console.log("in here");
-    }
-    else
-    {
-      console.log("Registered."); //fix this shit front end
-    }
-    client.end();
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(pass1, salt);
+
+    console.log(salt);
+    console.log(hash);
+
+    client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('"+fName+"','"+lName+"','"+email+"','"+hash+"','CJWPUA7R3VDJNLV0');", (err,res2) => {
+      if(err)
+      {
+        throw err;
+        console.log("in here");
+      }
+      else
+      {
+        console.log("User insertion successful.");
+      }
     });
   }
-  res.render('register');
-
+  res.redirect('/dashboard',req);
 });
 
 router.get('/dashboard', function(req, res, next) {
-  res.render('dashboard');
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    res.redirect('/');
+  } else {
+
+    res.render('dashboard2');
+  }
+});
+
+router.get('/dash-get', function(req, res, next) {
+
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    queries.getNotifications(req.user.email, function(query2){
+      req.session.notifications=query2.rows;
+      queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
+        req.session.userInfo=queryUser.rows[0];
+        queries.getWorth(req.user.email, function(queryWorth) {
+          console.log(queryWorth.rows);
+          req.session.worth = queryWorth.rows;
+          req.session.total_worth = 10000;
+          res.json(JSON.stringify(req.session));
+        });
+      });
+    });
+  });
+
+});
+
+router.get('/tick-get', function(req, res, next) {
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    res.json(JSON.stringify(req.session));
+  });
+});
+
+router.get('/investments-get', function(req, res, next) {
+  queries.getCurrentStockInfo(req.user.email, function(query){
+    req.session.stockInfo=query.rows;
+    res.json(JSON.stringify(req.session));
+  // console.log(req.body)
+  });
+});
+
+router.post('/edit-algorithm', function(req, res, next) {
+
+  console.log(req.body)
+
+  var ID = req.body.investID;
+  var params;
+
+  if (req.body.algorithm == 'BBands')
+  {
+
+    params = JSON.stringify({
+      'interval': req.body.interval,
+      'num_points': req.body.num_points
+    })
+  }
+  else if (req.body.algorithm == 'Moving Averages')
+  {
+    params = req.body.days;
+  }
+  else if (req.body.algorithm == 'RSI')
+  {
+    params = req.body.radio;
+  }
+
+  client.query("DELETE FROM userstocks WHERE id=$1", [ID]);
+
+  console.log(req.session.userInfo)
+
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
+  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+
+  res.render('investments', req);
+
+});
+
+router.post('/delete', function(req, res, next) {
+
+  console.log(req.body)
+
+  var del_id = req.body.delete;
+  client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
+
+  res.render('investments', req);
+
+});
+
+router.post('/add', function(req, res, next) {
+
+  console.log(req.body)
+  var params;
+
+  if (req.body.algorithm == 'BBands')
+  {
+
+    params = JSON.stringify({
+      'interval': req.body.interval,
+      'num_points': req.body.num_points
+    })
+  }
+  else if (req.body.algorithm == 'Moving Averages')
+  {
+    params = req.body.days;
+  }
+  else if (req.body.algorithm == 'RSI')
+  {
+    params = req.body.radio;
+  }
+
+  console.log(params)
+
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+
+  res.render('investments')
+
+});
+
+router.get('/investments', function(req, res, next) {
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+
+    res.render('investments', req);
+  }
+});
+
+router.get('/aboutalgorithms', function(req, res, next) {
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+
+    res.render('aboutalgorithms');
+  }
 });
 
 router.get('/accountsettings', function(req, res, next) {
-  res.render('accountsettings');
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+
+    res.render('accountsettings');
+  }
+});
+
+router.post('/updatePassword', async function(req, res, next) {
+  console.log('Password Changed!');
+
+  var currentPassword = req['body']['currentPassword'];
+  var newPassword = req['body']['newPassword'];
+  var newPasswordConfirm = req['body']['newPasswordConfirm'];
+
+  console.log(req.session);
+  console.log(req.session.userInfo);
+  console.log(req.session.userInfo.password);
+
+  if(bcrypt.compareSync(currentPassword, req.session.userInfo.password) && newPassword === newPasswordConfirm) {
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(newPassword, salt);
+
+    client.query("UPDATE users SET password = " + hash + ";");
+  }
+
+});
+
+router.get('/dataanalytics', function(req, res, next) {
+  if (!req.isAuthenticated() || !req.isAuthenticated) {
+    console.log("Auth Failed.");
+    req.logout();
+    res.redirect('/');
+  } else {
+
+    res.render('dataanalytics');
+  }
+});
+
+router.get('/logout', function(req, res) {
+  console.log(req.user);
+  req.logout();
+  console.log(req.user);
+  res.redirect('/');
+});
+
+router.get('/sum', function(req, res) {
+  allUsersWorthDay();
+});
+
+function allUsersWorthDay() {
+  queries.getAllUsers(function(query) {
+    var json = JSON.stringify(query.rows);
+    child.send(json);
+  });
+}
+
+//client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
+child.on('message', function(result) {//When we recieve a sum, add it to the db
+  var obj = JSON.parse(result);
+  //console.log('User ID Recieved: ' + obj.email);
+  //console.log('User portfolio worth: ' + obj.result);
+  var email = obj.email;
+  var worth = Number(obj.result).toFixed(2);
+  var today = new Date().toISOString().slice(0, 10).replace('T', ' ');//todays date
+
+  queries.addWorth(email, worth, today, function(result) {
+    console.log("Added data to email: " + email);
+  });
 });
 
 module.exports = router;
+
+//make();
+//allUsersWorthDay();

@@ -1,25 +1,60 @@
-doctype html
-head
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/dashboard.css')
-  link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
-  link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+extends masterPug.pug
 
-body
-  div.page-wrapper
-    div.header
-      div.dropdown-button-container
-        div.dropdown
-          div.burger-holder.drop-button
-          div.dropdown-content
-            a link 1
-            a link 2
-            a link 3
-      div.logo-holder
-    div.content-wrapper
-      div.investments
-        h1 My Investments
-          div.invest(id='invest')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-    script(src='js/stocks.js')
-    script(src='js/investments.js')
+block headContent
+  link(rel='stylesheet', type='text/css', href='stylesheets/css/investments.css')
+
+block investmentsLink
+  li.nav-item.active
+    a.nav-link(href="/investments") Investments
+
+block bodyContent
+  div.investments
+    button(type='button', id='add', onclick='myModal.showModal()') Add
+    //A Modal
+    div.modal(id='modal')
+      div.modal-content(id='modal-content')
+        span.close(onclick='myModal.hideModal()') &times;
+        form(id='modalForm', method="POST", action="/add")
+          input(type='text', name='lookup', placeholder='Company Name', oninput='myModal.lookupOnInput()')
+          div.select(id='results')
+          input(type='text', name='symbol', placeholder='Symbol', readonly="readonly")
+          input(type='number', name='volume', onchange='myModal.volumeOnChange()', placeholder='Volume')
+          span(id='priceConversion')
+          //algorithm delection stuff is generated dynamically
+          select(name='algorithm', onchange='myModal.algorithmOnChange()')
+            option(value='default') Select an Algorithm
+          div.algorithm-params(id='params')
+          input(type='submit', value='Add')
+    //Edit modal
+    div.modal(id='edit')
+        div.modal-content(id='edit-content')
+          span.close(onclick='edit.hideModal()') &times;
+          form(id='editForm', method='POST', action='/edit-algorithm')
+            input(type='text', name='symbol', readonly="readonly")
+            input(type='hidden', name='investID', readonly="readonly")
+            //Div to hold volumeBox and its label
+            input(type='number', name='volume' volumeOnChange='edit.volumeOnChange()')
+            select(name='algorithm', onchange='edit.algorithmOnChange()')
+            div.algorithm-params(id='edit-params')
+            input(type='submit', value='Confirm')
+          form(id='deleteForm', method='POST', action='/delete')
+            input(type='hidden', name='delete' readonly='readonly')
+            input(type='submit', value='Delete')
+    h1 My Investments
+    div.invest(id='invest')
+      span(id='warn')
+      span(id='load') Loading Data...
+      table.holders(id='investments')
+        thead
+          tr
+            th Symbols
+            th Share
+            th Volume
+            th Price
+            th Algorithm
+            th Status
+        tbody.tbody
+  script(src='js/stocks.js')
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')
+  script(src='js/investments.js')

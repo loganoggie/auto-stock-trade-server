@@ -1,0 +1,22 @@
+extends masterPug
+
+block headContent
+  link(href="stylesheets/css/dataanalytics.css", rel="stylesheet")
+
+
+block bodyContent
+  h1.page-title Account Analytics
+  div.graph-wrapper
+    div.graph-selector-wrapper
+      ul.graph-selector
+        li.graph-selection Graph 1
+        li.graph-selection Graph 2
+        li.graph-selection Graph 3
+    div.graph-view-wrapper
+      
+      //- My only idea is to switch which canvas is active based on what selection is clicked.
+      //- graph-selection[0] => graph-view[0]
+      canvas.graph-view.first-view
+      canvas.graph-view.second-view
+      canvas.graph-view.third-view
+  script(src="js/dataanalytics.js")

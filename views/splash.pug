@@ -4,9 +4,11 @@ head
   link(rel='stylesheet', type='text/css', href='stylesheets/css/splash.css')
   link(rel='stylesheet', type='text/css', href='stylesheets/css/reset.css')
   link(href="https://fonts.googleapis.com/css?family=Lato", rel="stylesheet")
+  link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous")
   script(src='js/splash.js')
-body
-  div.page-wrapper  
+
+body.myBody
+  div.container-fluid.page-background
     div.login-form-container
       div.logo-container
         div.logo-wrapper
@@ -38,3 +40,37 @@ body
             div.login-switch-wrapper
               p.login-switch-text Have an account? 
               p.login-switch-button(onClick="activateLoginForm()") Login Now!
+
+//- body
+//-   div.page-wrapper  
+//-     div.login-form-container
+//-       div.logo-container
+//-         div.logo-wrapper
+//-           h1.logo #[i my#[span.logo-altColor Folio]]
+//-       div.login-form-wrapper
+//-         h1.form-title Login
+//-         div.login-form.splash-form
+//-           form(method="POST", action="/login")
+//-             input.login-field(type="email", placeholder="Email Address", name="username", required=true)
+//-             input.login-field(type="password", placeholder="Password", name="password", required=true)
+//-             input.login-field.submit-field(type="submit", value="Login")
+//-             div.register-switch-wrapper
+//-               p.register-switch-text Need an account? 
+//-               p.register-switch-button(onClick="activateRegisterForm()") Register Now!
+//-     div.register-form-container
+//-       div.logo-container
+//-         div.logo-wrapper
+//-           h1.logo #[i my#[span.logo-altColor Folio]]
+//-       div.register-form-wrapper
+//-         h1.form-title Register
+//-         div.register-form.splash-form
+//-           form(method="POST", action="/register")
+//-             input.register-field(type="text", placeholder="First Name", name="first", required=true)
+//-             input.register-field(type="text", placeholder="Last Name", name="last", required=true)
+//-             input.register-field(type="email", placeholder="Email Address", name="email", required=true)
+//-             input.register-field(type="password", placeholder="Password", name="rpassword", required=true)
+//-             input.register-field(type="password", placeholder="Confirm Password", name="crpassword", required=true)
+//-             input.register-field.submit-field(type="submit", value="Register")
+//-             div.login-switch-wrapper
+//-               p.login-switch-text Have an account? 
+//-               p.login-switch-button(onClick="activateLoginForm()") Login Now!
