@@ -23,7 +23,8 @@
     "pg": "7.4.1",
     "pug": "2.0.0-beta11",
     "request": "^2.85.0",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "twilio": "^3.15.1"
   },
   "description": "CS4096 Senior Design project - SP18 Missouri University of Science and Technology",
   "main": "app.js",
