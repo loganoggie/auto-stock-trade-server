@@ -393,6 +393,23 @@ function allUsersWorthDay() {
   });
 }
 
+function toLocal(day) {//for local time
+    var tzo = -day.getTimezoneOffset(),
+        dif = tzo >= 0 ? '+' : '-',
+        pad = function(num) {
+            var norm = Math.floor(Math.abs(num));
+            return (norm < 10 ? '0' : '') + norm;
+        };
+    return day.getFullYear() +
+        '-' + pad(day.getMonth() + 1) +
+        '-' + pad(day.getDate()) +
+        'T' + pad(day.getHours()) +
+        ':' + pad(day.getMinutes()) +
+        ':' + pad(day.getSeconds()) +
+        dif + pad(tzo / 60) +
+        ':' + pad(tzo % 60);
+}
+
 //client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
 child.on('message', function(result) {//When we recieve a sum, add it to the db
   var obj = JSON.parse(result);
@@ -400,7 +417,7 @@ child.on('message', function(result) {//When we recieve a sum, add it to the db
   //console.log('User portfolio worth: ' + obj.result);
   var email = obj.email;
   var worth = Number(obj.result).toFixed(2);
-  var today = new Date().toISOString().slice(0, 10).replace('T', ' ');//todays date
+  var today = toLocal(new Date()).slice(0, 10).replace('T', ' ');
 
   queries.addWorth(email, worth, today, function(result) {
     console.log("Added data to email: " + email);
