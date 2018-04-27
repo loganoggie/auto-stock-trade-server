@@ -11,7 +11,11 @@ var queries = require('../bin/queries.js');
 var funcs = require('./funcs.js')
 var client = database.client;
 var pool = database.pool;
+var cp = require('child_process');
 
+//-----------------------------------------------------------------------
+//SUMMATION WORKER
+var child = cp.fork('routes/summing.js');//summs up everything
 //-----------------------------------------------------------------------
 
 // console.log(passport);
@@ -223,12 +227,12 @@ router.get('/dash-get', function(req, res, next) {
       req.session.notifications=query2.rows;
       queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
         req.session.userInfo=queryUser.rows[0];
-        req.session.worth_day = {
-          worth: [9000, 9200, 9460.43, 9750, 10000],
-          day: ["2-21-2018", "2-22-2018", "2-23-2018", "2-24-2018", "2-25-2018"]
-          };
-        req.session.total_worth = 10000.00;
-        res.json(JSON.stringify(req.session));
+        queries.getWorth(req.user.email, function(queryWorth) {
+          console.log(queryWorth.rows);
+          req.session.worth = queryWorth.rows;
+          req.session.total_worth = 10000;
+          res.json(JSON.stringify(req.session));
+        });
       });
     });
   });
@@ -398,4 +402,32 @@ router.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
+router.get('/sum', function(req, res) {
+  allUsersWorthDay();
+});
+
+function allUsersWorthDay() {
+  queries.getAllUsers(function(query) {
+    var json = JSON.stringify(query.rows);
+    child.send(json);
+  });
+}
+
+//client.query("INSERT INTO portfolioworth (email, worth, day) VALUES ($1,$2,$3)",["tanner0397x@gmail.com", 5000.00, "2018-04-23"])
+child.on('message', function(result) {//When we recieve a sum, add it to the db
+  var obj = JSON.parse(result);
+  //console.log('User ID Recieved: ' + obj.email);
+  //console.log('User portfolio worth: ' + obj.result);
+  var email = obj.email;
+  var worth = Number(obj.result).toFixed(2);
+  var today = new Date().toISOString().slice(0, 10).replace('T', ' ');//todays date
+
+  queries.addWorth(email, worth, today, function(result) {
+    console.log("Added data to email: " + email);
+  });
+});
+
 module.exports = router;
+
+//make();
+//allUsersWorthDay();

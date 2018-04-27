@@ -51,6 +51,16 @@ var pool = database.pool;
 //   console.log("userstocks created");
 // });
 
+//Make portfolioworth table;
+// client.query("CREATE TABLE portfolioworth (id INT NOT NULL AUTO_INCREMENT, email VARCHAR, worth DOUBLE, date DATE, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES users(email));", (err, res) => {
+//   console.log(err);
+// });
+
+//DROP
+// client.query("DROP TABLE portfolioworth", (err, res) => {
+//   console.log(err);
+// });
+
 
 //Insert into users
 // client.query("INSERT INTO users (fname, lname, email, password, AVkey) VALUES ('Adam','Bagsby','bob@gmail.com','apple123', 'CJWPUA7R3VDJNLV0')", (err,res) => {
@@ -133,8 +143,28 @@ async function addNotification(email, notification, callback)
   callback(notifications);
 }
 
+async function getAllUsers(callback)
+{
+  var allUsers = await client.query("SELECT * FROM users");
+  callback(allUsers);
+}
+
+async function addWorth(email, worth, day, callback)
+{
+  var add = await client.query("INSERT INTO portfolioworth (email, worth, date) VALUES ($1,$2,$3)",[email, worth, day]);
+  callback(add);
+}
+
+async function getWorth(email, callback) {
+  var worth = await client.query("SELECT * FROM portfolioworth WHERE email=$1",[email]);
+  callback(worth);
+}
+
 module.exports.getCurrentStockInfo = getCurrentStockInfo;
 module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
 module.exports.getNotifications = getNotifications;
 module.exports.addNotification = addNotification;
+module.exports.getAllUsers = getAllUsers;
+module.exports.addWorth = addWorth;
+module.exports.getWorth = getWorth;
