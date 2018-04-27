@@ -9,7 +9,7 @@ block investmentsLink
 
 block bodyContent
   div.investments
-    button(type='button', id='add', onclick='myModal.showModal()') Add
+    //button(type='button', id='add', onclick='myModal.showModal()') Add Investments
     //A Modal
     div.modal(id='modal')
       div.modal-content(id='modal-content')
@@ -37,18 +37,24 @@ block bodyContent
             select(name='algorithm', onchange='edit.algorithmOnChange()')
             div.algorithm-params(id='edit-params')
             input(type='submit', value='Confirm')
+          form(id='deleteForm', method='POST', action='/delete')
+            input(type='hidden', name='delete' readonly='readonly')
+            input(type='submit', value='Delete')
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
       span(id='load') Loading Data...
-      div.invest-holder-base(id='base')
-        span.symbol Symbol
-        span.share Share
-        span.volume Volume
-        span.price Price
-        span.algorithm Algorithm
-        span.status Status
-      div.holders(id='investments')
+      table.holders(id='investments')
+        thead
+          tr
+            th Symbols
+            th Share
+            th Volume
+            th Price
+            th Algorithm
+            th Status
+        tbody.tbody
   script(src='js/stocks.js')
-  script(src='js/investments.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+  script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')
+  script(src='js/investments.js')

@@ -10,13 +10,13 @@
 
 .tab-holder {
     margin: 0 auto;
-    width: 580px;
+    width: 400px;
+    padding-bottom: 5px;
 }
 
 .tab-content {
     width: 75%;
     margin: 0 auto;
-    
 }
 
 .tab {
@@ -29,13 +29,14 @@
 
 .tab button {
     background-color: inherit;
+    font-weight: bold;
     float: left;
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 10px 35px;
+    padding: 15px 9px;
     transition: 0.5s;
-    font-size: 2em;
+    font-size: 1.22em;
 }
 
 
@@ -54,10 +55,12 @@
     display: none;
     padding: 10px 50px;
     border-top: none;
+    border: 1px solid #1C2321;
+    border-radius: 25px;
 }
 
 .tab-content-header {
-    padding-left: 0px;
+    text-align: center;
     padding-top: 20px;
     padding-bottom: 10px;
     font-family: sans-serif;
@@ -66,7 +69,7 @@
 }
 
 .tab-content-body {
-    padding-left: 20px;
+    text-align: center;
     padding-bottom: 10px;
     font-family: sans-serif;
     font-size: 1.25em;

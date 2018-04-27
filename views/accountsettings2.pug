@@ -1,0 +1,32 @@
+extends masterPug.pug
+
+block headContent
+    link(rel='stylesheet',type='text/css', href='stylesheets/css/accountSettings2.css')
+
+block accountSettingsLink
+    li.nav-item.active
+        a.nav-link(href="/accountsettings") Settings
+
+block bodyContent
+    div.settings-container
+        h1.settings-header Password Settings
+        form.change-password-form(method="POST", action="/updatePassword")
+            p.change-pwd-field-label.form-field-label Current Password:
+            input.change-pwd-field.form-field(type='text', name="currentPassword")
+            p.change-pwd-field-label.form-field-label New Password:
+            input.change-pwd-field.form-field(type='text', name="newPassword")
+            p.change-pwd-field-label.form-field-label Confirm New Password:
+            input.change-pwd-field.form-field(type='text', name="newPasswordConfirm")
+            input.submit-button(type='submit', value='Apply')
+        h1.settings-header Text Message Alerts
+        form.text-alerts-form(method="POST", action="/updatePhoneNumber")
+            p.change-phone-field-label.form-field-label Phone Number:
+            input.change-phone-field.form-field(type='number', name='newPhoneNumber')
+            p.change-phone-field.form-field-label Confirm Phone Number:
+            input.change-phone-field.form-field(type='number', name='newPhoneNumberConfirm')
+            input.submit-button(type='submit', value='Apply')
+        h1.settings-header AlphaVantage API Key
+        form.text-alerts-form(method="POST", action="/updateAVKey")
+            p.change-AV-field-label.form-field-label New AV Key:
+            input.change-AV-field.form-field(type='text', name='newAVKey')
+            input.submit-button(type='submit', value='Apply')
