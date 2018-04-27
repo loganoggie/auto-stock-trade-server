@@ -23,7 +23,7 @@ block bodyContent
       each notif in notifications
         div.suggested-action
           p.investment-name #{notif.name} 
-          p.investment-action #{notif.action}
+          p.investment-action #{notif.notification}
           p.investment-action-date #{notif.action_date}
           p.investment-quantity #{notif.quantity}
           p.investment-price $#{notif.price}
