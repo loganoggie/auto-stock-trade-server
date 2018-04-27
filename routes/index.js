@@ -10,9 +10,12 @@ var database = require('../bin/database.js');
 var queries = require('../bin/queries.js');
 var client = database.client;
 var pool = database.pool;
+var cp = require('child_process')
 var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954cd4e84950c98dbdde099f8');
 
 //-----------------------------------------------------------------------
+
+var child = cp.fork('routes/summing.js')
 
 router.get('/demo', function(req,res,next){
   twilio.messages.create({
@@ -196,7 +199,10 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
-    res.render('dashboard2');
+    queries.getNotifications(req.user.email, function(query){
+      var note = query.rows;
+      res.render('dashboard2', {notifications: note});
+    });
   }
 });
 
@@ -380,7 +386,7 @@ router.post('/updatePassword', async function(req, res, next) {
   var currentPassword = req['body']['currentPassword'];
   var newPassword = req['body']['newPassword'];
   var newPasswordConfirm = req['body']['newPasswordConfirm'];
-  
+
   queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
     req.session.userInfo=query.rows[0];
     console.log(req.session);
@@ -393,14 +399,14 @@ router.post('/updatePassword', async function(req, res, next) {
     req.session.notifications=query.rows;
     console.log(req.session);
   });
-  
+
   if(bcrypt.compareSync(currentPassword, req.session.userInfo.password) && newPassword === newPasswordConfirm) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(newPassword, salt);
 
     client.query("UPDATE users SET password = " + hash + ";");
   }
-  
+
 });
 
 router.get('/dataanalytics', function(req, res, next) {
