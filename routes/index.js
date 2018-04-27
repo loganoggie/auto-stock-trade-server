@@ -207,7 +207,7 @@ router.get('/aboutalgorithms', function(req, res, next) {
   }
 });
 
-router.get('/accountsettings', function(req, res, next) {
+router.get('/accountsettings2', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     req.logout();
@@ -225,7 +225,7 @@ router.get('/accountsettings', function(req, res, next) {
       req.session.notifications=query.rows;
       console.log(req.session);
     });
-    res.render('accountsettings');
+    res.render('accountsettings2');
   }
 });
 
@@ -244,16 +244,16 @@ router.post('/updatePassword', function(req, res, next) {
       var newPassword = req['body']['newPassword'];                   //user input - the new plain text password the user wants to change their password to
       var newPasswordConfirm = req['body']['newPasswordConfirm'];     //user input - this should match newPassword
 
-      console.log(req.session.userInfo);
+      //console.log(req.session.userInfo);
 
-      client.query("SELECT * FROM users", (err,res) => {
-       console.log("Number of users: "+res.rowCount);
-       console.log(res.rows);
-      });
-      client.query("SELECT * FROM usernotifications", (err,res) => {
-        console.log("Number of notifications: "+res.rowCount);
-        console.log(res.rows);
-       });
+      // client.query("SELECT * FROM users", (err,res) => {
+      //  console.log("Number of users: "+res.rowCount);
+      //  console.log(res.rows);
+      // });
+      // client.query("SELECT * FROM usernotifications", (err,res) => {
+      //   console.log("Number of notifications: "+res.rowCount);
+      //   console.log(res.rows);
+      //  });
 
       if(newPassword === newPasswordConfirm)  //if new password feilds match
       {
@@ -314,14 +314,14 @@ router.post('/updatePassword', function(req, res, next) {
 
   });
 
-  res.render("accountsettings");
+  res.render("accountsettings2");
 
 });
 
 
 
 
-router.post('/updateNotificationSettings', function(req, res, next) {
+router.post('/updatePhoneNumber', function(req, res, next) {
   
   console.log("Change Twillio Settings");
 
@@ -330,17 +330,8 @@ router.post('/updateNotificationSettings', function(req, res, next) {
       req.session.userInfo = query.rows[0]; //get the current password hash and other user info from the database
      
       //get user input ...
-      var checkBoxValue = req['body']['notEnableCheckbox'];           //user input - this should be the current plain text password associated with the users account
-      var phoneNum = req['body']['phoneNum'];                   //user input - the new plain text password the user wants to change their password to
-      
-      if(checkBoxValue == null)
-      {
-        checkBoxValue = 0;
-      }
-      else
-      {
-        checkBoxValue = 1;
-      }
+      var newPhoneNumber = req['body']['newPhoneNumber'];                   //user input - the new plain text password the user wants to change their password to
+      var newPhoneNumberConfirm = req['body']['newPhoneNumberConfirm'];
 
       // console.log(req.session.userInfo.id);
       // console.log("checkBox = " + checkBoxValue);
@@ -348,11 +339,18 @@ router.post('/updateNotificationSettings', function(req, res, next) {
       // console.log("phoneNum.length = " + phoneNum.length);
       // console.log("UPDATE users SET twilioenabled = '" + checkBoxValue + "' , phonenumber = '" + phoneNum + "'  where id = '" + req.session.userInfo.id + "';");
       
-      client.query("UPDATE users SET twilioenabled = '" + checkBoxValue + "' , phonenumber = '" + phoneNum + "'  where id = '" + req.session.userInfo.id + "';");
-
+      if(newPhoneNumber == newPhoneNumberConfirm)
+      {
+        console.log("UPDATE users SET phonenumber = '" + newPhoneNumber + "'  where id = '" + req.session.userInfo.id + "';");
+        client.query("UPDATE users SET phonenumber = '" + newPhoneNumber + "'  where id = '" + req.session.userInfo.id + "';");
+      }
+      else
+      {
+        console.log("Phone number did not match!");
+      }
   });
 
-  res.render("accountsettings");
+  res.render("accountsettings2");
 
 });
 
@@ -360,13 +358,13 @@ router.post('/updateNotificationSettings', function(req, res, next) {
 
 router.post('/updateAVkey', function(req, res, next) {
   
-  var newAVkey = req['body']['newAVkey']; //value from the on-screen textbox
+  var newAVkey = req['body']['newAVKey']; //value from the on-screen textbox
 
   console.log("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
 
   client.query("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
   
-  res.render('accountsettings');
+  res.render('accountsettings2');
 });
 
 
