@@ -94,22 +94,27 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //  console.log("added pk");
 //});
 
-//client.query("UPDATE users SET phonenumber='6365380210' WHERE email='jwbhvb@mst.edu'", (err,res) => {
+//client.query("UPDATE users SET phonenumber='4173984675' WHERE email='tanner0397x@gmail.com'", (err,res) => {
+//  console.log("UPDATING users.");
+//  console.log(res.rows);
+//});
+
+//client.query("UPDATE userstocks SET twiliobit='1' WHERE email='tanner0397x@gmail.com' AND id='2'", (err,res) => {
 //  console.log("UPDATING users.");
 //  console.log(res.rows);
 //});
 
 //Print # of users and all rows in users
-//client.query("SELECT * FROM users", (err,res) => {
+//client.query("SELECT * FROM users WHERE email='tanner0397x@gmail.com'", (err,res) => {
 //  console.log("Number of users: "+res.rowCount);
 //  console.log(res.rows);
 //});
 
 //Print # of userstocks and all rows in userstocks
-client.query("SELECT * FROM userstocks", (err,res) => {
-  console.log("Number of userstocks: "+res.rowCount);
-  console.log(res.rows);
-});
+//client.query("SELECT * FROM userstocks", (err,res) => {
+//  console.log("Number of userstocks: "+res.rowCount);
+//  console.log(res.rows);
+//});
 
 //Print # of usernotifications and all rows in usernotifications
 //client.query("SELECT * FROM usernotifications", (err,res) => {
@@ -155,6 +160,12 @@ async function addNotification(email, notification, callback)
   callback(notifications);
 }
 
+async function getPhoneNumber(email, callback)
+{
+  var phonenumber = await client.query("SELECT phonenumber FROM users WHERE email=$1",[email]);
+  callback(notifications);
+}
+
 async function getAllUsers(callback)
 {
   var allUsers = await client.query("SELECT * FROM users");
@@ -177,6 +188,7 @@ module.exports.getCurrentUserInfo = getCurrentUserInfo;
 module.exports.getAllInvestments = getAllInvestments;
 module.exports.getNotifications = getNotifications;
 module.exports.addNotification = addNotification;
+module.exports.getPhoneNumber = getPhoneNumber;
 module.exports.getAllUsers = getAllUsers;
 module.exports.addWorth = addWorth;
 module.exports.getWorth = getWorth;

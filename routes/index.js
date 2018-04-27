@@ -103,7 +103,7 @@ router.get('/run', function(req, res, next) {
   });
   */
 
-  queries.getAllInvestments("MovingAverages",function(query) {
+  queries.getAllInvestments("Moving Averages",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
       var date = new Date();
@@ -122,49 +122,52 @@ router.get('/run', function(req, res, next) {
 
       var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
 
-      console.log("Current date: "+stringDate);
       request("https://www.alphavantage.co/query?function=SMA&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=1"+parseInt(query.rows[i].params)+"&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body)
       {
-        console.log("CHECK this stringdate:"+stringDate);
         var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
         request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
           var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
-          console.log("Current Price: "+currentPrice);
-          console.log("Moving Average Value: "+movingAverageValue);
           if(currentPrice>movingAverageValue)
           {
-            twilio.messages.create({
-              body: "myFolio update: "+this.query.rows[this.i].email+ ":Sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at "+currentPrice,
-              to: '1'+req.session.userInfo.phonenumber,
-              from: '+13146674809'
-            });
+            if(this.query.rows[this.i].twiliobit==1)
+            {
+              //tanner
+              queries.getPhoneNumber(this.query.rows[this.i].email,function(query2) {
+                twilio.messages.create({
+                  body: "myFolio update: "+this.query.rows[this.i].email+ ":Sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at "+currentPrice,
+                  to: '1'+query2.phonenumber,
+                  from: '+13146674809'
+                });    
+              });
+            }
             queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query)
             {
-              //console.log("User "+query.rows[this.i].email+" should sell "+query.rows[this.i].numstocks+" of "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each. This would make the investment worth $"+this.currentPrice*query.rows[this.i].numstocks+".");//UnhandledPromiseRejection???
-              //console.log("SELL THE STOCK:");
-              
+
             }.bind({i: this.i, currentPrice: currentPrice}));
           }
           else
           {
-            twilio.messages.create({
-              body: "myFolio update: "+this.query.rows[this.i].email+ ":Buy "+query.rows[this.i].stockticker+" at "+currentPrice,
-              to: '1'+req.session.userInfo.phonenumber,
-              from: '+13146674809'
-            });
+            if(this.query.rows[this.i].twiliobit==1)
+            {
+              //tanner
+              queries.getPhoneNumber(this.query.rows[this.i].email,function(query2) {
+                twilio.messages.create({
+                  body: "myFolio update: "+this.query.rows[this.i].email+ ":Buy "+query.rows[this.i].stockticker+" at "+currentPrice,
+                  to: '1'+query2.phonenumber,
+                  from: '+13146674809'
+                });    
+              });
+            }
             queries.addNotification(this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query)
             {
-              //console.log("User "+query.rows[this.i].email+" should buy "+query.rows[this.i].stockticker+" at a price of "+this.currentPrice+" each.");//UnhandledPromiseRejection???
-              //console.log("BUY THE STOCK:");
-              
+
             }.bind({i: this.i, currentPrice: currentPrice}));
           }
         }.bind({ query: this.query, i: this.i }));
       }.bind({ query: query, i: i }));
     }
   });
-  console.log("Done updating investments.");
   res.render('splash');
 });
 
