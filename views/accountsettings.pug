@@ -23,11 +23,18 @@ block bodyContent
                 input(type='submit', value='Apply', class='submitButton', id='changePwdSubButton')
         h3.accordion-header Authentication Settings
         div.accordion-section-contents
-            form.two-factor-auth-form
+            form.two-factor-auth-form(method="POST", action="/updateNotificationSettings")
                 div.check-box-section
-                    input(type='checkbox' value='twoFactorAuth' id='twoFactorEnableCheckbox')
-                    p(class='two-factor-auth-label' id='twoFactCheckboxLbl') Enable Two-factor Authentication
+                    input(type='checkbox' name="notEnableCheckbox" value='twoFactorAuth' id='twoFactorEnableCheckbox')
+                    p(class='two-factor-auth-label' id='twoFactCheckboxLbl') Enable Twilio Notifications
                 div.two-fact-phone-num-info
                     p(class='two-factor-auth-label' id='phoneNumLabel') Phone Number:
-                    input(type='text', name="twoFactorPhoneNum", class='twoFactorSettingsTxtBox')
+                    input(type='text', name="phoneNum", class='twoFactorSettingsTxtBox')
                 input(type='submit', value='Apply', class='submitButton', id='twoFactorSubButton')
+        h3.accordion-header Alpha Vantage Settings
+        div.accordion-section-contents
+            form.alpha-vantage-form(method="POST", action="/updateAVkey")
+                p.alpha-vantage-key-label Alpha Vantage Key:
+                input(type='text', name="newAVkey", class='pwdSettingsTxtBox', required=true)
+                br
+                input(type='submit', value='Apply', class='submitButton', id='changeAVkeySubButton')
