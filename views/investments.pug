@@ -9,7 +9,7 @@ block investmentsLink
 
 block bodyContent
   div.investments
-    //button(type='button', id='add', onclick='myModal.showModal()') Add Investments
+    //button(type='button', id='add', onclick='myModal.showModal()') Add Investments //THIS CAN BE REMOVED
     //A Modal
     div.modal(id='modal')
       div.modal-content(id='modal-content')
@@ -45,17 +45,20 @@ block bodyContent
     h1 My Investments
     div.invest(id='invest')
       span(id='warn')
+      //span(id='load') Loading Data...
+      div.table-wrapper(class='table-wrapper')
+        table.holders(id='investments')
+          thead
+            tr
+              th Symbols
+              th Share
+              th Volume
+              th Price
+              th Algorithm
+              th Notifications
+          tbody.tbody
       span(id='load') Loading Data...
-      table.holders(id='investments')
-        thead
-          tr
-            th Symbols
-            th Share
-            th Volume
-            th Price
-            th Algorithm
-            th Notifications
-        tbody.tbody
+      button(type='button', id='add', onclick='myModal.showModal()') Add Investments
   script(src='js/stocks.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
   script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')
