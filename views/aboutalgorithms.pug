@@ -11,38 +11,9 @@ block bodyContent
   div.tab-content
     div.tab-holder 
       div.tab
-        button(class="tablinks") Beta
         button(class="tablinks") RSI 
         button(class="tablinks") Moving Averages
-    
-    div(class="tab-wrapper" id="BETA")
-      div.tab-content-header What is Beta?
-      div.tab-content-body Beta is a measure of the volatility, or systematic risk, of a security 
-        | or a portfolio in comparison to the market as a whole. Beta is used in the capital 
-        | asset pricing model (CAPM), which calculates the expected return of an asset based on 
-        | its beta and expected market returns. Beta is also known as the beta coefficient. By 
-        | definition, the market has a beta of 1.0, and individual stocks are ranked according to 
-        | how much they deviate from the market. A stock that swings more than the market over 
-        | time has a beta above 1.0. If a stock moves less than the market, the stock's beta is 
-        | less than 1.0. High-beta stocks are supposed to be riskier but provide a potential for 
-        | higher returns; low-beta stocks pose less risk but also lower returns.
-      div.tab-content-header How is Beta calculated?
-      div.tab-content-body Beta is calculated using regression analysis. Beta represents the 
-        | tendency of a security's returns to respond to swings in the market. A security's beta 
-        | is calculated by dividing the covariance the security's returns and the benchmark's 
-        | returns by the variance of the benchmark's returns over a specified period.
-      div.tab-content-header Is Beta safe to use?
-      div.tab-content-body A stock's price variability is important to consider when assessing 
-        | risk. If you think about risk as the possibility of a stock losing its value, beta has 
-        | appeal as a proxy for risk. Intuitively, it makes plenty of sense. Think of an early-stage 
-        | technology stock with a price that bounces up and down more than the market. It's hard 
-        | not to think that stock will be riskier than, say, a safe-haven utility industry stock 
-        | with a low beta. There are variations on beta depending on things such as the market 
-        | index used and the time period measured – but broadly speaking, the notion of beta is 
-        | fairly straightforward. It's a convenient measure that can be used to calculate the costs 
-        | of equity used in a valuation method that discounts cash flows.
-      div.tab-content-footer Check out Investopedia's page on Beta 
-        a(href='https://www.investopedia.com/terms/b/beta.asp') here
+        button(class="tablinks") Ballinger Bands
     
     div(class="tab-wrapper" id="RSI")
       div.tab-content-header What is RSI?
@@ -74,11 +45,48 @@ block bodyContent
         | considered a trend-following indicator because it is based on past prices. Moving Averages are 
         | the basis for many different strategies, but for this program, we'll just be utilizing a Simple 
         | Moving Average.
-      div.tab-content-header How does a Simple Moving Average work?
+      div.tab-content-header How does a Simple Moving Average (SMA) work?
       div.tab-content-body A Simple Moving Average is a customizable arithmetic moving average that is  
         | calculated by adding the closing price of the security for a number of time periods, and then 
         | dividing that sum by the total number of time periods. This gives the average price of the 
-        | security over the time period...
+        | security over the time period.
+      div.tab-content-header How does an Exponential Moving Average (EMA) work?
+      div.tab-content-body An exponential moving average (EMA) is a type of moving average that is similar 
+        | to a simple moving average, except that more weight is given to the latest data. It's also known 
+        | as the exponentially weighted moving average. This type of moving average reacts faster to recent 
+        | price changes than a simple moving average.
+      div.tab-content-header How should you use Moving Averages?
+      div.tab-contnet-body Traders who employ technical analysis find moving averages very useful and 
+        | insightful when applied correctly but create havoc when used improperly or are misinterpreted. 
+        | All the moving averages commonly used in technical analysis are, by their very nature, lagging 
+        | indicators. Consequently, the conclusions drawn from applying a moving average to a particular 
+        | market chart should be to confirm a market move or to indicate its strength. Very often, by the 
+        | time a moving average indicator line has made a change to reflect a significant move in the market, 
+        | the optimal point of market entry has already passed.
       div.tab-content-footer Check out Investopedia's page on Simple Moving Averages 
         a(href='https://www.investopedia.com/terms/s/sma.asp') here
+    
+    div(class='tab-wrapper' id="BBANDS")
+      div.tab-content-header What are Bollinger Bands®?
+      div.tab-content-body A Bollinger Band®, developed by famous technical trader John Bollinger, is 
+        | plotted two standard deviations away from a simple moving average. Standard deviation is a 
+        | mathematical formula that measures volatility, showing how the stock price can vary from its 
+        | true value. By measuring price volatility, Bollinger Bands® adjust themselves to market conditions. 
+        | This is what makes them so handy for traders: they can find almost all of the price data needed 
+        | between the two bands.
+      div.tab-content-header How do Bollinger Bands® work?
+      div.tab-content-body Bollinger Bands® consist of a center line and two price channels (bands) above 
+        | and below it. The center line is an exponential moving average; the price channels are the standard 
+        | deviations of the stock being studied. The bands will expand and contract as the price action of an 
+        | issue becomes volatile (expansion) or becomes bound into a tight trading pattern (contraction).
+      div.tab-content-header Can You Trust Bollinger Bands®?
+      div.tab-content-body Bollinger Bands® are a highly popular technical analysis technique. Many 
+        | traders believe the closer the prices move to the upper band, the more overbought the market, 
+        | and the closer the prices move to the lower band, the more oversold the market. While every strategy 
+        | has its drawbacks, Bollinger Bands® have become one of the most useful and commonly used tools in 
+        | spotlighting extreme short-term prices in a security. Buying when stock prices cross below the lower 
+        | Bollinger Band® often helps traders take advantage of oversold conditions and profit when the stock 
+        | price moves back up toward the center moving-average line.
+      div.tab-content-footer Check out Investopedia's page on Bollinger Bands® 
+        a(href='https://www.investopedia.com/terms/b/bollingerbands.asp') here
   script(src="js/aboutalgorithms.js")
