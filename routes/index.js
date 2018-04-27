@@ -244,12 +244,16 @@ router.post('/updatePassword', function(req, res, next) {
       var newPassword = req['body']['newPassword'];                   //user input - the new plain text password the user wants to change their password to
       var newPasswordConfirm = req['body']['newPasswordConfirm'];     //user input - this should match newPassword
 
-      //console.log(req.session.userInfo);
+      console.log(req.session.userInfo);
 
-      // client.query("SELECT * FROM users", (err,res) => {
-      //  console.log("Number of users: "+res.rowCount);
-      //  console.log(res.rows);
-      // });
+      client.query("SELECT * FROM users", (err,res) => {
+       console.log("Number of users: "+res.rowCount);
+       console.log(res.rows);
+      });
+      client.query("SELECT * FROM usernotifications", (err,res) => {
+        console.log("Number of notifications: "+res.rowCount);
+        console.log(res.rows);
+       });
 
       if(newPassword === newPasswordConfirm)  //if new password feilds match
       {
@@ -259,6 +263,7 @@ router.post('/updatePassword', function(req, res, next) {
               if(err)
               {
                 console.log("Error while comparing current password input to current database password");
+                //alert("Error: your password has not been update. Please try agian");
                 throw err;
               }
 
@@ -270,6 +275,7 @@ router.post('/updatePassword', function(req, res, next) {
                       if(err)
                       {
                         console.log("Error while generating salt");
+                        //alert("Error: your password has not been update. Please try agian");
                         throw err;
                       }
 
@@ -280,11 +286,14 @@ router.post('/updatePassword', function(req, res, next) {
                           if(error)
                           {
                             console.log("Error while generating hash");
+                            alert("Error: your password has not been update. Please try agian");
                             throw error;
                           }
 
                           console.log(result);
+                          console.log("UPDATE users SET password = '" + result + "' where id = '" + req.session.userInfo.id + "';");
                           client.query("UPDATE users SET password = '" + result + "' where id = '" + req.session.userInfo.id + "';");
+                          //alert("Your password has been updated.");
                           //client.query("UPDATE users SET password = '" + result + "';");
                       });
                   });
@@ -292,6 +301,7 @@ router.post('/updatePassword', function(req, res, next) {
               else
               {
                   console.log("Current password is incorrect");
+                  //alert("Current password is incorrect");
               }
           }); 
       }
@@ -301,11 +311,64 @@ router.post('/updatePassword', function(req, res, next) {
       }
       
 
+
   });
 
   res.render("accountsettings");
 
 });
+
+
+
+
+router.post('/updateNotificationSettings', function(req, res, next) {
+  
+  console.log("Change Twillio Settings");
+
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+
+      req.session.userInfo = query.rows[0]; //get the current password hash and other user info from the database
+     
+      //get user input ...
+      var checkBoxValue = req['body']['notEnableCheckbox'];           //user input - this should be the current plain text password associated with the users account
+      var phoneNum = req['body']['phoneNum'];                   //user input - the new plain text password the user wants to change their password to
+      
+      if(checkBoxValue == null)
+      {
+        checkBoxValue = 0;
+      }
+      else
+      {
+        checkBoxValue = 1;
+      }
+
+      // console.log(req.session.userInfo.id);
+      // console.log("checkBox = " + checkBoxValue);
+      // console.log("phoneNum = " + phoneNum);
+      // console.log("phoneNum.length = " + phoneNum.length);
+      // console.log("UPDATE users SET twilioenabled = '" + checkBoxValue + "' , phonenumber = '" + phoneNum + "'  where id = '" + req.session.userInfo.id + "';");
+      
+      client.query("UPDATE users SET twilioenabled = '" + checkBoxValue + "' , phonenumber = '" + phoneNum + "'  where id = '" + req.session.userInfo.id + "';");
+
+  });
+
+  res.render("accountsettings");
+
+});
+
+
+
+router.post('/updateAVkey', function(req, res, next) {
+  
+  var newAVkey = req['body']['newAVkey']; //value from the on-screen textbox
+
+  console.log("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+
+  client.query("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+  
+  res.render('accountsettings');
+});
+
 
 router.get('/dataanalytics', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
