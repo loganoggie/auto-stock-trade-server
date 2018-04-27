@@ -194,8 +194,28 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
-
-    res.render('dashboard2');
+    queries.getNotifications(req.user.email, function(query) {
+      notifications = {
+        "inv1": {
+          "name": "APPL",
+          "action": "Buy",
+          "action_date": "05-10-18",
+          "quantity": "1",
+          "price": "110",
+        },
+        "inv2": {
+          "name": "F",
+          "action": "Sell",
+          "action_date": "05-10-18",
+          "quantity": "7",
+          "price": "15",
+        },
+      };
+      console.log(JSON.stringify(notifications) === JSON.stringify({}));
+      res.render('dashboard2', {
+        userNotifications: JSON.stringify(notifications),
+      });
+    });
   }
 });
 
@@ -340,7 +360,7 @@ router.get('/accountsettings', function(req, res, next) {
     res.redirect('/');
   } else {
 
-    res.render('accountsettings');
+    res.render('accountsettings2');
   }
 });
 

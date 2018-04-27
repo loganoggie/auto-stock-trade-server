@@ -348,6 +348,8 @@ async function generateInvestment(stockData, investNum) {
             investLoc.innerHTML += '<span id=\'price-' + investNum + '\' class=\'price\'>$' + price +'</span>';
             investLoc.innerHTML += '<span id=\'algorithm-' + investNum + '\' class=\'algorithm\'>' + stockData.algorithm +'</span>';
             investLoc.innerHTML += '<span id=\'status-' + investNum + '\' class=\'status\'>' + status +'</span>';
+
+
             await sleep(1*1000)//let the API catch up
             sortInvestments()
           }//end if

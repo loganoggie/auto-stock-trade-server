@@ -125,8 +125,8 @@ function genChart(data) {
       labels: days,
       datasets: [{
         label: 'Portfolio Value',
-        data: worth,
-        backgroundColor: ['rgba(67, 160, 71, 0.4)']
+        data: data.worth_day.worth,
+        backgroundColor: ['rgba(67, 160, 71, 0.6)']
       }]
     },
     options: {
