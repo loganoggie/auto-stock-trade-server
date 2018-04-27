@@ -17,21 +17,18 @@ block bodyContent
       div.account-graph
         canvas(id='folio-value', height='600', width='800')
         //Import the chart.js library
-        script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
-        script(src='js/dash-chart.js')
-  div.suggested-actions-wrapper 
+  div.suggested-actions-wrapper
     h1.suggested-actions-heading Suggested Actions
-    p.no-actions-notification There are no actions to take at the moment
     div.suggested-actions-feed 
-      div.suggested-action
-        div
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
-      div.suggested-action
+      each notif in notifications
+        div.suggested-action
+          p.investment-name #{notif.name} 
+          p.investment-action #{notif.action}
+          p.investment-action-date #{notif.action_date}
+          p.investment-quantity #{notif.quantity}
+          p.investment-price $#{notif.price}
+      else
+        p.no-actions-notification There are no actions to take at the moment
   div.investment-link-wrapper
     p.investment-verbage Want to edit your current investments?
       a.investment-link(href='/investments') Click Here!
@@ -41,7 +38,16 @@ block bodyContent
       div.account-graph
         canvas(id='folio-value2', height='600', width='800')
         //Import the chart.js library
+        //Import stocks library
+        script(src='js/stocks.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
         script(src='js/dash-chart.js')
+  div.tickers
+    span(id='warn')
+    span(id='load') Loading Data...
+    button(type='button' id='prev' onclick='namespace.prevTickers()' disabled) Previous
+    button(type='button' id='next' onclick='namespace.nextTickers()' disabled) Next
+    div.tick(id='tick')
+    script(src='js/ticker.js')
   //- div.current-investment-wrapper
   //-   div.current-investment-feed

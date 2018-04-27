@@ -42,8 +42,9 @@
   object-fit: fill;
 }
 
-.invest-holder {
-  padding: 0.5%
+.invest-holder:hover {
+  background-color: #F48F4B;
+  cursor: default;
 }
 
 .symbol {
@@ -63,6 +64,10 @@
 }
 
 .algorithm {
+  padding: 0.5%
+}
+
+.edit {
   padding: 0.5%
 }
 
@@ -102,11 +107,35 @@
     cursor: pointer;
 }
 
-.invest-holder {
+/* .invest-holder {
   display: none;
-}
+} */
 
 .optn:hover {
   background-color: #F48F4B;
   cursor: default;
+}
+
+
+table {
+    /* cellspacing */
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: solid;
+    table-layout: : fixed;
+}
+th {
+    /* This covers the th elements */
+}
+tr {
+    /* This covers the tr elements */
+    padding: 5%
+}
+th, td {
+    /* cellpadding */
+    padding: 15px;
+}
+
+thead {
+  display: table-header-group;
 }
