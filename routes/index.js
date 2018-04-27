@@ -194,13 +194,11 @@ router.get('/dashboard', function(req, res, next) {
     console.log("Auth Failed.");
     res.redirect('/');
   } else {
-
     res.render('dashboard2');
   }
 });
 
 router.get('/dash-get', function(req, res, next) {
-
   queries.getCurrentStockInfo(req.user.email, function(query){
     req.session.stockInfo=query.rows;
     queries.getNotifications(req.user.email, function(query2){
@@ -221,8 +219,11 @@ router.get('/dash-get', function(req, res, next) {
 
 router.get('/tick-get', function(req, res, next) {
   queries.getCurrentStockInfo(req.user.email, function(query){
-    req.session.stockInfo=query.rows;
-    res.json(JSON.stringify(req.session));
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(queryUser) {
+      req.session.userInfo = queryUser.rows[0];
+      req.session.stockInfo=query.rows;
+      res.json(JSON.stringify(req.session));
+    });
   });
 });
 
