@@ -155,7 +155,7 @@ async function addNotification(twiliobit, phonenumber, email, notification, call
   if(twiliobit==1)
   {
     twilio.messages.create({
-      body: notification,
+      body: 'myFolio update: '+notification,
       to: '+1'+phonenumber,
       from: '+13146674809'
     });

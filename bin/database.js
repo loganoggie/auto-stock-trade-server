@@ -1,6 +1,4 @@
 // Just making sure this module ran
-console.log('database.js initiated');
-
 // Global Module Handling -------------------------------------------------------------
 var pg = require('pg');
 const {Client} = require('pg');
