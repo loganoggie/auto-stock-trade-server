@@ -121,21 +121,62 @@ table {
     /* cellspacing */
     border-collapse: collapse;
     border-spacing: 0;
-    border: solid;
+    border: 1px solid #acacac;
     table-layout: : fixed;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 th {
-    /* This covers the th elements */
+    color: white;
+    background-color: #43A047;
+    border-radius: 2px;
 }
-tr {
+tr{
     /* This covers the tr elements */
     padding: 5%
 }
+
+tr:nth-child(even){background-color: #dddddd;}
+
 th, td {
-    /* cellpadding */
-    padding: 15px;
+    /* cellpadding 
+    padding: 15px; */ 
+    border: 1px solid #acacac; 
+    padding: 8px;
+    border-radius: 2px;
 }
 
 thead {
   display: table-header-group;
+}
+
+.table-wrapper{
+  
+}
+#invest{
+  
+}
+
+#add{
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: 200px;
+  height: 50px;
+  line-height: 50px;
+  color: white;
+  background-color: #43A047;
+  border: none;
+  border-radius: 2px;
+}
+
+#load{
+    position: relative;
+    left: 46%;
+    transform: translateX(-50%);
+}
+
+h1{
+  text-align: center;
 }
