@@ -53,14 +53,11 @@ router.get('/demo', function(req,res,next){
 /*Runs the correct algorithm for every investment.*/
 router.get('/run', function(req, res, next) {
 
-  /*
   queries.getAllInvestments("RSI",function(query) {
-    console.log("PROCESSING RSI ALGO");
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
-      if(query.rows[i].params=="low") //low risk RSI
+      if(query.rows[i].params=="lowrisk") //low risk RSI
       {
-        //console.log("low");
         var date = new Date();
         var year = date.getFullYear();
         var month = date.getMonth()+1;
@@ -75,24 +72,130 @@ router.get('/run', function(req, res, next) {
           day="0"+day;
         }
 
-
       var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
-        //https://www.alphavantage.co/query?function=RSI&symbol="+this.query.rows[this.i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0
         request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
-          console.log("RSIDate: "+stringDate);
-          var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the current price
-          //console.log("Current Price: "+currentPrice);
-          console.log("RSI Value: "+RSIvalue);
+          var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
+
+          request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+          {
+            var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
+            if(RSIvalue>=80)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else if(RSIvalue<=20)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else
+            {
+
+            }
+          }.bind({ query: this.query, i: this.i }));
         }.bind({ query: query, i: i }));
       }
-      else if(query.rows[i].params=="medium") //medium risk RSI
+      else if(query.rows[i].params=="mediumrisk") //medium risk RSI
       {
-        //console.log("medium");
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        var day = date.getDate()-2;
+
+        if(month<10)
+        {
+          month="0"+month;
+        }
+        if(day<10)
+        {
+          day="0"+day;
+        }
+
+        var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+        request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        {
+          var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
+
+          request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+          {
+            var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
+            if(RSIvalue>=65)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else if(RSIvalue<=35)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else
+            {
+
+            }
+          }.bind({ query: this.query, i: this.i }));
+        }.bind({ query: query, i: i }));
       }
-      else if(query.rows[i].params=="high") //high risk RSI
+      else if(query.rows[i].params=="highrisk") //high risk RSI
       {
-        //console.log("high");
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        var day = date.getDate()-2;
+
+        if(month<10)
+        {
+          month="0"+month;
+        }
+        if(day<10)
+        {
+          day="0"+day;
+        }
+
+        var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
+        request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+        {
+          var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
+
+          request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
+          {
+            var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
+            if(RSIvalue>=55)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else if(RSIvalue<=45)
+            {
+              queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
+              }.bind({i: this.i, query: this.query}));
+            }
+            else
+            {
+
+            }
+          }.bind({ query: this.query, i: this.i }));
+        }.bind({ query: query, i: i }));
       }
       else
       {
@@ -100,7 +203,6 @@ router.get('/run', function(req, res, next) {
       }
     }
   });
-  */
 
   queries.getAllInvestments("Moving Averages",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
@@ -129,7 +231,7 @@ router.get('/run', function(req, res, next) {
           if(currentPrice>movingAverageValue)
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -137,7 +239,7 @@ router.get('/run', function(req, res, next) {
           else
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(this.query.rows[this.i].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -145,7 +247,8 @@ router.get('/run', function(req, res, next) {
         }.bind({ query: this.query, i: this.i }));
       }.bind({ query: query, i: i }));
     }
-  });
+  }).then(console.log("Finished Moving Averages."));
+  
   res.render('splash');
 });
 
