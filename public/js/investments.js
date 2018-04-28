@@ -208,6 +208,7 @@ var edit = {
   close: document.getElementsByClassName('close')[1],//the second closed
   select: document.getElementsByName('algorithm')[1],
   deleteID: document.getElementsByName('delete')[0],
+  twilio: document.getElementsByName('editTwilio')[0],
   index: 0,//generator.investments index
 
   hideModal: function() {
@@ -221,6 +222,11 @@ var edit = {
     this.investID.value = generator.investments[num].investID;
     this.deleteID.value = generator.investments[num].investID;//fill for deletion
     this.volume.value = generator.investments[num].volume;
+    if(generator.investments[num].twilio == "1")
+      this.twilio.checked = true;
+    else
+      this.twilio.checked = false;
+
     if(generator.investments[num].algorithm == this.ALGORITHM_NAME[0])//if we have RSI selected
       this.select.value = this.ALGORITHM_NAME[0];
     else if(generator.investments[num].algorithm == this.ALGORITHM_NAME[1])
@@ -337,7 +343,7 @@ async function generateInvestment(stockData, investNum) {
             var price = Number(today.close).toFixed(2)
             var share = (price*stockData.numstocks).toFixed(2)
             var status = "active";
-            if(stockData.enabled != '1')//maybe remove later
+            if(stockData.twiliobit != '1')//maybe remove later
               status = "inactive";
             //Display an investment
             var row = investHolder.insertRow(-1);//insert at end
@@ -376,7 +382,7 @@ async function generateInvestment(stockData, investNum) {
 
             cellStatus.innerHTML = status;
             cellStatus.className = 'cell';
-            cellStatus.id = 'status-' + investNum;
+            cellStatus.id = 'notif-' + investNum;
             await sleep(1*1000)//let the API catch up
             //sortInvestments()
           }//end if
@@ -458,7 +464,7 @@ var generator = {
       catch(e) {
         paramWrapper = stockData[i].params
       }
-      this.investments.push({symbol: stockData[i].stockticker, volume: stockData[i].numstocks, algorithm: stockData[i].algorithm, status: stockData[i].enabled, investID: stockData[i].id, investNum: i, param: paramWrapper})
+      this.investments.push({symbol: stockData[i].stockticker, volume: stockData[i].numstocks, algorithm: stockData[i].algorithm, status: stockData[i].enabled, investID: stockData[i].id, investNum: i, param: paramWrapper, twilio: stockData[i].twiliobit})
     }//end for
   }//end function createAllInvestments
 }//end generator object

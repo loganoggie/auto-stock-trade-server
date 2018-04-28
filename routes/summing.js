@@ -41,25 +41,27 @@ Summation.prototype.calcPrices = async function() {
     var symbol = sumInstance.symbols[i];//already set
     var volume = sumInstance.volumes[i];
     await sumInstance.resultMin(symbol).then(async function(result) {//We are no longer in the scope of summation, however i is in the scope
-      try {
-        var json = JSON.stringify(result[0]);
-        if(json != undefined) {//if we're not undefined we're good
-          var value = JSON.parse(json);
-          sumInstance.shares.push(Number(Number(value.close)*Number(volume)).toFixed(2));
-          i++;
-          if(i >= length)
-            done = true;
+      await sumInstance.sleep(5*1000).then(function() {
+        try {
+          var json = JSON.stringify(result[0]);
+          if(json != undefined) {//if we're not undefined we're good
+            var value = JSON.parse(json);
+            sumInstance.shares.push(Number(Number(value.close)*Number(volume)).toFixed(2));
+            i++;
+            if(i >= length)
+              done = true;
+          }
+          else {
+            throw "JSON is undefined";
+          }
+          //await sumInstance.sleep(5*1000);
         }
-        else {
-          throw "JSON is undefined";
+        catch(err) {
+          console.log('FAILED AT SYMBOL ' + symbol);
+  				console.log(err);
+  				sumInstance.sleep(30*1000).then(function() {});//sleep for 30 second
         }
-        await sumInstance.sleep(5*1000);
-      }
-      catch(err) {
-        console.log('FAILED AT SYMBOL ' + symbol);
-				console.log(err);
-				await sumInstance.sleep(30*1000);//sleep for ten second
-      }
+      });
     });
   }
 }
