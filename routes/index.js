@@ -279,15 +279,24 @@ router.post('/edit-algorithm', function(req, res, next) {
 });
 
 router.post('/delete', function(req, res, next) {
+
+  console.log(req.body)
+
   var del_id = req.body.delete;
   client.query("DELETE FROM userstocks WHERE id=$1", [del_id]);
+
   res.render('investments', req);
+
 });
 
 router.post('/add', function(req, res, next) {
+
+  console.log(req.body)
   var params;
+
   if (req.body.algorithm == 'BBands')
   {
+
     params = JSON.stringify({
       'interval': req.body.interval,
       'num_points': req.body.num_points
@@ -301,19 +310,14 @@ router.post('/add', function(req, res, next) {
   {
     params = req.body.radio;
   }
-  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
-    req.session.userInfo=query.rows[0];
-    console.log(req.session);
-  });
-  queries.getCurrentStockInfo(req.user.email, function(query){
-    req.session.stockInfo=query.rows;
-    console.log(req.session);
-  });
-  queries.getNotifications(req.user.email, function(query){
-    req.session.notifications=query.rows;
-    console.log(req.session);
-  });
-  res.render('dashboard2');
+
+  console.log(params)
+
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+
+  res.render('investments')
+
 });
 
 router.get('/investments', function(req, res, next) {
@@ -322,18 +326,7 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
-      req.session.userInfo=query.rows[0];
-      console.log(req.session);
-    });
-    queries.getCurrentStockInfo(req.user.email, function(query){
-      req.session.stockInfo=query.rows;
-      console.log(req.session);
-    });
-    queries.getNotifications(req.user.email, function(query){
-      req.session.notifications=query.rows;
-      console.log(req.session);
-    });
+
     res.render('investments', req);
   }
 });
