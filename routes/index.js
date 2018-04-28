@@ -231,7 +231,7 @@ router.get('/run', function(req, res, next) {
         var upperBandValue = JSON.parse(body)['Technical Analysis: BBANDS'][stringDate]['Real Upper Band']; //this is the upper band
         var lowerBandValue = JSON.parse(body)['Technical Analysis: BBANDS'][stringDate]['Real Lower Band']; //this is the lower band
         request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
-        { 
+        {
           var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
           if(currentPrice>upperBandValue)
           {
@@ -342,6 +342,13 @@ router.post('/register', function(req, res, next) {
   }
 });
 
+function Notificaion(ac, sy, qt, pr) {//notification constructor
+  this.symbol = sy;
+  this.action = ac;
+  this.quantity = qt;
+  this.price = pr;
+}
+
 router.get('/dashboard', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
@@ -349,7 +356,21 @@ router.get('/dashboard', function(req, res, next) {
   } else {
     queries.getNotifications(req.user.email, function(query){
       var note = query.rows;
-      res.render('dashboard2', {notifications: note});
+      var noteArry = note.map( a => a.notification);//gives an array of the notifations
+      noteArry.reverse();
+      var notes = [];
+      for(var i = 0; i < noteArry.length; i++) {
+        var split = noteArry[i].split(' ');
+        console.log(split);
+        if(noteArry[i].includes('sell')) {
+          notes.push(new Notificaion('Sell', split[6], split[4], Number(Number(split[11]).toFixed(2)).toFixed(2)));
+        }//end if
+        else {
+          notes.push(new Notificaion('Buy', split[4], 0, Number(Number(split[9]).toFixed(2)).toFixed(2)));
+        }//end else
+      }//end for
+      console.log("TEST2");
+      res.render('dashboard2', {notifications: notes});
     });
   }
 });

@@ -63,7 +63,7 @@ html {
 }
 
 .suggested-actions-wrapper {
-    overflow: hidden;
+    overflow-y: scroll;
     margin: 0 auto;
     margin-top: 30px;
     max-height: 600px;
@@ -92,7 +92,7 @@ html {
     height: 70px;
     border-bottom: 1px solid lightgrey;
     box-sizing: border-box;
-    transition: background-color .10s ease-in-out; 
+    transition: background-color .10s ease-in-out;
     /* background-color: yellow; */
 }
 
