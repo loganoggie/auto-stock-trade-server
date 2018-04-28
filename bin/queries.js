@@ -82,7 +82,7 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //});
 
 //Alter users table to have id column
-//client.query("ALTER TABLE users DROP PRIMARY KEY", (err, res) => {
+//client.query("ALTER TABLE users DROP COLUMN twilioenabled", (err, res) => {
 //  console.log("drop pk");
 //});
 
@@ -94,21 +94,21 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //  console.log("added pk");
 //});
 
-client.query("UPDATE users SET phonenumber='6362841357' WHERE email='tanner0397x@gmail.com'", (err,res) => {
-  console.log("UPDATING users.");
-  console.log(res.rows);
-});
+//client.query("UPDATE users SET phonenumber='6362841357' WHERE email='tanner0397x@gmail.com'", (err,res) => {
+//  console.log("UPDATING users.");
+//  console.log(res.rows);
+//});
 
-//client.query("UPDATE userstocks SET twiliobit='1' WHERE email='tanner0397x@gmail.com' AND id='2'", (err,res) => {
+//client.query("UPDATE userstocks SET twiliobit='1'", (err,res) => {
 //  console.log("UPDATING users.");
 //  console.log(res.rows);
 //});
 
 //Print # of users and all rows in users
-client.query("SELECT * FROM users", (err,res) => {
-  console.log("Number of users: "+res.rowCount);
-  console.log(res.rows);
-});
+//client.query("SELECT * FROM users", (err,res) => {
+//  console.log("Number of users: "+res.rowCount);
+//  console.log(res.rows);
+//});
 
 //Print # of userstocks and all rows in userstocks
 //client.query("SELECT * FROM userstocks", (err,res) => {
@@ -149,14 +149,17 @@ async function getNotifications(email, callback)
   callback(notifications);
 }
 
-async function addNotification(phonenumber, email, notification, callback)
+async function addNotification(twiliobit, phonenumber, email, notification, callback)
 {
   var notifications2 = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
-  twilio.messages.create({
-    body: notification,
-    to: '+1'+phonenumber,
-    from: '+13146674809'
-  });
+  if(twiliobit==1)
+  {
+    twilio.messages.create({
+      body: 'myFolio update: '+notification,
+      to: '+1'+phonenumber,
+      from: '+13146674809'
+    });
+  }
   callback(notifications2);
 }
 
