@@ -361,7 +361,6 @@ router.get('/dashboard', function(req, res, next) {
       var notes = [];
       for(var i = 0; i < noteArry.length; i++) {
         var split = noteArry[i].split(' ');
-        console.log(split);
         if(noteArry[i].includes('sell')) {
           notes.push(new Notificaion('Sell', split[6], split[4], Number(Number(split[11]).toFixed(2)).toFixed(2)));
         }//end if
@@ -369,7 +368,6 @@ router.get('/dashboard', function(req, res, next) {
           notes.push(new Notificaion('Buy', split[4], 0, Number(Number(split[9]).toFixed(2)).toFixed(2)));
         }//end else
       }//end for
-      console.log("TEST2");
       res.render('dashboard2', {notifications: notes});
     });
   }

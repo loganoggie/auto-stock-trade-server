@@ -11,7 +11,7 @@ block bodyContent
   div.account-analytics
     div.account-standing
       h1.account-standing-label Account Standing:
-        span.account-standing-value  $10,000
+        span.account-standing-value(id='standing') Calculating...
     div.account-graph-holder
       script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
       div.account-graph
@@ -46,12 +46,9 @@ block bodyContent
         script(src='js/stocks.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
         script(src='js/dash-chart.js')
-  div.tickers
-    span(id='warn')
-    span(id='load') Loading Data...
-    button(type='button' id='prev' onclick='namespace.prevTickers()' disabled) Previous
-    button(type='button' id='next' onclick='namespace.nextTickers()' disabled) Next
-    div.tick(id='tick')
-    script(src='js/ticker.js')
+  div.ticker-wrap
+    div.ticker(id='ticker')
+      span(id='load') Loading Data...
+  script(src='js/ticker.js')
   //- div.current-investment-wrapper
   //-   div.current-investment-feed

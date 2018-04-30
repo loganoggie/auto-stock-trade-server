@@ -23,53 +23,24 @@ var namespace = {//namespace to hold allSymbols and indexTickers to avoid global
   },
 
   setSymbols_Volume: function(symbols, volumes) {this.allSymbols = symbols; this.allVolumes = volumes},//set this array to the array of symbol fetched from backend
-  nextTickers: function() {
-    var totalPages = Math.ceil(this.allSymbols.length / TICKERS_ON_PAGE)-1;
-    //var length = TICKERS_ON_PAGE;//default length
-    var lastPageItems = this.allSymbols.length % TICKERS_ON_PAGE;
-    this.currentPage++;
-    if(this.currentPage > totalPages) {this.currentPage = 0;}
-    //if(this.currentPage == totalPages) {length = lastPageItems == 0 ? 0 : lastPageItems}
-    var index = this.currentPage*TICKERS_ON_PAGE;
-    //generators.clearLoadInterval();
-    //generators.loaded(length);
-    //generators.clearTimeouts();//clear all timeouts of tickers that encountered errors
-    this.clearOld();
-    this.showTickers(this.allSymbols, index)
-  },//end nextTickers
-
-  prevTickers: function() {//goto previous page of tickers
-    var totalPages = Math.ceil(this.allSymbols.length / TICKERS_ON_PAGE)-1;
-    //var length = TICKERS_ON_PAGE;//default length
-    var lastPageItems = this.allSymbols.length % TICKERS_ON_PAGE;
-    this.currentPage--;
-    if(this.currentPage < 0) {this.currentPage = totalPages}
-    //if(this.currentPage == totalPages) {length = lastPageItems == 0 ? 0 : lastPageItems}
-    var index = this.currentPage*TICKERS_ON_PAGE;
-    //generators.clearLoadInterval();
-    //generators.loaded(length);
-    //generators.clearTimeouts();
-    this.clearOld();
-    this.showTickers(this.allSymbols, index)
-  },//end prvTickers
 
   clearOld: function() {//clear all the old tickers off the page
     //document.getElementById('tick').innerHTML = ''//Set back to empty
-    var tickers = document.getElementsByClassName('ticker');
-    for(i = 0; i < this.allSymbols.length; i++)
-      tickers[i].style.display = 'none';
+    var tickers = document.getElementsByClassName('ticker__item');
+    //for(i = 0; i < this.allSymbols.length; i++)
+      //tickers[i].style.display = 'none';
     for(i = 0; i < this.activeIntervals.length; i++) {//stop updating for those old tickers
       clearInterval(this.activeIntervals[i]);
     }//end for
   },
   showTickers: async function(symbols, start) {//this creates all the tickers for the page.
     var length = 0;
-    var tickers = document.getElementsByClassName('ticker');
-    for(i = start, ln = start + TICKERS_ON_PAGE; i < ln; i++) {//Go through the stock ticker array
+    var tickers = document.getElementsByClassName('ticker__item');
+    for(i = 0; i < this.allSymbols.length; i++) {//Go through the stock ticker array
       try {
         if(i < symbols.length) {
           length++;
-          tickers[i].style.display = 'inline';
+          tickers[i].style.display = 'inline-block';
         }//end if
       }
       catch(err) {
@@ -124,39 +95,47 @@ var generators = {//generation namespace. Using to avoid an other global variabl
 
   genTicker: async function(symbol, tickerNum, volume) {
     resultDaily(symbol).then(async function(valueDaily) {
-      await sleep(1*1000);
-      resultMin(symbol).then(async function(valueOpen) {
-        try {
-          var jsonToday = JSON.stringify(valueOpen[0])
-          var jsonDaily = JSON.stringify(valueDaily[1])
-          if(jsonToday != undefined && jsonDaily != undefined) {
-            var today = JSON.parse(JSON.stringify(valueOpen[0]))
-            var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
-            var tickersHolder = document.getElementById('tick');
-            generators.symbol_price_volume.push({sym: symbol, prc: today.close, vol: volume});
-            var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
-            var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
-            tickersHolder.innerHTML += '<div class=\'ticker\' id=' + tickerNum + '>'
-            var tickerLoc = document.getElementById(tickerNum)
-            tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + symbol + '</span></br>'
-            tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span></br>'
-            tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'>' + deltaPoints + '</span></br>'
-            tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'>(' + deltaPercent + '%)</span></br>'
-            await sleep(1000);
-            //sortTickers();
+      sleep(500).then(async function() {
+        resultMin(symbol).then(async function(valueOpen) {
+          try {
+            var jsonToday = JSON.stringify(valueOpen[0])
+            var jsonDaily = JSON.stringify(valueDaily[1])
+            if(jsonToday != undefined && jsonDaily != undefined) {
+              var today = JSON.parse(JSON.stringify(valueOpen[0]))
+              var yesterday = JSON.parse(JSON.stringify(valueDaily[1]))
+              var tickersHolder = document.getElementById('ticker');
+              if(Number(today.close) == NaN) {
+                throw "Something went wrong...";
+              }
+              generators.symbol_price_volume.push({sym: symbol, prc: Number(today.close), vol: volume});
+              var deltaPoints = (Number(today.close)-Number(yesterday.close)).toFixed(2)//round to 2 decimal places
+              var deltaPercent = ((Number(deltaPoints)/Number(yesterday.close))*100).toFixed(2)//percent
+              tickersHolder.innerHTML += '<div class=\'ticker__item\' id=' + tickerNum + '>'
+              var tickerLoc = document.getElementById(tickerNum)
+              var styleString = "";
+              if(Number(deltaPoints) < 0)
+                styleString = "style=\'color: #e22626'\'";
+              else if(Number(deltaPoints) > 0)
+                styleString = "style=\'color: #43a047\'";
+              tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + symbol + '</span> '
+              tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span> '
+              tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'' + styleString + '>' + deltaPoints + '</span> '
+              tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'' + styleString + '>(' + deltaPercent + '%)</span> '
+              //sortTickers();
+            }
+          else {
+            throw "Generation Failed, jsons are undefined"
           }
-        else {
-          throw "Generation Failed, jsons are undefined"
         }
-      }
-      catch(err) {
-        console.log("Error: Ticker " + symbol + " has failed to generate!")
-        console.log("Retrying in 30 seconds")
-        console.log(err)
-        generators.retry.push(setTimeout(function(k, j){generators.genTicker(k, j)}, 30*1000, symbol, tickerNum));
-        //In the above line you cannot use the this keyword because we are not in the scope of generators anymore because of resultsDaily and resultsMin!
-        //So insead of this we can just use generators. We have the same functionality
-      }
+        catch(err) {
+          console.log("Error: Ticker " + symbol + " has failed to generate!")
+          console.log("Retrying in 30 seconds")
+          console.log(err)
+          generators.retry.push(setTimeout(function(k, j, w){generators.genTicker(k, j, w)}, 30*1000, symbol, tickerNum, volume));
+          //In the above line you cannot use the this keyword because we are not in the scope of generators anymore because of resultsDaily and resultsMin!
+          //So insead of this we can just use generators. We have the same functionality
+        }
+      });
     });
   });
   },//end member function genTicker
@@ -198,19 +177,24 @@ var generators = {//generation namespace. Using to avoid an other global variabl
   },//end function clearTimeouts
 
   loaded: function(length) {
-    var prev = document.getElementById('prev');
-    var next = document.getElementById('next');
     loadInterval = setInterval(function(length){
-      var tickers = document.getElementsByClassName('ticker');
-      if(tickers.length == length) {//Finally load
+      var tickers = document.getElementsByClassName('ticker__item');
+      if(tickers.length == length && generators.symbol_price_volume.length == length) {//Finally load
+        console.log(generators.symbol_price_volume);
+        var total = 0;
         document.getElementById('load').innerHTML = '';
-        prev.disabled = false;
-        next.disabled = false;
         sortTickers();
         namespace.showStartTickers();//show the inital set of tickers
         clearInterval(loadInterval);
         //Done with ticker stuff
         //Start pie chart stuff
+        for(var i = 0; i < length; i++) {
+          if(generators.symbol_price_volume[i].prc == NaN || generators.symbol_price_volume[i].vol == NaN) {
+            console.log(generators.symbol_price_volume[i]);
+          }
+          total += Number(Number(Number(generators.symbol_price_volume[i].prc) * Number(generators.symbol_price_volume[i].vol)).toFixed(2));
+        }
+        document.getElementById('standing').innerHTML = "$" + Number(total).toFixed(2);
         genChart2(generators.symbol_price_volume)
       }//end if
     }, 1000, length);
@@ -224,8 +208,8 @@ var generators = {//generation namespace. Using to avoid an other global variabl
 
 function sortTickers() {
   var tickersClone = []
-  var tickersHolder = document.getElementById('tick');
-  var tickers = document.getElementsByClassName('ticker');//get an array of all the tickers
+  var tickersHolder = document.getElementById('ticker');
+  var tickers = document.getElementsByClassName('ticker__item');//get an array of all the tickers
   var numTickers = tickers.length;
 
   for(i = 0; i < numTickers; i++) {
