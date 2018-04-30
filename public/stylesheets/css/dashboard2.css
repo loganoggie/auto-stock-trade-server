@@ -198,14 +198,20 @@ html {
 
 .symbol {
   display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .price {
   display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .change {
   display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 
@@ -268,6 +274,7 @@ html {
       /*display: inline-block !important;*/
 
       padding: 0 2rem;
+      padding-left: 5%;
       font-size: 2rem;
       color: white;
 
