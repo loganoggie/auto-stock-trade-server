@@ -33,7 +33,9 @@ head
 
 body
     nav.navbar.navbar-expand-md.navbar-dark.myNavbarTheme.fixed-top
-        a.navbar-brand.myFolio-brand(href="#") myFolio
+        a.navbar-brand.myFolio-brand(href="#") 
+          span.myInMyFolio my
+          span.FolioInMyFolio Folio
         button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
             span.navbar-toggler-icon
         #navbarSupportedContent.collapse.navbar-collapse
@@ -46,7 +48,7 @@ body
                         a.nav-link(href="/investments") Investments
                 block aboutAlgorithmsLink
                     li.nav-item
-                        a.nav-link(href="/aboutalgorithms") About Algorithms
+                        a.nav-link(href="/aboutalgorithms") About Indicators
                 block accountSettingsLink
                     li.nav-item
                         a.nav-link(href="/accountsettings2") Settings
