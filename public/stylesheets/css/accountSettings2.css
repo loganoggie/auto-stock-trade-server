@@ -1,9 +1,14 @@
+body {
+  font-family: 'Ubuntu', sans-serif;
+}
+
 .settings-container {
     width: 100%;
     min-width: 400px;
 }
 
 .settings-header {
+    text-align: center;
     font-size: 2em;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -44,9 +49,9 @@
     background-color: rgb(37, 112, 41);
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
 }
 
 input[type=number] {

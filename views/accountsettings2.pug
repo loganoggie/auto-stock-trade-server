@@ -2,6 +2,7 @@ extends masterPug.pug
 
 block headContent
     link(rel='stylesheet',type='text/css', href='stylesheets/css/accountSettings2.css')
+    link(href='https://fonts.googleapis.com/css?family=Ubuntu', rel='stylesheet')
 
 block accountSettingsLink
     li.nav-item.active
@@ -9,7 +10,7 @@ block accountSettingsLink
 
 block bodyContent
     div.settings-container
-        h1.settings-header Password Settings
+        h1.settings-header Change Password
         form.change-password-form(method="POST", action="/updatePassword")
             p.change-pwd-field-label.form-field-label Current Password:
             input.change-pwd-field.form-field(type='text', name="currentPassword")
@@ -18,7 +19,7 @@ block bodyContent
             p.change-pwd-field-label.form-field-label Confirm New Password:
             input.change-pwd-field.form-field(type='text', name="newPasswordConfirm")
             input.submit-button(type='submit', value='Apply')
-        h1.settings-header Text Message Alerts
+        h1.settings-header Sign Up For Text Alerts
         form.text-alerts-form(method="POST", action="/updatePhoneNumber")
             p.change-phone-field-label.form-field-label Phone Number:
             input.change-phone-field.form-field(type='number', name='newPhoneNumber')

@@ -1,3 +1,7 @@
+body {
+  font-family: 'Ubuntu', sans-serif;
+}
+
 .myNavbarTheme {
     background-color: #1C2321;
 }
@@ -5,4 +9,5 @@
 .content-wrapper {
     min-height: 100px;
     padding-top: 60px;
+    font-family: 'Ubuntu', sans-serif;
 }
