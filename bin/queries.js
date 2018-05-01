@@ -160,7 +160,6 @@ async function addNotification(twiliobit, phonenumber, email, notification, call
   //     from: '+13146674809'
   //   });
   // }
-  console.log(notifation);
   callback(notifications2);
 }
 
