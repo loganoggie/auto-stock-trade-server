@@ -75,6 +75,21 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 //  console.log("userstocks added to database.");
 //});
 
+// client.query("ALTER TABLE usernotifications ADD datetime timestamp", (err, res) => {
+//   console.log("timestamp )(!@)()!@$(@!#!)@$(*@)_$(*");
+// });
+
+// client.query("ALTER TABLE usernotifications ADD investmentname varchar(10)", (err, res) => {
+//   console.log("investment name )(!@)()!@$(@!#!)@$(*@)_$(*");
+// });
+
+// client.query("ALTER TABLE usernotifications ADD indicator varchar(100)", (err, res) => {
+//   console.log("indicator )(!@)()!@$(@!#!)@$(*@)_$(*");
+// });
+
+// client.query("ALTER TABLE usernotifications ADD investmentcost decimal", (err, res) => {
+//   console.log("investment cost)(!@)()!@$(@!#!)@$(*@)_$(*");
+// });
 
 //Insert into usernotifications
 //client.query("INSERT INTO usernotifications (email, notification) VALUES ('jwbhvb@mst.edu','Blah blah blah')", (err,res) => {
@@ -149,9 +164,9 @@ async function getNotifications(email, callback)
   callback(notifications);
 }
 
-async function addNotification(twiliobit, phonenumber, email, notification, callback)
+async function addNotification(twiliobit, phonenumber, email, notification, datetime, investmentname, indicator, investmentcost, callback)
 {
-  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
+  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification, datetime, investmentname, indicator, investmentcost) VALUES ($1,$2,$3,$4,$5,$6)",[email, notification, datetime, investmentname, indicator, investmentcost]);
   if(twiliobit==1)
   {
     twilio.messages.create({
