@@ -42,6 +42,7 @@ html {
     margin: 0 auto;
     /* margin-top: 30px; */
     padding-top: 30px;
+    padding-bottom: 70px;
     /* background-color: cyan; */
 }
 
@@ -63,7 +64,7 @@ html {
 }
 
 .suggested-actions-wrapper {
-    overflow: hidden;
+    overflow-y: scroll;
     margin: 0 auto;
     margin-top: 30px;
     max-height: 600px;
@@ -92,7 +93,7 @@ html {
     height: 70px;
     border-bottom: 1px solid lightgrey;
     box-sizing: border-box;
-    transition: background-color .10s ease-in-out; 
+    transition: background-color .10s ease-in-out;
     /* background-color: yellow; */
 }
 
@@ -191,6 +192,96 @@ html {
     }
 }
 
-.ticker {
+/*.ticker {
   display: none;
+}*/
+
+.symbol {
+  display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.price {
+  display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.change {
+  display: inline-block !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+* { box-sizing: border-box; }
+
+@-webkit-keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.ticker-wrap {
+
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  height: 4rem;
+  background-color: #000000;
+  opacity: 0.9;
+  padding-left: 100%;
+  box-sizing: content-box;
+}
+  .ticker {
+
+    display: inline-block !important;
+    height: 4rem;
+    line-height: 4rem;
+    white-space: nowrap;
+    padding-right: 100%;
+    box-sizing: content-box;
+
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-name: ticker;
+    animation-duration: 30s;
+}
+    .ticker__item {
+
+      /*display: inline-block !important;*/
+
+      padding: 0 2rem;
+      padding-left: 5%;
+      font-size: 2rem;
+      color: white;
+
+    }
+
+#load {
+  padding: 0 2rem;
+  font-size: 2rem;
+  color: white;
 }
