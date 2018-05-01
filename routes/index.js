@@ -56,7 +56,25 @@ router.get('/demo', function(req,res,next){
 });
 
 /*Runs the correct algorithm for every investment.*/
+
+function twoDays(){
+		var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var local = new Date(toLocal(new Date()));
+    if(weekdays[local.getDay()] == "Monday" || weekdays[local.getDay()] == "Tuesday")
+    	return local.getDate()-4;
+    return local.getDate()-2;
+}
+
+function oneDay(){
+		var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var local = new Date(toLocal(new Date()));
+    if(weekdays[local.getDay()] == "Monday" || weekdays[local.getDay()] == "Tuesday")
+    	return local.getDate()-3;
+    return local.getDate()-1;
+}
+
 router.get('/run', function(req, res, next) {
+
 
   queries.getAllInvestments("RSI",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
@@ -64,9 +82,10 @@ router.get('/run', function(req, res, next) {
       if(query.rows[i].params=="lowrisk") //low risk RSI
       {
         var date = new Date();
+        date.setDate(twoDays());//date form 2 days ago;
         var year = date.getFullYear();
         var month = date.getMonth()+1;
-        var day = date.getDate()-2;
+        var day = date.getDate();
 
         if(month<10)
         {
@@ -111,9 +130,10 @@ router.get('/run', function(req, res, next) {
       else if(query.rows[i].params=="mediumrisk") //medium risk RSI
       {
         var date = new Date();
+        date.setDate(twoDays());//date form 2 days ago;
         var year = date.getFullYear();
         var month = date.getMonth()+1;
-        var day = date.getDate()-2;
+        var day = date.getDate();
 
         if(month<10)
         {
@@ -158,9 +178,10 @@ router.get('/run', function(req, res, next) {
       else if(query.rows[i].params=="highrisk") //high risk RSI
       {
         var date = new Date();
+        date.setDate(twoDays());//date form 2 days ago;
         var year = date.getFullYear();
         var month = date.getMonth()+1;
-        var day = date.getDate()-2;
+        var day = date.getDate();
 
         if(month<10)
         {
@@ -212,10 +233,12 @@ router.get('/run', function(req, res, next) {
   queries.getAllInvestments("BBands",function(query) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
+
       var date = new Date();
+      date.setDate(oneDay());//date form 2 days ago;
       var year = date.getFullYear();
       var month = date.getMonth()+1;
-      var day = date.getDate()-1;
+      var day = date.getDate();
 
       if(month<10)
       {
@@ -262,9 +285,10 @@ router.get('/run', function(req, res, next) {
     for(var i=0;i<query.rows.length;i++) //for each investment
     {
       var date = new Date();
+      date.setDate(oneDay());//date form 2 days ago;
       var year = date.getFullYear();
       var month = date.getMonth()+1;
-      var day = date.getDate()-1;
+      var day = date.getDate();
 
       if(month<10)
       {
