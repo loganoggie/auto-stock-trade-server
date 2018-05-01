@@ -15,6 +15,7 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 
 //-----------------------------------------------------------------------
 
+
 var child = cp.fork('routes/summing.js')
 
 router.get('/demo', function(req,res,next){
@@ -88,7 +89,7 @@ router.get('/run', function(req, res, next) {
             if(RSIvalue>=80)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -96,7 +97,7 @@ router.get('/run', function(req, res, next) {
             else if(RSIvalue<=20)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -127,6 +128,7 @@ router.get('/run', function(req, res, next) {
         var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
         request("https://www.alphavantage.co/query?function=RSI&symbol="+query.rows[i].stockticker+"&interval=daily&time_period=10&series_type=open&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
         {
+          
           var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
 
           request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.query.rows[this.i].stockticker+"&interval=60min&apikey=CJWPUA7R3VDJNLV0", function(error,response,body2)
@@ -135,7 +137,7 @@ router.get('/run', function(req, res, next) {
             if(RSIvalue>=65)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -143,7 +145,7 @@ router.get('/run', function(req, res, next) {
             else if(RSIvalue<=35)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -182,7 +184,7 @@ router.get('/run', function(req, res, next) {
             if(RSIvalue>=55)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -190,7 +192,7 @@ router.get('/run', function(req, res, next) {
             else if(RSIvalue<=45)
             {
               queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
               }.bind({i: this.i, query: this.query}));
@@ -236,7 +238,7 @@ router.get('/run', function(req, res, next) {
           if(currentPrice>upperBandValue)
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "BBANDS", currentPrice, function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -244,7 +246,7 @@ router.get('/run', function(req, res, next) {
           else if(currentPrice<lowerBandValue)
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "BBANDS", currentPrice, function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -285,7 +287,7 @@ router.get('/run', function(req, res, next) {
           if(currentPrice>movingAverageValue)
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should sell "+this.query.rows[this.i].numstocks+" of "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.query.rows[this.i].numstocks+".", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "Moving Averages", currentPrice, function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -293,7 +295,7 @@ router.get('/run', function(req, res, next) {
           else
           {
             queries.getPhoneNumber(this.query.rows[this.i].email, function(query2) {
-              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              queries.addNotification(this.query.rows[this.i].twiliobit ,query2.rows[0].phonenumber, this.query.rows[this.i].email,"User "+this.query.rows[this.i].email+" should buy "+this.query.rows[this.i].stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", this.query.rows[this.i].stockticker, "Moving Averages", currentPrice, function(query3)
               {
               }.bind({i: this.i, currentPrice: currentPrice, query: this.query}));
             }.bind({i: this.i, query: this.query}));
@@ -322,7 +324,7 @@ router.post('/register', function(req, res, next) {
 
   if(pass1!=pass2)
   {
-    res.redirect('/splash',req);
+    res.redirect('/');
   }
   else
   {
