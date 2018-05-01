@@ -152,14 +152,15 @@ async function getNotifications(email, callback)
 async function addNotification(twiliobit, phonenumber, email, notification, callback)
 {
   var notifications2 = await client.query("INSERT INTO usernotifications (email, notification) VALUES ($1,$2)",[email, notification]);
-  if(twiliobit==1)
-  {
-    twilio.messages.create({
-      body: 'myFolio update: '+notification,
-      to: '+1'+phonenumber,
-      from: '+13146674809'
-    });
-  }
+  // if(twiliobit==1)
+  // {
+  //   twilio.messages.create({
+  //     body: 'myFolio update: '+notification,
+  //     to: '+1'+phonenumber,
+  //     from: '+13146674809'
+  //   });
+  // }
+  console.log(notifation);
   callback(notifications2);
 }
 
