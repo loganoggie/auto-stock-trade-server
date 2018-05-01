@@ -328,8 +328,7 @@ router.get('/run', function(req, res, next) {
       }.bind({ query: query, i: i }));
     }
   }).then(console.log("Finished Moving Averages."));
-
-  res.render('splash');
+  res.redirect('/dashboard');
 });
 
 
