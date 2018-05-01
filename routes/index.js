@@ -353,7 +353,7 @@ router.get('/aboutalgorithms', function(req, res, next) {
   }
 });
 
-router.get('/accountsettings', function(req, res, next) {
+router.get('/accountsettings2', function(req, res, next) {
   if (!req.isAuthenticated() || !req.isAuthenticated) {
     console.log("Auth Failed.");
     req.logout();
@@ -371,7 +371,7 @@ router.get('/accountsettings', function(req, res, next) {
       req.session.notifications=query.rows;
       console.log(req.session);
     });
-    res.render('accountsettings');
+    res.render('accountsettings2');
   }
 });
 
