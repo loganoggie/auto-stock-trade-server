@@ -1,3 +1,5 @@
+
+
 .account-standing {
   height: 120px;
   width: 300px;
@@ -126,7 +128,9 @@ table {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+    width: 100%;
 }
+
 th {
     color: white;
     background-color: #43A047;
@@ -140,10 +144,10 @@ tr{
 tr:nth-child(even){background-color: #dddddd;}
 
 th, td {
-    /* cellpadding 
-    padding: 15px; */ 
-    border: 1px solid #acacac; 
-    padding: 8px;
+    /* cellpadding
+    padding: 15px; */
+    border: 1px solid #acacac;
+    padding: 16px 8px;
     border-radius: 2px;
 }
 
@@ -152,10 +156,10 @@ thead {
 }
 
 .table-wrapper{
-  
+
 }
 #invest{
-  
+
 }
 
 #add{
@@ -179,4 +183,13 @@ thead {
 
 h1{
   text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+@media(min-width: 600px) {
+  table {
+    width: 80%;
+    min-width: 600px;
+  }
 }

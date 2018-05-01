@@ -63,19 +63,11 @@ html {
     /* margin-top: 30px; */
 }
 
-/* .suggested-actions-wrapper-wrapper{
-    overflow: hidden;
-    margin: 0 auto;
-    margin-top: 30px;
-    max-height: 600px;
-    /* background-color: red; */
-} */
-
 .suggested-actions-wrapper {
-    /* overflow-y: scroll; */
     margin: 0 auto;
     margin-top: 30px;
     max-height: 600px;
+    width: 90%;
     /* background-color: red; */
 }
 
@@ -90,6 +82,7 @@ html {
     overflow-y: scroll;
     width: 90%;
     max-height: 500px;
+    /* background-color: cyan; */
 }
 
 .suggested-action {

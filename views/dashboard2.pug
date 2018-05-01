@@ -17,23 +17,22 @@ block bodyContent
       div.account-graph
         canvas(id='folio-value', height='600', width='800')
         //Import the chart.js library
-  div.suggested-actions-wrapper-wrapper
-    div.suggested-actions-wrapper
-      h1.suggested-actions-heading Suggested Actions
-      table.suggested-actions-feed 
-        each notif in notifications
-          div.suggested-action
-            if (notif.action === 'Sell')
-              p.investment-name You should sell your #{notif.quantity} shares of #{notif.symbol} since the price is $#{notif.price}.
-            else
-              p.investment-name You should start buying more stock in #{notif.symbol} since the price is $#{notif.price}.
-            //p.investment-name #{notif.symbol} 
-            //p.investment-action #{notif.action}
-            //p.investment-action-date #{notif.action_date}
-            //p.investment-quantity #{notif.quantity}
-            //p.investment-price $#{notif.price} 
-        else
-          p.no-actions-notification There are no actions to take at the moment
+  div.suggested-actions-wrapper
+    h1.suggested-actions-heading Suggested Actions
+    table.suggested-actions-feed 
+      each notif in notifications
+        div.suggested-action
+          if (notif.action === 'Sell')
+            p.investment-name You should sell your #{notif.quantity} shares of #{notif.symbol} since the price is $#{notif.price}.
+          else
+            p.investment-name You should start buying more stock in #{notif.symbol} since the price is $#{notif.price}.
+          //p.investment-name #{notif.symbol} 
+          //p.investment-action #{notif.action}
+          //p.investment-action-date #{notif.action_date}
+          //p.investment-quantity #{notif.quantity}
+          //p.investment-price $#{notif.price} 
+      else
+        p.no-actions-notification There are no actions to take at the moment
   div.investment-link-wrapper
     p.investment-verbage Want to edit your current investments?
       a.investment-link(href='/investments') Click Here!
