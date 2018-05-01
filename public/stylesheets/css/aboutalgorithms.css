@@ -10,7 +10,8 @@
 
 .tab-holder {
     margin: 0 auto;
-    width: 400px;
+    width: 450px;
+    min-width: 400px;
     padding-bottom: 5px;
 }
 
@@ -20,6 +21,9 @@
 }
 
 .tab {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
     padding: 0px 1px;
     overflow: hidden;
     border: 1px solid #1C2321;
