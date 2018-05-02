@@ -91,7 +91,51 @@
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+.lookup-field-add {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 15px;
+  padding: 5px 100px 5px 5px;
+}
+
+.selected-symbol-label-add {
+  display: block;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.selected-symbol-add {
+  border: none;
+  text-align: center;
+  width: 100px;
+}
+
+.two-field-box-add {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.params-add {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.volume-field-add, .select-algorithm-add {
+  display: inline-block;
 }
 
 .close { /*The close button*/
