@@ -163,42 +163,57 @@ function doRSI(investment) {
         throw "Error: RSI has failed to generate any data."
       }
       var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
-      request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.investment.stockticker+"&interval=60min&apikey=XJEKY7CWNCOKZ5ZP", function(error,response,body2)
-      {
-        if(error) {
-          throw "Error: Time Series has failed";
-        }
-
-        var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
-        if(RSIvalue>=upper)
+      resultMin(this.investment.stockticker, "XJEKY7CWNCOKZ5ZP").then(function(result) {
+        try
         {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should sell "+this.investment.numstocks+" of "+this.investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.investment.numstocks+".",function(query3)
+          var json = JSON.stringify(result[0]);
+          if(json != undefined)
+          {
+            var currentPrice = JSON.parse(json).close; //this is the current price
+            if(RSIvalue>=upper)
             {
-            }.bind({currentPrice: currentPrice, investment: this.investment}));
-          }.bind({investment: this.investment}));
-        }
-        else if(RSIvalue<=lower)
-        {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should buy "+this.investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+this.investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                {
+                }.bind({currentPrice: currentPrice, investment: this.investment}));
+              }.bind({investment: this.investment}));
+            }
+            else if(RSIvalue<=lower)
             {
-            }.bind({currentPrice: currentPrice, investment: this.investment}));
-          }.bind({investment: this.investment}));
-        }
-        else
-        {
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                });
+              });
+            }
+            else
+            {
 
+            }
+          }
+          else
+          {
+            throw "Json is undefined";
+          }
         }
-      }.bind({ investment: this.investment }));
+        catch(err)
+        {
+          console.log(err);
+          console.log("Reattempt in 10 seconds");
+          //Retry again in 10 seconds
+          rsiFail.push(setTimeout(function(k) {doRSI(k)}, 10*1000, investment));
+          return;
+        }
+      });
     }.bind({ investment: investment }));
   }//end try
   catch(err)
-
   {
     console.log(err);
+    console.log("Reattempt in 10 seconds");
     //Retry again in 10 seconds
     rsiFail.push(setTimeout(function(k) {doRSI(k)}, 10*1000, investment));
+    return;
   }
 }
 
@@ -260,59 +275,51 @@ function doBbands(investment)
       var upperBandValue = JSON.parse(body)['Technical Analysis: BBANDS'][stringDate]['Real Upper Band']; //this is the upper band
       var lowerBandValue = JSON.parse(body)['Technical Analysis: BBANDS'][stringDate]['Real Lower Band']; //this is the lower band
       resultMin(this.investment.stockticker, "01JXX13CGEF2C4TR").then(function(result) {
-        var json = JSON.stringify(result[0]);
-        if(json != undefined)
-        {//--------------------------CONTINUE HERE-------------------------
-
-        }//end if
-      });
-      request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.investment.stockticker+"&interval=60min&apikey=01JXX13CGEF2C4TR", function(error,response,body2)
-      {
         try
         {
-          if(error) {
-            throw "Error: Time Series has failed";
-          }
-
-          if (typeof JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00'] == 'undefined')
+          var json = JSON.stringify(result[0]);
+          if(json != undefined)
           {
-            throw "Error: Time Series undefined for " + (stringDate+' 16:00:00')
-          }
+            var currentPrice = JSON.parse(json).close;
+            if(currentPrice>upperBandValue)
+            {
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                {
+                });
+              });
+            }
+            else if(currentPrice<lowerBandValue)
+            {
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                });
+              });
+            }
+            else
+            {
 
-        }
+            }
+          }//end if
+          else
+          {
+            throw "Json is undefined";
+          }
+        }//end try
         catch(err)
         {
-          console.log(err)
+          console.log(err);
+          //Retry again in 10 seconds
+          bbandsFail.push(setTimeout(function(k) {doBbands(k)}, 10*1000, investment));
           return;
         }
-
-        var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
-        if(currentPrice>upperBandValue)
-        {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should sell "+this.investment.numstocks+" of "+this.investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.investment.numstocks+".",function(query3)
-            {
-            }.bind({investment: this.investment, currentPrice: currentPrice}));
-          }.bind({investment: this.investment}));
-        }
-        else if(currentPrice<lowerBandValue)
-        {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should buy "+this.investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
-            {
-            }.bind({investment: this.investment, currentPrice: currentPrice}));
-          }.bind({investment: this.investment}));
-        }
-        else
-        {
-
-        }
-      }.bind({ investment: this.investment }));
+      });
     }.bind({ investment: investment }));
   }//end try
   catch(err)
   {
-    console.log("hello")
+    console.log("Reattempt in 10 seconds");
     console.log(err);
     //Retry again in 10 seconds
     bbandsFail.push(setTimeout(function(k) {doBbands(k)}, 10*1000, investment));
@@ -341,33 +348,52 @@ function doAVG(investment)
     request("https://www.alphavantage.co/query?function=SMA&symbol="+investment.stockticker+"&interval=daily&time_period=1"+parseInt(investment.params)+"&series_type=open&apikey=8BOE6CIGUGGJCA4F", function(error,response,body)
     {
       var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
-      request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+this.investment.stockticker+"&interval=60min&apikey=OQN5AR8PLIEEUUQP", function(error,response,body2)
-      {
-        var currentPrice = JSON.parse(body2)['Time Series (60min)'][stringDate+' 16:00:00']['1. open']; //this is the current price
-        if(currentPrice>movingAverageValue)
+      resultMin(investment.stockticker, "OQN5AR8PLIEEUUQP").then(function(result) {
+        try
         {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should sell "+this.investment.numstocks+" of "+this.investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*this.investment.numstocks+".",function(query3)
+          var json = JSON.stringify(result[0]);
+          if(json != undefined)
+          {
+            var currentPrice = JSON.parse(json).close;
+            if(currentPrice>movingAverageValue)
             {
-            }.bind({investment: this.investment, currentPrice: currentPrice}));
-          }.bind({investment: this.investment}));
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                {
+                }.bind({investment: this.investment, currentPrice: currentPrice}));
+              }.bind({investment: this.investment}));
+            }
+            else
+            {
+              queries.getPhoneNumber(investment.email, function(query2) {
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                {
+                });
+              });
+            }
+          }
+          else
+          {
+            throw "Json is undefined";
+          }
         }
-        else
+        catch(err)
         {
-          queries.getPhoneNumber(this.investment.email, function(query2) {
-            queries.addNotification(this.investment.twiliobit ,query2.rows[0].phonenumber, this.investment.email,"User "+this.investment.email+" should buy "+this.investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
-            {
-            }.bind({investment: this.investment, currentPrice: currentPrice}));
-          }.bind({investment: this.investment}));
+          console.log(err);
+          console.log("Reattempt in 10 seconds");
+          avgFail.push(setTimeout(function(k) {doAVG(k)}, 10*1000, investment));
+          return;
         }
-      }.bind({ investment: this.investment }));
+      });
     }.bind({ investment: investment }));
   }//end try
   catch(err)
   {
     console.log(err);
+    console.log("Reattempt in 10 seconds");
     //Retry again in 10 seconds
     avgFail.push(setTimeout(function(k) {doAVG(k)}, 10*1000, investment));
+    return;
   }
 }
 
