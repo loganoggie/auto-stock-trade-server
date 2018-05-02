@@ -166,7 +166,7 @@ async function getNotifications(email, callback)
 
 async function addNotification(twiliobit, phonenumber, email, notification, datetime, investmentname, indicator, investmentcost, callback)
 {
-  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification, datetime, investmentname, indicator, investmentcost) VALUES ($1,$2,$3,$4,$5,$6)",[email, notification, datetime, investmentname, indicator, investmentcost]);
+  var notifications2 = await client.query("INSERT INTO usernotifications (email, notification, datetime, investmentname, indicator, investmentcost) VALUES ($1,$2,NULL,NULL,NULL,NULL)",[email, notification]);
   if(twiliobit==1)
   {
     twilio.messages.create({

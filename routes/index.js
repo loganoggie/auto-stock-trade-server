@@ -19,10 +19,18 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 
 var child = cp.fork('routes/summing.js')
 
-router.get('/demo', function(req,res,next){
-  twilio.messages.create({
+  router.get('/demo', function(req,res,next){
+    queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "You should start buying more stock in RTN since the price is $200.98.",null,null,null,null, function(query)
+    {
+    });
+  /*twilio.messages.create({
     body: 'myFolio update: I am a brainlet.',
     to: '+16365380210', //John
+    from: '+13146674809'
+  }).then();
+  twilio.messages.create({
+    body: 'myFolio update: I am a brainlet.',
+    to: '+13145968101', //Ryan
     from: '+13146674809'
   }).then();
   twilio.messages.create({
@@ -54,7 +62,8 @@ router.get('/demo', function(req,res,next){
     body: 'myFolio update: I am a brainlet.',
     to: '+13148147234', //Mario
     from: '+13146674809'
-  }).then();
+  }).then();*/
+  res.redirect('/dashboard');
 });
 
 /*Runs the correct algorithm for every investment.*/
@@ -141,7 +150,8 @@ function doRSI(investment) {
       return
     }
 
-    var date = twoDays();//date form 2 days ago;
+    var date = new Date(twoDays());//date form 2 days ago;
+    console.log(date);
     var year = date.getFullYear();
     var month = date.getMonth()+1;
     var day = date.getDate();
@@ -160,9 +170,24 @@ function doRSI(investment) {
   var stringDate = year+"-"+month+"-"+day; //converting the date into the string that AV wants
     request("https://www.alphavantage.co/query?function=RSI&symbol="+investment.stockticker+"&interval=daily&time_period=10&series_type=open&apikey=HINHR5C56XTU0VE2", function(error,response,body2)
     {
-      if(error) {
-        throw "Error: RSI has failed to generate any data."
+
+      try
+      {
+        if(error) {
+          throw "Error: RSI request has failed to generate any data."
+        }
+        // console.log(typeof JSON.parse(body)['Technical Analysis: BBANDS'][stringDate] == 'undefined')
+        if (typeof JSON.parse(body2)['Technical Analysis: RSI'] == 'undefined' || typeof JSON.parse(body2)['Technical Analysis: RSI'][stringDate] == 'undefined')
+        {
+          throw "Error: Alphavantage RSI undefined for " + stringDate + " at " + investment.params
+        }
       }
+      catch(err)
+      {
+        console.log(err)
+        return;
+      }
+
       var RSIvalue = JSON.parse(body2)['Technical Analysis: RSI'][stringDate]['RSI']; //this is the RSI value
       resultMin(this.investment.stockticker, "XJEKY7CWNCOKZ5ZP").then(function(result) {
         try
@@ -170,11 +195,12 @@ function doRSI(investment) {
           var json = JSON.stringify(result[0]);
           if(json != undefined)
           {
+            console.log("DONE");
             var currentPrice = JSON.parse(json).close; //this is the current price
             if(RSIvalue>=upper)
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+this.investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".", "CURRENT_TIMESTAMP", investment.stockticker, "RSI", currentPrice, function(query3)
                 {
                 }.bind({currentPrice: currentPrice, investment: this.investment}));
               }.bind({investment: this.investment}));
@@ -182,7 +208,7 @@ function doRSI(investment) {
             else if(RSIvalue<=lower)
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", investment.stockticker, "RSI", currentPrice, function(query3)
                 {
                 });
               });
@@ -262,7 +288,7 @@ function doBbands(investment)
           throw "Error: BBands request has failed to generate any data."
         }
         // console.log(typeof JSON.parse(body)['Technical Analysis: BBANDS'][stringDate] == 'undefined')
-        if (typeof JSON.parse(body)['Technical Analysis: BBANDS'][stringDate] == 'undefined')
+        if (typeof JSON.parse(body)['Technical Analysis: BBANDS'][stringDate] == 'undefined' || typeof JSON.parse(body)['Technical Analysis: BBANDS'] == 'undefined')
         {
           throw "Error: Alphavantage BBands undefined for " + stringDate + " at " + investment.params
         }
@@ -281,11 +307,12 @@ function doBbands(investment)
           var json = JSON.stringify(result[0]);
           if(json != undefined)
           {
+            console.log("DONE");
             var currentPrice = JSON.parse(json).close;
             if(currentPrice>upperBandValue)
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".", "CURRENT_TIMESTAMP", investment.stockticker, "BBANDS", currentPrice, function(query3)
                 {
                 });
               });
@@ -293,7 +320,7 @@ function doBbands(investment)
             else if(currentPrice<lowerBandValue)
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", investment.stockticker, "BBANDS", currentPrice, function(query3)
                 {
                 });
               });
@@ -348,6 +375,24 @@ function doAVG(investment)
 
     request("https://www.alphavantage.co/query?function=SMA&symbol="+investment.stockticker+"&interval=daily&time_period=1"+parseInt(investment.params)+"&series_type=open&apikey=8BOE6CIGUGGJCA4F", function(error,response,body)
     {
+
+      try
+      {
+        if(error) {
+          throw "Error: Moving Averages request has failed to generate any data."
+        }
+        // console.log(typeof JSON.parse(body)['Technical Analysis: BBANDS'][stringDate] == 'undefined')
+        if (typeof JSON.parse(body)['Technical Analysis: SMA'] == 'undefined' || JSON.parse(body)['Technical Analysis: SMA'][stringDate] == 'undefined')
+        {
+          throw "Error: Alphavantage BBands undefined for " + stringDate + " at " + investment.params
+        }
+      }
+      catch(err)
+      {
+        console.log(err)
+        return;
+      }
+
       var movingAverageValue = JSON.parse(body)['Technical Analysis: SMA'][stringDate]['SMA']; //this is the moving average
       resultMin(investment.stockticker, "OQN5AR8PLIEEUUQP").then(function(result) {
         try
@@ -355,11 +400,12 @@ function doAVG(investment)
           var json = JSON.stringify(result[0]);
           if(json != undefined)
           {
+            console.log("DONE");
             var currentPrice = JSON.parse(json).close;
             if(currentPrice>movingAverageValue)
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should sell "+investment.numstocks+" of "+investment.stockticker+" at a price of "+currentPrice+" each. This would make the investment worth $"+currentPrice*investment.numstocks+".", "CURRENT_TIMESTAMP", investment.stockticker, "BBANDS", currentPrice, function(query3)
                 {
                 }.bind({investment: this.investment, currentPrice: currentPrice}));
               }.bind({investment: this.investment}));
@@ -367,7 +413,7 @@ function doAVG(investment)
             else
             {
               queries.getPhoneNumber(investment.email, function(query2) {
-                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.",function(query3)
+                queries.addNotification(investment.twiliobit ,query2.rows[0].phonenumber, investment.email,"User "+investment.email+" should buy "+investment.stockticker+" at a price of "+currentPrice+" each.", "CURRENT_TIMESTAMP", investment.stockticker, "Moving Averages", currentPrice, function(query3)
                 {
                 });
               });
