@@ -16,15 +16,17 @@ block bodyContent
       div.modal-content(id='modal-content')
         span.close(onclick='myModal.hideModal()') &times;
         form(id='modalForm', method="POST", action="/add")
-          input(type='text', name='lookup', placeholder='Company Name', oninput='myModal.lookupOnInput()')
+          input.lookup-field-add(type='text', name='lookup', placeholder='Company Name', oninput='myModal.lookupOnInput()')
           div.select(id='results')
-          input(type='text', name='symbol', placeholder='Symbol', readonly="readonly")
-          input(type='number', name='volume', onchange='myModal.volumeOnChange()', placeholder='Volume')
-          span(id='priceConversion')
-          //algorithm delection stuff is generated dynamically
-          select(name='algorithm', onchange='myModal.algorithmOnChange()')
-            option(value='default') Select an Algorithm
-          div.algorithm-params(id='params')
+          label.selected-symbol-label-add Selection: 
+            input.selected-symbol-add(type='text', name='symbol', readonly="readonly")
+          div.two-field-box-add
+            input.volume-field-add(type='number', name='volume', onchange='myModal.volumeOnChange()', placeholder='Volume')
+            //algorithm delection stuff is generated dynamically
+            span(id='priceConversion')
+            select.select-algorithm-add(name='algorithm', onchange='myModal.algorithmOnChange()')
+              option(value='default') Select an Algorithm
+          div.algorithm-params.params-add(id='params')
           input(type='submit', value='Add')
     //Edit modal
     div.modal(id='edit')

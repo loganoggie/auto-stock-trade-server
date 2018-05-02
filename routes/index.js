@@ -426,7 +426,6 @@ router.get('/run', function(req, res, next) {
 
 
 router.get('/', function(req, res, next) {
-
   res.render('splash');
 });
 
@@ -455,7 +454,7 @@ router.post('/register', function(req, res, next) {
       else
       {
         console.log("User insertion successful.");
-        res.redirect('/dashboard',req);
+        res.redirect('/');
       }
     });
   }
