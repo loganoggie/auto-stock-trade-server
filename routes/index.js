@@ -16,6 +16,7 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 
 //-----------------------------------------------------------------------
 
+
 var child = cp.fork('routes/summing.js')
 
 router.get('/demo', function(req,res,next){
@@ -441,7 +442,7 @@ router.post('/register', function(req, res, next) {
 
   if(pass1!=pass2)
   {
-    res.redirect('/splash',req);
+    res.redirect('/');
   }
   else
   {
@@ -603,7 +604,7 @@ router.post('/add', function(req, res, next) {
   client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
     "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
 
-  res.render('investments')
+  res.render('investments', req)
 
 });
 
@@ -613,7 +614,6 @@ router.get('/investments', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
     res.render('investments', req);
   }
 });
@@ -624,8 +624,19 @@ router.get('/aboutalgorithms', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
-    res.render('aboutalgorithms');
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
+    res.render('aboutalgorithms', req);
   }
 });
 
@@ -635,34 +646,160 @@ router.get('/accountsettings2', function(req, res, next) {
     req.logout();
     res.redirect('/');
   } else {
-
-    res.render('accountsettings2');
+    queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+      req.session.userInfo=query.rows[0];
+      console.log(req.session);
+    });
+    queries.getCurrentStockInfo(req.user.email, function(query){
+      req.session.stockInfo=query.rows;
+      console.log(req.session);
+    });
+    queries.getNotifications(req.user.email, function(query){
+      req.session.notifications=query.rows;
+      console.log(req.session);
+    });
+    res.render('accountsettings2', req);
   }
 });
 
-router.post('/updatePassword', async function(req, res, next) {
-  var currentPassword = req['body']['currentPassword'];
-  var newPassword = req['body']['newPassword'];
-  var newPasswordConfirm = req['body']['newPasswordConfirm'];
 
-  if(bcrypt.compareSync(currentPassword, req.session.userInfo.password) && newPassword === newPasswordConfirm) {
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(newPassword, salt);
 
-    client.query("UPDATE users SET password = " + hash + ";");
-  }
+router.post('/updatePassword', function(req, res, next) {
+  console.log('Password Changed!');
+
+  console.log(req.user.id);
+  console.log(req.user.email);
+
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+
+      req.session.userInfo = query.rows[0]; //get the current password hash and other user info from the database
+
+      //get user input ...
+      var currentPassword = req['body']['currentPassword'];           //user input - this should be the current plain text password associated with the users account
+      var newPassword = req['body']['newPassword'];                   //user input - the new plain text password the user wants to change their password to
+      var newPasswordConfirm = req['body']['newPasswordConfirm'];     //user input - this should match newPassword
+
+      //console.log(req.session.userInfo);
+
+      // client.query("SELECT * FROM users", (err,res) => {
+      //  console.log("Number of users: "+res.rowCount);
+      //  console.log(res.rows);
+      // });
+      // client.query("SELECT * FROM usernotifications", (err,res) => {
+      //   console.log("Number of notifications: "+res.rowCount);
+      //   console.log(res.rows);
+      //  });
+
+      if(newPassword === newPasswordConfirm)  //if new password feilds match
+      {
+          //run compare to make sure the currentPassword is actually the user's current password in the database
+          bcrypt.compare(currentPassword, req.session.userInfo.password, function (err, res)
+          {
+              if(err)
+              {
+                console.log("Error while comparing current password input to current database password");
+                //alert("Error: your password has not been update. Please try agian");
+                throw err;
+              }
+
+              if(res) //res == true if the user types in the correct current password that is in the database
+              {
+                  //generate the salt. the salt is automatically stored in res ...
+                  bcrypt.genSalt(function(err,res)
+                  {
+                      if(err)
+                      {
+                        console.log("Error while generating salt");
+                        //alert("Error: your password has not been update. Please try agian");
+                        throw err;
+                      }
+
+                      console.log(res);
+                      //generate and store the hash. the hash is automatically stored in result ...
+                      bcrypt.hash(newPassword, res, function(error, result)
+                      {
+                          if(error)
+                          {
+                            console.log("Error while generating hash");
+                            alert("Error: your password has not been update. Please try agian");
+                            throw error;
+                          }
+
+                          console.log(result);
+                          console.log("UPDATE users SET password = '" + result + "' where id = '" + req.session.userInfo.id + "';");
+                          client.query("UPDATE users SET password = '" + result + "' where id = '" + req.session.userInfo.id + "';");
+                          //alert("Your password has been updated.");
+                          //client.query("UPDATE users SET password = '" + result + "';");
+                      });
+                  });
+              }
+              else
+              {
+                  console.log("Current password is incorrect");
+                  //alert("Current password is incorrect");
+              }
+          });
+      }
+      else //otherwise new password fields didn't match
+      {
+        console.log("New passwords did not match!");
+      }
+
+
+
+  });
+
+  res.redirect("/accountsettings2");
 
 });
 
-router.get('/dataanalytics', function(req, res, next) {
-  if (!req.isAuthenticated() || !req.isAuthenticated) {
-    console.log("Auth Failed.");
-    req.logout();
-    res.redirect('/');
-  } else {
 
-    res.render('dataanalytics');
-  }
+
+
+router.post('/updatePhoneNumber', function(req, res, next) {
+
+  console.log("Change Twillio Settings");
+
+  queries.getCurrentUserInfo(req.user.id, req.user.email, function(query){
+
+      req.session.userInfo = query.rows[0]; //get the current password hash and other user info from the database
+
+      //get user input ...
+      var newPhoneNumber = req['body']['newPhoneNumber'];                   //user input - the new plain text password the user wants to change their password to
+      var newPhoneNumberConfirm = req['body']['newPhoneNumberConfirm'];
+
+      // console.log(req.session.userInfo.id);
+      // console.log("checkBox = " + checkBoxValue);
+      // console.log("phoneNum = " + phoneNum);
+      // console.log("phoneNum.length = " + phoneNum.length);
+      // console.log("UPDATE users SET twilioenabled = '" + checkBoxValue + "' , phonenumber = '" + phoneNum + "'  where id = '" + req.session.userInfo.id + "';");
+
+      if(newPhoneNumber == newPhoneNumberConfirm)
+      {
+        console.log("UPDATE users SET phonenumber = '" + newPhoneNumber + "'  where id = '" + req.session.userInfo.id + "';");
+        client.query("UPDATE users SET phonenumber = '" + newPhoneNumber + "'  where id = '" + req.session.userInfo.id + "';");
+      }
+      else
+      {
+        console.log("Phone number did not match!");
+      }
+  });
+
+  res.redirect("/accountsettings2");
+
+});
+
+
+
+router.post('/updateAVKey', function(req, res, next) {
+
+  var newAVkey = req['body']['newAVKey']; //value from the on-screen textbox
+
+  console.log("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+
+  client.query("UPDATE users SET avkey = '" + newAVkey + "' WHERE id = '" + req.user.id + "' AND email = '" + req.user.email + "';");
+
+  res.redirect('/accountsettings2');
 });
 
 router.get('/logout', function(req, res) {
