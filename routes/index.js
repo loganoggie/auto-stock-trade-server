@@ -421,8 +421,7 @@ router.get('/run', function(req, res, next) {
       await doAVG(query.rows[i]);
     }
   }).then(console.log("Finished Moving Averages."));
-
-  res.render('splash');
+  res.redirect('/dashboard');
 });
 
 
