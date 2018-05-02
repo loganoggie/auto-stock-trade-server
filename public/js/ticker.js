@@ -118,7 +118,7 @@ var generators = {//generation namespace. Using to avoid an other global variabl
               else if(Number(deltaPoints) > 0)
                 styleString = "style=\'color: #43a047\'";
               tickerLoc.innerHTML += '<span id=\'symbol-' + tickerNum + '\' class=\'symbol\'>' + symbol + '</span>'
-              tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>' + Number(today.close).toFixed(2) + '</span>'
+              tickerLoc.innerHTML += '<span id=\'price-' + tickerNum + '\' class=\'price\'>$' + Number(today.close).toFixed(2) + '</span>'
               tickerLoc.innerHTML += '<span id=\'points-' + tickerNum + '\' class=\'change\'' + styleString + '>' + deltaPoints + '</span>'
               tickerLoc.innerHTML += '<span id=\'percent-' + tickerNum + '\' class=\'change\'' + styleString + '>(' + deltaPercent + '%)</span>'
               //sortTickers();

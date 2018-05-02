@@ -109,8 +109,8 @@ var myModal = {
         //Bbands Time intervals
         bbands.innerHTML += '<option value=\'default\'> Select a Time Period';
         bbands.innerHTML += '<option value=\'daily\'> Daily';
-        bbands.innerHTML += '<option value=\'weekly\'> Weekly';
-        bbands.innerHTML += '<option value=\'monthly\'> Monthly';
+        //bbands.innerHTML += '<option value=\'weekly\'> Weekly';
+        //bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
         params.innerHTML += '<input type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
       }//end if
@@ -261,8 +261,8 @@ var edit = {
         //Bbands Time intervals
         bbands.innerHTML += '<option value=\'default\'> Select a Time Period';
         bbands.innerHTML += '<option value=\'daily\'> Daily';
-        bbands.innerHTML += '<option value=\'weekly\'> Weekly';
-        bbands.innerHTML += '<option value=\'monthly\'> Monthly';
+        //bbands.innerHTML += '<option value=\'weekly\'> Weekly';
+        //bbands.innerHTML += '<option value=\'monthly\'> Monthly';
         //Time_period number
         params.innerHTML += '<input id=\'edit-num_points\' type=\'number\' name=\'num_points\' placeholder=\'Number of Data Points\'>'
         if(this.select.value == generator.investments[this.index].algorithm)
@@ -364,7 +364,7 @@ async function generateInvestment(stockData, investNum) {
             cellSymbol.className = 'cell';
             cellSymbol.id = 'symbol-' + investNum;
 
-            cellShare.innerHTML = share;
+            cellShare.innerHTML = "$"+share;
             cellShare.className = 'cell';
             cellShare.id = 'share-' + investNum;
 
@@ -372,7 +372,7 @@ async function generateInvestment(stockData, investNum) {
             cellVolume.className = 'cell';
             cellVolume.id = 'volume-' + investNum;
 
-            cellPrice.innerHTML = price;
+            cellPrice.innerHTML = "$"+price;
             cellPrice.className = 'cell';
             cellPrice.id = 'price-' + investNum;
 
