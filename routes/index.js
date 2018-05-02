@@ -555,12 +555,17 @@ router.post('/edit-algorithm', function(req, res, next) {
     params = req.body.radio;
   }
 
+  var enableTwilio = req.body.editTwilio
+  var stat = 0;
+  if(enableTwilio)
+    stat = 1;
+
   client.query("DELETE FROM userstocks WHERE id=$1", [ID]);
 
   console.log(req.session.userInfo)
 
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
-  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled, twiliobit) VALUES ('" + req.session.userInfo.email +
+  "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "','" + stat + "')")
 
   res.render('investments', req);
 
@@ -601,8 +606,8 @@ router.post('/add', function(req, res, next) {
 
   console.log(params)
 
-  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled) VALUES ('" + req.session.userInfo.email +
-    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "')")
+  client.query("INSERT INTO userstocks (email, stockticker, numstocks, algorithm, params, enabled, twiliobit) VALUES ('" + req.session.userInfo.email +
+    "','" + req.body.symbol + "','" + req.body.volume + "','" + req.body.algorithm + "','" + params + "','" + 1 + "', '" + 1 + "')")
 
   res.render('investments', req)
 
