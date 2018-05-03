@@ -20,7 +20,7 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 var child = cp.fork('routes/summing.js')
 
   router.get('/demo', function(req,res,next){
-    queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "You should start buying more stock in RTN since the price is 203.98.",null,null,null,null, function(query)
+    queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "User tanner0397x@gmail.com should buy TSLA at a price of 293.3640 each.",null,null,null,null, function(query)
     {
     });
   /*twilio.messages.create({
