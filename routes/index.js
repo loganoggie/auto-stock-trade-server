@@ -20,8 +20,22 @@ var twilio = require('twilio')('AC31621b0d9e4714be87ce41aa88d2cbad','a3b8be0954c
 var child = cp.fork('routes/summing.js')
 
   router.get('/demo', function(req,res,next){
-    queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "User tanner0397x@gmail.com should buy TSLA at a price of 293.3640 each.",null,null,null,null, function(query)
-    {
+    resultMin("TSLA", "0BG6Y9SK9JRUOJ43").then(function(result) {
+      var json = JSON.stringify(result[0]);
+      if(json != undefined)
+      {
+        var currentPrice = JSON.parse(json).close; //this is the current price
+        queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "User tanner0397x@gmail.com should buy TSLA at a price of "+ Number(currentPrice).toFixed(2) +" each.",null,null,null,null, function(query)
+        {
+        });
+        console.log("ACTUAL PRICE")
+      }
+      else
+      {
+        queries.addNotification(1, 4173994675, "tanner0397x@gmail.com", "User tanner0397x@gmail.com should buy TSLA at a price of 301.15 each.",null,null,null,null, function(query)
+        {
+        });
+      }
     });
   /*twilio.messages.create({
     body: 'myFolio update: I am a brainlet.',
